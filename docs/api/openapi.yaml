@@ -1,0 +1,193 @@
+openapi: 3.0.3
+info:
+  title: BP Reset V1 API
+  description: |
+    API contract for BP Reset V1.
+
+    PostgREST for reads, single Postgres RPC for ingest.
+    Base URL: https://<project>.supabase.co/rest/v1/
+    Auth: Authorization: Bearer <access_token>, apikey: <anon_key>
+  version: 0.1.0
+  contact:
+    name: Platform Team
+servers:
+  - url: https://{project}.supabase.co/rest/v1
+    variables:
+      project:
+        default: dev-project
+        description: Supabase project reference
+
+paths:
+  /rpc/ingest_observations:
+    post:
+      operationId: ingest_observations
+      summary: Ingest observations from HealthKit or manual entry
+      description: |
+        TODO: Full implementation details.
+
+        The single write path. Used by both the native plugin (background and foreground)
+        and manual entry. Idempotent by construction.
+
+        - Upsert on (user_id, source_system, source_uuid)
+        - Bounds and cross-field validation from observation_definition
+        - deleted_source_uuids soft-deletes matching parent or component source_uuid
+        - Missing consent returns 403 CONSENT_REQUIRED
+      tags:
+        - Ingest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: TODO
+      responses:
+        '200':
+          description: Ingest completed
+          content:
+            application/json:
+              schema:
+                type: object
+                description: TODO
+        '400':
+          description: Malformed payload
+        '401':
+          description: Invalid session
+        '403':
+          description: CONSENT_REQUIRED
+        '422':
+          description: All items rejected
+
+  /rpc/export_patient_data:
+    post:
+      operationId: export_patient_data
+      summary: Export patient data as FHIR Bundle and CSV
+      description: |
+        TODO: Full implementation details.
+
+        Returns a FHIR R4 Bundle of the patient's observations plus a CSV,
+        delivered through the iOS share sheet. Deliverable 12.
+      tags:
+        - Export
+      responses:
+        '200':
+          description: Export generated
+          content:
+            application/json:
+              schema:
+                type: object
+                description: TODO
+        '401':
+          description: Invalid session
+
+  /v_bp_readings:
+    get:
+      operationId: get_bp_readings
+      summary: Blood pressure reading list
+      description: |
+        TODO: Full implementation details.
+
+        Flattened view: id, effective_time, effective_tz, systolic, diastolic,
+        source_type, source_name, body_site_display.
+
+        Pagination is keyset on effective_time, not offset.
+      tags:
+        - Views
+      parameters:
+        - name: order
+          in: query
+          schema:
+            type: string
+          example: effective_time.desc
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          example: 50
+        - name: effective_time
+          in: query
+          description: Keyset pagination filter
+          schema:
+            type: string
+          example: lt.2026-07-01T00:00:00Z
+      responses:
+        '200':
+          description: Reading list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: TODO
+
+  /v_bp_trend:
+    get:
+      operationId: get_bp_trend
+      summary: Blood pressure trend aggregates
+      description: |
+        TODO: Full implementation details.
+
+        Daily aggregate: day, min_systolic, max_systolic, mean_systolic,
+        min_diastolic, max_diastolic, mean_diastolic, reading_count.
+
+        Computed server-side so the client never pulls every row to draw a line.
+      tags:
+        - Views
+      responses:
+        '200':
+          description: Trend data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: TODO
+
+  /v_consent_status:
+    get:
+      operationId: get_consent_status
+      summary: Current consent status
+      description: |
+        TODO: Full implementation details.
+
+        Returns: has_active_consent, version, last_event_at.
+        Derived from the latest consent_event row.
+      tags:
+        - Views
+      responses:
+        '200':
+          description: Consent status
+          content:
+            application/json:
+              schema:
+                type: object
+                description: TODO
+
+  /v_program_progress:
+    get:
+      operationId: get_program_progress
+      summary: Journey/program progress
+      description: |
+        TODO: Full implementation details.
+
+        Returns: current_week, completed_steps.
+      tags:
+        - Views
+      responses:
+        '200':
+          description: Program progress
+          content:
+            application/json:
+              schema:
+                type: object
+                description: TODO
+
+tags:
+  - name: Ingest
+    description: Write operations
+  - name: Export
+    description: Data export
+  - name: Views
+    description: Read-only views
