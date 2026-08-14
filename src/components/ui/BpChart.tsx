@@ -10,9 +10,11 @@ import type { BpTrendRow } from "@/lib/api/types";
  */
 export function BpChart({
   rows,
+  ariaLabel,
   height = 220,
 }: {
   rows: BpTrendRow[];
+  ariaLabel: string;
   height?: number;
 }) {
   const width = 340;
@@ -46,7 +48,7 @@ export function BpChart({
       viewBox={`0 0 ${width} ${height}`}
       className="w-full"
       role="img"
-      aria-label="Blood pressure readings over time, shown as recorded"
+      aria-label={ariaLabel}
     >
       {yTicks.map((t) => (
         <g key={t}>

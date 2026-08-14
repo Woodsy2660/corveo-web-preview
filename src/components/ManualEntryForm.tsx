@@ -1,12 +1,21 @@
 import { useState } from "react";
 import { Field } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
+import { APP } from "@/copy/app";
 import { JOURNEY } from "@/copy/journey";
 import { VALIDATION_PLEASE_CHECK, VALIDATION_SYSTOLIC_GREATER } from "@/copy/validation";
 import { BP_PANEL_CODE, BOUNDS, validateManualEntry } from "@/lib/api";
 import { useIngestObservations } from "@/lib/api/hooks";
 import { localTzInfo, nowLocalInputValue } from "@/lib/format";
 import type { IngestResponse } from "@/lib/api/types";
+
+/** The reading as submitted, for screens that show it back immediately. */
+export interface SubmittedReading {
+  systolic: number;
+  diastolic: number;
+  effective_time: string;
+  source_type: "manual";
+}
 
 /**
  * Manual BP entry (Deliverable 4). Bounds are data quality only — the form
@@ -19,7 +28,7 @@ export function ManualEntryForm({
   onSaved,
 }: {
   ctaLabel: string;
-  onSaved: (result: IngestResponse) => void;
+  onSaved: (result: IngestResponse, submitted: SubmittedReading) => void;
 }) {
   const ingest = useIngestObservations();
   const [systolic, setSystolic] = useState("");
@@ -27,6 +36,7 @@ export function ManualEntryForm({
   const [takenAt, setTakenAt] = useState(nowLocalInputValue());
   const [arm, setArm] = useState<"left" | "right">("left");
   const [showErrors, setShowErrors] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const errors = validateManualEntry({ systolic, diastolic });
   const c = JOURNEY.firstCapture;
@@ -40,13 +50,16 @@ export function ManualEntryForm({
 
   const save = async () => {
     setShowErrors(true);
+    setFormError(null);
     if (Object.keys(errors).length > 0) return;
 
     const taken = new Date(takenAt);
     const { tz, offsetMinutes } = localTzInfo(taken);
     const uuid = crypto.randomUUID();
 
-    const result = await ingest.mutateAsync({
+    let result: IngestResponse;
+    try {
+      result = await ingest.mutateAsync({
       source_type: "manual",
       observations: [
         {
@@ -77,8 +90,26 @@ export function ManualEntryForm({
           ],
         },
       ],
+      });
+    } catch {
+      setFormError(APP.manualEntry.saveFailed);
+      return;
+    }
+
+    // A duplicate means the reading is already in the record — treat as
+    // saved. Rejection with nothing inserted means the values didn't pass
+    // server-side bounds: stay on the form with mechanical copy only.
+    if (result.inserted === 0 && result.duplicates === 0) {
+      setFormError(VALIDATION_PLEASE_CHECK);
+      return;
+    }
+
+    onSaved(result, {
+      systolic: Number(systolic),
+      diastolic: Number(diastolic),
+      effective_time: taken.toISOString(),
+      source_type: "manual",
     });
-    onSaved(result);
   };
 
   return (
@@ -135,8 +166,14 @@ export function ManualEntryForm({
         </div>
       </div>
 
+      {formError ? (
+        <p role="alert" className="text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
+          {formError}
+        </p>
+      ) : null}
+
       <Button disabled={ingest.isPending} onClick={save}>
-        {ingest.isPending ? "…" : ctaLabel}
+        {ingest.isPending ? APP.common.busy : ctaLabel}
       </Button>
     </div>
   );

@@ -15,7 +15,7 @@ export function ManualEntry() {
       title={c.title}
       footer={
         <Button variant="ghost" onClick={() => navigate(-1)}>
-          Cancel
+          {APP.common.cancel}
         </Button>
       }
     >

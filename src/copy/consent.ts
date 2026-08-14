@@ -37,8 +37,6 @@ export const CONSENT = {
   checkboxLabel:
     "I have read and understood the above, and I expressly consent to Corveo collecting and storing my blood pressure readings as described.",
   cta: "I consent",
-  declineNote:
-    "You can use the education program without consenting — readings simply won't be stored.",
 } as const;
 
 /**
@@ -48,10 +46,12 @@ export const CONSENT = {
  */
 export async function hashConsentText(): Promise<string> {
   const text = [
+    CONSENT.eyebrow,
     CONSENT.title,
     CONSENT.intro,
     ...CONSENT.points.map((p) => `${p.title}: ${p.body}`),
     CONSENT.checkboxLabel,
+    CONSENT.cta,
   ].join("\n");
   const data = new TextEncoder().encode(text);
   const digest = await crypto.subtle.digest("SHA-256", data);

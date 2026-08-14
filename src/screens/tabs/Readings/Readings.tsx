@@ -20,7 +20,7 @@ export function Readings() {
       withTabBar
       action={
         <Link to="/app/settings" className="eyebrow underline underline-offset-4">
-          Settings
+          {APP.common.settingsLink}
         </Link>
       }
     >
@@ -52,7 +52,7 @@ export function Readings() {
                     {r.systolic}/{r.diastolic}
                   </span>
                   <span className="pl-[var(--spacing-2xs)] text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)" }}>
-                    mmHg
+                    {APP.common.unitMmHg}
                   </span>
                   <span className="block text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)" }}>
                     {fmtDateTime(r.effective_time)}

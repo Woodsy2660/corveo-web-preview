@@ -9,6 +9,7 @@
  */
 
 import type { BpReadingRow, BpTrendRow } from "@/lib/api/types";
+import { localDay } from "@/lib/format";
 
 /** mulberry32 — small deterministic PRNG, good enough for fixtures. */
 export function mulberry32(seed: number): () => number {
@@ -31,10 +32,13 @@ export interface FixtureOptions {
 }
 
 /**
- * 42 days of readings for persona "synthetic Alex": systolic drifting
- * 146 → 135, diastolic 92 → 86, 4–6 readings/week with skipped days,
- * ~70% HealthKit (Omron via Apple Health) / 30% manual, one deliberate
- * same-minute duplicate pair mid-series.
+ * 42 days of readings for persona "synthetic Alex": stable baseline around
+ * 138/87 with natural variation, 4–6 readings/week with skipped days,
+ * ~70% HealthKit (Omron via Apple Health) / 30% manual.
+ *
+ * Deliberately NO systematic downward drift: a demo dataset that "improves"
+ * over the program would visually imply the program lowers blood pressure —
+ * an outcome claim the IPS prohibits. The demo shows tracking, not results.
  */
 export function buildSeedReadings(opts: FixtureOptions = {}): BpReadingRow[] {
   const { seed = 1337, days = 42, now = new Date() } = opts;
@@ -45,9 +49,8 @@ export function buildSeedReadings(opts: FixtureOptions = {}): BpReadingRow[] {
     // Skip ~30% of days — real people miss days.
     if (rand() < 0.3) continue;
 
-    const progress = 1 - daysAgo / days; // 0 → 1 over the series
-    const baseSys = 146 - 11 * progress;
-    const baseDia = 92 - 6 * progress;
+    const baseSys = 138;
+    const baseDia = 87;
     const readingsToday = rand() < 0.35 ? 2 : 1;
 
     for (let i = 0; i < readingsToday; i++) {
@@ -72,6 +75,19 @@ export function buildSeedReadings(opts: FixtureOptions = {}): BpReadingRow[] {
     }
   }
 
+  // One deliberate near-duplicate mid-series: the same reading arriving from
+  // both the cuff app (via Apple Health) and a manual entry in the same
+  // minute — the awkward two-source case the record has to display honestly.
+  const mid = rows[Math.floor(rows.length / 2)];
+  if (mid) {
+    rows.push({
+      ...mid,
+      id: `${mid.id}-manual-dup`,
+      source_type: "manual",
+      source_name: null,
+    });
+  }
+
   rows.sort((a, b) => a.effective_time.localeCompare(b.effective_time));
   return rows;
 }
@@ -79,12 +95,13 @@ export function buildSeedReadings(opts: FixtureOptions = {}): BpReadingRow[] {
 /**
  * Daily aggregate matching the `v_bp_trend` shape. In production this is
  * computed server-side; the mock derives it from the reading set so the two
- * stay consistent.
+ * stay consistent. Buckets by the user's LOCAL calendar day — a 7:30am
+ * Sydney reading belongs to that Sydney day, not the UTC one.
  */
 export function aggregateTrend(readings: BpReadingRow[]): BpTrendRow[] {
   const byDay = new Map<string, BpReadingRow[]>();
   for (const r of readings) {
-    const day = r.effective_time.slice(0, 10);
+    const day = localDay(r.effective_time);
     const bucket = byDay.get(day) ?? [];
     bucket.push(r);
     byDay.set(day, bucket);

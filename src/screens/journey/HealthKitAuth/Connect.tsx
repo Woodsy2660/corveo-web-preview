@@ -42,7 +42,7 @@ export function Connect() {
               aria-checked={selected}
               onClick={() => setConnectChoice(key)}
               className={`rounded-lg bg-card p-[var(--spacing-sm)] text-left transition-shadow ${
-                selected ? "ring-2 ring-black" : "ring-1 ring-transparent"
+                selected ? "ring-2 ring-heading" : "ring-1 ring-transparent"
               }`}
             >
               <span className="block pb-[var(--spacing-3xs)]" style={{ fontSize: "var(--text-body-base)", fontWeight: 500 }}>

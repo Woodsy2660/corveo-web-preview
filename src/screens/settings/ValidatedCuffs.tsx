@@ -2,6 +2,7 @@ import { useNavigate } from "react-router";
 import { Screen } from "@/components/ui/Screen";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { APP } from "@/copy/app";
 import { VALIDATED_CUFFS } from "@/copy/safety";
 
 /**
@@ -18,7 +19,7 @@ export function ValidatedCuffs() {
       title={c.title}
       footer={
         <Button variant="ghost" onClick={() => navigate(-1)}>
-          Back
+          {APP.common.back}
         </Button>
       }
     >

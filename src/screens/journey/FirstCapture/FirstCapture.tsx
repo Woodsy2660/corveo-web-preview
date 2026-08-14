@@ -25,7 +25,12 @@ export function FirstCapture() {
         </Card>
       ) : null}
 
-      <ManualEntryForm ctaLabel={c.cta} onSaved={() => navigate("/journey/result")} />
+      <ManualEntryForm
+        ctaLabel={c.cta}
+        onSaved={(_result, submitted) =>
+          navigate("/journey/result", { state: { reading: submitted } })
+        }
+      />
     </Screen>
   );
 }

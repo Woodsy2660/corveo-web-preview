@@ -8,6 +8,14 @@
 import { MY_HEART_RECORD } from "./product";
 
 export const APP = {
+  common: {
+    unitMmHg: "mmHg",
+    settingsLink: "Settings",
+    cancel: "Cancel",
+    back: "Back",
+    busy: "…",
+  },
+
   tabs: {
     readings: "Readings",
     trend: "Trend",
@@ -31,6 +39,8 @@ export const APP = {
     intro:
       "Each point is a daily summary of your readings, shown exactly as recorded. The pattern across weeks is what's worth discussing with your doctor.",
     ranges: { twoWeeks: "2W", sixWeeks: "6W", all: "All" },
+    rangeAria: "Trend range",
+    chartAria: "Blood pressure readings over time, shown as recorded",
     legendSystolic: "Systolic",
     legendDiastolic: "Diastolic",
     empty: "Your trend appears once readings begin to arrive.",
@@ -50,8 +60,7 @@ export const APP = {
     title: "Add a reading.",
     timeNote: "Recorded readings keep the time you set here.",
     cta: "Save reading",
-    savedToast: "Reading saved.",
-    duplicateToast: "This reading was already in your record.",
+    saveFailed: "The reading couldn't be saved. Please try again.",
   },
 
   settings: {
@@ -62,7 +71,6 @@ export const APP = {
       readsOnly: "Corveo reads blood pressure only. It never writes.",
       manageHint: "Manage access in Settings › Health › Data Access & Devices.",
       notConnected: "Not connected. You can connect Apple Health at any time.",
-      connectCta: "Connect Apple Health",
     },
     yourData: {
       title: "Your data",

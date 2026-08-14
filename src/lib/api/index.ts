@@ -5,7 +5,7 @@
  */
 
 import type { CorveoApi } from "./types";
-import { createMockApi } from "./mock";
+import { createMockApi, resetMockStore } from "./mock";
 
 let instance: CorveoApi | null = null;
 
@@ -14,6 +14,16 @@ export function getApi(): CorveoApi {
     instance = createMockApi();
   }
   return instance;
+}
+
+/**
+ * DEV ONLY — clears the persisted mock store AND drops the singleton, so the
+ * next getApi() reloads fresh state. Clearing storage alone is not enough:
+ * the instance's closure holds the old store and would re-persist it.
+ */
+export function resetApi(): void {
+  resetMockStore();
+  instance = null;
 }
 
 export * from "./types";

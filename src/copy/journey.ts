@@ -13,7 +13,7 @@ export const JOURNEY = {
     eyebrow: "Six-week program",
     title: "Understand your blood pressure.",
     intro:
-      "A calm, structured way to track your readings and learn what they mean for the conversations that matter — alongside the care of your own doctor.",
+      "A calm, structured way to track your readings and learn about blood pressure — alongside the care of your own doctor.",
     cards: [
       {
         title: "Why home readings matter",

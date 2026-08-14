@@ -4,12 +4,11 @@ import { Screen } from "@/components/ui/Screen";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { APP } from "@/copy/app";
+import { JOURNEY } from "@/copy/journey";
 import { SAFETY } from "@/copy/safety";
-import { getApi } from "@/lib/api";
+import { getApi, resetApi } from "@/lib/api";
 import { useConsentStatus } from "@/lib/api/hooks";
-import { getHealthPlugin, type AuthorizationState } from "@/lib/health";
-import { resetMockStore } from "@/lib/api/mock";
-import { resetMockHealth } from "@/lib/health/mock";
+import { getHealthPlugin, resetHealthPlugin, type AuthorizationState } from "@/lib/health";
 import { useJourney } from "@/lib/journey/state";
 import { fmtFullDate } from "@/lib/format";
 import { useQueryClient } from "@tanstack/react-query";
@@ -52,16 +51,16 @@ export function Settings() {
   const requestDeletion = async () => {
     await getApi().requestAccountDeletion();
     resetJourney();
-    resetMockHealth();
+    resetHealthPlugin();
     await qc.invalidateQueries();
     navigate("/journey/welcome", { replace: true });
   };
 
   const resetDemo = async () => {
-    resetMockStore();
-    resetMockHealth();
+    resetApi();
+    resetHealthPlugin();
     resetJourney();
-    await qc.invalidateQueries();
+    qc.clear();
     navigate("/journey/welcome", { replace: true });
   };
 
@@ -73,7 +72,7 @@ export function Settings() {
       title={c.title}
       footer={
         <Button variant="ghost" onClick={() => navigate(-1)}>
-          Back
+          {APP.common.back}
         </Button>
       }
     >
@@ -82,6 +81,13 @@ export function Settings() {
           <p style={{ fontSize: "var(--text-body-sm)" }}>
             {connected ? c.appleHealth.readsOnly : c.appleHealth.notConnected}
           </p>
+          {connected && health && !health.samplesEverReceived ? (
+            // Neutral nudge, verbatim from docs/03 §4 — absence of data is
+            // indistinguishable from denial, and we never imply denial.
+            <p className="pt-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-body-sm)" }}>
+              {JOURNEY.healthAuth.noSamplesNudge}
+            </p>
+          ) : null}
           <p className="pt-[var(--spacing-3xs)] text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)" }}>
             {c.appleHealth.manageHint}
           </p>
@@ -93,7 +99,7 @@ export function Settings() {
           </p>
           <div className="flex flex-col gap-[var(--spacing-2xs)]">
             <Button variant="secondary" disabled={exporting} onClick={exportData}>
-              {exporting ? "…" : c.yourData.exportCta}
+              {exporting ? APP.common.busy : c.yourData.exportCta}
             </Button>
             <p className="text-ink-tertiary" style={{ fontSize: "12px" }}>
               {c.yourData.exportNote}

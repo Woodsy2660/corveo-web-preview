@@ -9,7 +9,7 @@
  */
 
 import type { CorveoHealthPlugin } from "./types";
-import { createMockHealthPlugin } from "./mock";
+import { createMockHealthPlugin, resetMockHealth } from "./mock";
 
 let instance: CorveoHealthPlugin | null = null;
 
@@ -18,6 +18,15 @@ export function getHealthPlugin(): CorveoHealthPlugin {
     instance = createMockHealthPlugin();
   }
   return instance;
+}
+
+/**
+ * DEV ONLY — clears persisted mock plugin state AND drops the singleton so
+ * the next getHealthPlugin() starts from notDetermined.
+ */
+export function resetHealthPlugin(): void {
+  resetMockHealth();
+  instance = null;
 }
 
 export * from "./types";

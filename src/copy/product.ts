@@ -11,3 +11,6 @@
  * Note: Trade mark clearance is Corveo's responsibility.
  */
 export const MY_HEART_RECORD = "My Heart Record";
+
+/** Brand wordmark shown in the app header. */
+export const CORVEO_WORDMARK = "Corveo";

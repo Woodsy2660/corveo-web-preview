@@ -166,4 +166,5 @@ Corveo can click the flow without a device; the product remains the iOS app.
 | F-G | Figma visual QA pass against Userkind components | Figma access session |
 | F-H | Cuff list confirmed against current STRIDE BP register | before Stage 3 |
 | F-I | Local notifications for cadence reminders | native shell (Luca) |
-| F-J | Offline buffer decision for manual entry (open item D-04) | Ben/Luca decision |
+| F-J | Offline buffer decision for manual entry (open item D-04) | Ben/Luka decision |
+| F-K | No-consent path: can a user decline consent and still use the education program? Currently consent is required to proceed — the flow makes no promise otherwise. Product/regulatory call. | Corveo decision |

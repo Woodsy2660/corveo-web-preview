@@ -4,6 +4,7 @@ import { Screen } from "@/components/ui/Screen";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StepDots } from "@/components/ui/StepDots";
+import { APP } from "@/copy/app";
 import { CONSENT, CONSENT_VERSION, hashConsentText } from "@/copy/consent";
 import { useRecordConsent } from "@/lib/api/hooks";
 
@@ -36,7 +37,7 @@ export function Consent() {
       title={CONSENT.title}
       footer={
         <Button disabled={!agreed || recordConsent.isPending} onClick={onConsent}>
-          {recordConsent.isPending ? "…" : CONSENT.cta}
+          {recordConsent.isPending ? APP.common.busy : CONSENT.cta}
         </Button>
       }
     >
@@ -61,17 +62,10 @@ export function Consent() {
           type="checkbox"
           checked={agreed}
           onChange={(e) => setAgreed(e.target.checked)}
-          className="mt-[4px] size-[18px] accent-black"
+          className="mt-[4px] size-[18px] accent-heading"
         />
         <span style={{ fontSize: "var(--text-body-sm)" }}>{CONSENT.checkboxLabel}</span>
       </label>
-
-      <p
-        className="pt-[var(--spacing-sm)] text-ink-tertiary"
-        style={{ fontSize: "var(--text-body-sm)" }}
-      >
-        {CONSENT.declineNote}
-      </p>
     </Screen>
   );
 }

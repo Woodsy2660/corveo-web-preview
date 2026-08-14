@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { Screen } from "@/components/ui/Screen";
 import { Button } from "@/components/ui/Button";
 import { StepDots } from "@/components/ui/StepDots";
+import { APP } from "@/copy/app";
 import { JOURNEY } from "@/copy/journey";
 import { getHealthPlugin } from "@/lib/health";
 
@@ -37,7 +38,7 @@ export function HealthAuth() {
       footer={
         <div className="flex flex-col gap-[var(--spacing-xs)]">
           <Button disabled={requesting} onClick={request}>
-            {requesting ? "…" : c.cta}
+            {requesting ? APP.common.busy : c.cta}
           </Button>
           <Button variant="ghost" onClick={() => navigate("/journey/capture")}>
             {c.skip}

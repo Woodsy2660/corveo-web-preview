@@ -29,7 +29,7 @@ export function Trend() {
       withTabBar
       action={
         <Link to="/app/settings" className="eyebrow underline underline-offset-4">
-          Settings
+          {APP.common.settingsLink}
         </Link>
       }
     >
@@ -39,7 +39,7 @@ export function Trend() {
 
       <div className="pb-[var(--spacing-sm)]">
         <Segmented
-          ariaLabel="Trend range"
+          ariaLabel={c.rangeAria}
           value={range}
           onChange={setRange}
           options={[
@@ -57,7 +57,7 @@ export function Trend() {
           </p>
         ) : (
           <>
-            <BpChart rows={rows} />
+            <BpChart rows={rows} ariaLabel={c.chartAria} />
             <div className="flex gap-[var(--spacing-sm)] pt-[var(--spacing-2xs)]">
               <span className="flex items-center gap-[var(--spacing-3xs)] text-ink-secondary" style={{ fontSize: "12px" }}>
                 <span className="inline-block h-[2px] w-[16px] bg-chart-ink" />

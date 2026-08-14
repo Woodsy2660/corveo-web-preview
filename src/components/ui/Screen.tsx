@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { CORVEO_WORDMARK } from "@/copy/product";
 
 /**
  * Page wrapper: safe-area padding, Corveo wordmark header with eyebrow
@@ -29,7 +30,7 @@ export function Screen({
           className="font-display text-heading"
           style={{ fontSize: "var(--text-heading-xl)", letterSpacing: "-0.01em" }}
         >
-          Corveo
+          {CORVEO_WORDMARK}
         </span>
         <span className="flex items-baseline gap-[var(--spacing-sm)]">
           {eyebrow ? <span className="eyebrow">{eyebrow}</span> : null}

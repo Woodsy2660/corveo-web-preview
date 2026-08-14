@@ -48,7 +48,7 @@ export function Signup() {
             type="checkbox"
             checked={adult}
             onChange={(e) => setAdult(e.target.checked)}
-            className="mt-[4px] size-[18px] accent-black"
+            className="mt-[4px] size-[18px] accent-heading"
           />
           <span style={{ fontSize: "var(--text-body-sm)" }}>{c.adultAttestation}</span>
         </label>
