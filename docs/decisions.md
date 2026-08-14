@@ -77,3 +77,43 @@ Add new decisions at the end. Do not edit or remove existing entries.
 **Decision**: No Sentry, Firebase, or equivalent analytics/crash-reporting SDKs.
 
 **Consequences**: Crash and error reporting must use native mechanisms or be deferred. Any future SDK addition requires Andrew's sign-off before the PR is opened.
+
+---
+
+## F-01: Front-end stack pinned at kickoff (React 19, Vite 8, TS 5.9, react-router 8, TanStack Query 5, Tailwind 4)
+
+**Context**: The July docs named React 18 + Capacitor 6; both ecosystems had moved a major version by build kickoff (14 Aug 2026). TypeScript 7 (the native compiler) shipped weeks ago and is not yet battle-tested across the toolchain.
+
+**Decision**: Build on current stable majors — React 19, Vite 8, react-router 8, TanStack Query 5, Tailwind 4 — with TypeScript held at 5.9. React Query is the formal data-fetching layer (it was implied but undocumented). Dev server port is pinned to 5184 (strictPort).
+
+**Consequences**: No mid-build major upgrades. TS 7 migration is a deliberate later decision. The Capacitor major remains the native lane's choice (see F-02).
+
+---
+
+## F-02: Web app stays Capacitor-agnostic until the shell lands
+
+**Context**: The Capacitor shell, Xcode project and TestFlight pipeline are the native lane's scope, and Capacitor has moved to 8.x since the docs were written.
+
+**Decision**: `src/` has no Capacitor dependency. The plugin bridge is consumed through `src/lib/health/index.ts`, a factory returning the web mock; the native lane swaps in `registerPlugin` when the shell exists and picks the Capacitor version.
+
+**Consequences**: Front end builds, tests and deploys as a plain web app; the Vercel preview needs no native toolchain. Integration is a one-file change. The frozen interface in `03-plugin-bridge-spec.md` §3 is the compatibility contract (copied verbatim into `src/lib/health/types.ts`).
+
+---
+
+## F-03: Hand-written typed mock instead of OpenAPI-generated mock
+
+**Context**: The README describes a mock generated from `docs/api/openapi.yaml`, but that spec is stubs (schemas TODO) and no generator exists. Waiting on it blocked the entire front-end lane.
+
+**Decision**: Code against a `CorveoApi` TypeScript interface (`src/lib/api/types.ts`) whose shapes mirror `02-data-model-and-api.md` Part 4 verbatim, with a hand-written in-memory mock (`src/lib/api/mock.ts`) over deterministic synthetic fixtures.
+
+**Consequences**: The interface, not the YAML, is the working contract; the OpenAPI spec can be completed later as confirmation. One gap surfaced: Part 4 defines no consent write path — the mock invented `recordConsentEvent`, which the real API must specify (open item F-B in `04-front-end.md`).
+
+---
+
+## F-04: Settings is a stack screen, not a fourth tab
+
+**Context**: The repo defines three tabs (Readings, Trend, Program). Deliverable 12 (export, deletion, safety copy) and the Apple Health status need a home.
+
+**Decision**: Settings lives at `/app/settings`, reached from a header link on each tab, with the validated-cuff list at `/app/cuffs` beneath it. The tab bar stays three tabs.
+
+**Consequences**: Deliverables 8 and 12 have surfaces without changing the agreed information architecture.

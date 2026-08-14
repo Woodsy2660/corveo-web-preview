@@ -1,0 +1,173 @@
+import { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router";
+import { Screen } from "@/components/ui/Screen";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { APP } from "@/copy/app";
+import { SAFETY } from "@/copy/safety";
+import { getApi } from "@/lib/api";
+import { useConsentStatus } from "@/lib/api/hooks";
+import { getHealthPlugin, type AuthorizationState } from "@/lib/health";
+import { resetMockStore } from "@/lib/api/mock";
+import { resetMockHealth } from "@/lib/health/mock";
+import { useJourney } from "@/lib/journey/state";
+import { fmtFullDate } from "@/lib/format";
+import { useQueryClient } from "@tanstack/react-query";
+
+/**
+ * Settings — Apple Health status, export and deletion (Deliverable 12),
+ * consent receipt, the safety surface, and the dev-only demo reset.
+ */
+export function Settings() {
+  const navigate = useNavigate();
+  const qc = useQueryClient();
+  const { data: consent } = useConsentStatus();
+  const { resetJourney } = useJourney();
+  const [health, setHealth] = useState<AuthorizationState | null>(null);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const c = APP.settings;
+
+  useEffect(() => {
+    void getHealthPlugin().getAuthorizationState().then(setHealth);
+  }, []);
+
+  const exportData = async () => {
+    setExporting(true);
+    try {
+      // On device this hands the files to the iOS share sheet (docs/02 §4.4).
+      const result = await getApi().exportPatientData();
+      const blob = new Blob([result.csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "corveo-my-heart-record.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const requestDeletion = async () => {
+    await getApi().requestAccountDeletion();
+    resetJourney();
+    resetMockHealth();
+    await qc.invalidateQueries();
+    navigate("/journey/welcome", { replace: true });
+  };
+
+  const resetDemo = async () => {
+    resetMockStore();
+    resetMockHealth();
+    resetJourney();
+    await qc.invalidateQueries();
+    navigate("/journey/welcome", { replace: true });
+  };
+
+  const connected = health?.state === "requested";
+
+  return (
+    <Screen
+      eyebrow={c.eyebrow}
+      title={c.title}
+      footer={
+        <Button variant="ghost" onClick={() => navigate(-1)}>
+          Back
+        </Button>
+      }
+    >
+      <div className="flex flex-col gap-[var(--spacing-sm)]">
+        <Card label={c.appleHealth.title}>
+          <p style={{ fontSize: "var(--text-body-sm)" }}>
+            {connected ? c.appleHealth.readsOnly : c.appleHealth.notConnected}
+          </p>
+          <p className="pt-[var(--spacing-3xs)] text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)" }}>
+            {c.appleHealth.manageHint}
+          </p>
+        </Card>
+
+        <Card label={c.yourData.title}>
+          <p className="pb-[var(--spacing-sm)]" style={{ fontSize: "var(--text-body-sm)" }}>
+            {c.yourData.body}
+          </p>
+          <div className="flex flex-col gap-[var(--spacing-2xs)]">
+            <Button variant="secondary" disabled={exporting} onClick={exportData}>
+              {exporting ? "…" : c.yourData.exportCta}
+            </Button>
+            <p className="text-ink-tertiary" style={{ fontSize: "12px" }}>
+              {c.yourData.exportNote}
+            </p>
+
+            {confirmingDelete ? (
+              <div className="rounded-md border border-hairline p-[var(--spacing-sm)]">
+                <h3 className="pb-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-heading-xl)" }}>
+                  {c.yourData.deleteConfirmTitle}
+                </h3>
+                <p className="pb-[var(--spacing-sm)] text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
+                  {c.yourData.deleteConfirmBody}
+                </p>
+                <div className="flex flex-col gap-[var(--spacing-2xs)]">
+                  <Button onClick={requestDeletion}>{c.yourData.deleteConfirmCta}</Button>
+                  <Button variant="secondary" onClick={() => setConfirmingDelete(false)}>
+                    {c.yourData.deleteCancelCta}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <Button variant="secondary" onClick={() => setConfirmingDelete(true)}>
+                {c.yourData.deleteCta}
+              </Button>
+            )}
+          </div>
+          {consent?.has_active_consent && consent.version && consent.last_event_at ? (
+            <p className="pt-[var(--spacing-sm)] text-ink-tertiary" style={{ fontSize: "12px" }}>
+              {c.yourData.consentReceipt(consent.version, fmtFullDate(consent.last_event_at))}
+            </p>
+          ) : null}
+        </Card>
+
+        <Card label={c.cuffs.title}>
+          <Link to="/app/cuffs" className="underline underline-offset-4" style={{ fontSize: "var(--text-body-sm)" }}>
+            {c.cuffs.cta}
+          </Link>
+        </Card>
+
+        <Card label={c.about.title}>
+          <h3 className="pb-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-heading-xl)" }}>
+            {SAFETY.title}
+          </h3>
+          <p className="eyebrow pb-[var(--spacing-3xs)]">{SAFETY.does.title}</p>
+          <ul className="list-disc pb-[var(--spacing-xs)] pl-[var(--spacing-sm)] text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
+            {SAFETY.does.items.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <p className="eyebrow pb-[var(--spacing-3xs)]">{SAFETY.doesNot.title}</p>
+          <ul className="list-disc pb-[var(--spacing-xs)] pl-[var(--spacing-sm)] text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
+            {SAFETY.doesNot.items.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <p className="pb-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-body-sm)" }}>
+            {SAFETY.seekAdvice}
+          </p>
+          <p className="text-ink-tertiary" style={{ fontSize: "12px" }}>
+            {SAFETY.disclaimer}
+          </p>
+        </Card>
+
+        {import.meta.env.DEV || import.meta.env.VITE_DEMO === "true" ? (
+          <Card label={c.demo.title}>
+            <Button variant="secondary" onClick={resetDemo}>
+              {c.demo.resetCta}
+            </Button>
+            <p className="pt-[var(--spacing-2xs)] text-ink-tertiary" style={{ fontSize: "12px" }}>
+              {c.demo.note}
+            </p>
+          </Card>
+        ) : null}
+      </div>
+    </Screen>
+  );
+}

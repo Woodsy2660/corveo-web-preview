@@ -1,0 +1,100 @@
+/*
+ * Corveo design tokens — Userkind vocabulary.
+ *
+ * Names and values mirror the Userkind design system as shipped on
+ * corveo.vercel.app (extracted 14 Aug 2026), so the web and iOS apps share
+ * one design language. When the Figma variables are exported directly this
+ * file is the single swap point.
+ *
+ * Rule (docs/01-system-architecture.md §8): components consume semantic
+ * tokens only — no raw hex or px in component files.
+ *
+ * Charts are monochrome. There are no threshold/zone/band colours here by
+ * design, and none may be added (SOW A.3.3).
+ */
+
+:root {
+  /* — Surfaces — */
+  --color-surface-action: #000;
+  --color-surface-white: #fff;
+  --color-surface-color-1: #3e4fb5;
+  --color-surface-color-1-light: #b2caff;
+  --color-surface-color-2: #9e6850;
+  --color-surface-color-3: #1c7a8c;
+  --color-surface-neutral-lighter: #c9b4a5;
+  --color-surface-neutral-light: #e5e5e5;
+  --color-surface-neutral-lightest: #f2ede9;
+  --color-surface-neutral-dark: #000;
+
+  /* — Text — */
+  --color-text-heading: #000;
+  --color-text-heading-inverse: #fff;
+  --color-text-primary: #333;
+  --color-text-primary-inverse: #fff;
+  --color-text-secondary: #4d4d4d;
+  --color-text-secondary-inverse: #f2ede9;
+  --color-text-tertiary: #808080;
+  --color-text-disabled: #999;
+  --color-text-link: #000;
+  --color-text-link-hover: #293f9d;
+
+  /* — Borders — */
+  --color-border-default: #ccc;
+  --color-border-primary: #000;
+  --color-border-primary-inverse: #fff;
+  --color-border-primary-hover: #808080;
+
+  /* — Typography — */
+  --font-display: "reckless", ui-serif, Georgia, "Times New Roman", serif;
+  --font-body: "haffer", -apple-system, "SF Pro Text", ui-sans-serif, system-ui,
+    sans-serif;
+  --font-mono: "GeistMono", ui-monospace, "SF Mono", SFMono-Regular, Menlo,
+    monospace;
+
+  --text-heading-xl: 20px;
+  --text-heading-2xl: 22px;
+  --text-heading-3xl: 32px;
+  --text-heading-4xl: 40px;
+  --text-body-sm: 14px;
+  --text-body-base: 16px;
+  --text-body-lg: 18px;
+  --text-label-button: 16px;
+  --text-special-sm: 28px;
+
+  /* — Spacing — */
+  --spacing-3xs: 4px;
+  --spacing-2xs: 8px;
+  --spacing-xs: 12px;
+  --spacing-sm: 16px;
+  --spacing-md: 24px;
+  --spacing-lg: 32px;
+  --spacing-xl: 48px;
+  --spacing-2xl: 80px;
+
+  /* — Radii — */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-round: 100px;
+
+  /* — App semantic aliases (what components actually consume) — */
+  --app-page: var(--color-surface-neutral-lightest);
+  --app-card: var(--color-surface-white);
+  --app-action: var(--color-surface-action);
+  --app-action-ink: var(--color-text-heading-inverse);
+  --app-heading: var(--color-text-heading);
+  --app-ink: var(--color-text-primary);
+  --app-ink-secondary: var(--color-text-secondary);
+  --app-ink-tertiary: var(--color-text-tertiary);
+  --app-ink-disabled: var(--color-text-disabled);
+  --app-hairline: var(--color-border-default);
+
+  /* Chart marks are ink-coloured, never evaluative. */
+  --app-chart-ink: var(--color-text-heading);
+  --app-chart-ink-soft: var(--color-text-tertiary);
+
+  /* iOS safe areas */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
