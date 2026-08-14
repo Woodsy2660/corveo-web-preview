@@ -133,10 +133,12 @@ upload binds it permanently.
 
 ## 7. Environments & preview
 
-Web preview deploys to Vercel (AI Please account for now — decision recorded
-5 Aug; transfer with the rest at handover). SPA fallback: `vercel.json`
-rewrites all routes to `index.html`. The preview exists so the team and
-Corveo can click the flow without a device; the product remains the iOS app.
+Web preview: **https://corveo-bp-reset.vercel.app** (AI Please account for
+now — decision recorded 5 Aug; transfer with the rest at handover). Deploys
+are manual for now (not wired to the repo) — ask Michael to redeploy after a
+merge. SPA fallback: `vercel.json` rewrites all routes to `index.html`. The
+preview exists so the team and Corveo can click the flow without a device;
+the product remains the iOS app.
 
 `VITE_DEMO=true` keeps the "Reset demo data" card visible in a deployed build.
 
