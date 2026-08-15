@@ -165,7 +165,7 @@ the product remains the iOS app.
 | F-D | Final safety copy wording | Corveo |
 | F-E | Education content (6 weeks, signed off) | Corveo (client dependency 5) |
 | F-F | reckless/haffer font files or license | Corveo/Userkind |
-| F-G | Figma visual QA pass against Userkind components | Figma access session |
+| F-G | ~~Figma visual QA pass against Userkind components~~ Done 15 Aug. Findings: the file is the **website** design system — it contains no iOS app screens, so this build is the first iOS design expression, derived from its components. Confirmed alignments: black pill CTAs, pill segmented toggle (Sign in/Sign up pattern), label-above bordered inputs, card language. Adopted: real corveo logotype (from the shipped site's `/brand/logo.svg`). To raise at the Userkind session: primary CTAs in Figma carry a `→` suffix; functional/auth headings are sans-bold (serif is editorial) — our screens use serif titles; web form errors use red, ours stay ink-toned (deliberately conservative near readings); the "corveo prevent" sub-brand (violet) may or may not apply to BP Reset. Design System page canvas is empty — tokens live as Figma variables, so a variables export (or Dev-Mode access) is still wanted to replace the live-site extraction. | — |
 | F-H | Cuff list confirmed against current STRIDE BP register | before Stage 3 |
 | F-I | Local notifications for cadence reminders | native shell (Luca) |
 | F-J | Offline buffer decision for manual entry (open item D-04) | Ben/Luka decision |
