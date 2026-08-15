@@ -82,8 +82,8 @@ export const JOURNEY = {
     title: "A starting point.",
     intro:
       "Enter your most recent reading. One reading is just a starting point — the picture builds over the coming weeks.",
-    systolicLabel: "Systolic (top number)",
-    diastolicLabel: "Diastolic (bottom number)",
+    systolicLabel: "Systolic (top)",
+    diastolicLabel: "Diastolic (bottom)",
     timeLabel: "When was it taken?",
     armLabel: "Which arm?",
     armLeft: "Left",

@@ -83,11 +83,15 @@
   }
 }
 
-/* Every Screen renders inside this shell — full-bleed on phones. */
+/*
+ * Every Screen renders inside this shell — full-bleed on phones. Fixed to
+ * the viewport height so the footer CTA stays pinned and content scrolls
+ * inside <main>, matching native iOS behaviour.
+ */
 .screen-shell {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  height: 100dvh;
 }
 
 /*

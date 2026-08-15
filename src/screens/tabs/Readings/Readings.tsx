@@ -60,7 +60,10 @@ export function Readings() {
                 </div>
                 <div className="flex flex-col items-end gap-[var(--spacing-3xs)]">
                   <Chip>{r.source_type === "healthkit" ? c.sourceHealth : c.sourceManual}</Chip>
-                  {r.body_site_display ? <Chip>{r.body_site_display}</Chip> : null}
+                  {/* Most readings are left-arm; only flag the exception. */}
+                  {r.body_site_display && r.body_site_display !== "Left arm" ? (
+                    <Chip>{r.body_site_display}</Chip>
+                  ) : null}
                 </div>
               </li>
             ))}

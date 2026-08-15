@@ -15,6 +15,7 @@ import { Trend } from "@/screens/tabs/Trend/Trend";
 import { Program } from "@/screens/tabs/Program/Program";
 import { Settings } from "@/screens/settings/Settings";
 import { ValidatedCuffs } from "@/screens/settings/ValidatedCuffs";
+import { BrandLab } from "@/screens/lab/BrandLab";
 
 /** /app/* requires a completed journey; /journey/* bounces back once done. */
 function RequireJourneyComplete() {
@@ -67,6 +68,9 @@ export function App() {
         <Route path="/app/settings" element={<Settings />} />
         <Route path="/app/cuffs" element={<ValidatedCuffs />} />
       </Route>
+
+      {/* Internal design exploration — unlinked; remove before submission. */}
+      <Route path="/lab" element={<BrandLab />} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
