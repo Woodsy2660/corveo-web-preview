@@ -35,37 +35,90 @@
   --radius-round: var(--radius-round);
 }
 
-html,
-body {
-  height: 100%;
+/*
+ * Base styles live in @layer base so Tailwind utilities (which live in a
+ * later layer) always win — an un-layered `button { color: inherit }` would
+ * silently override utility colors on buttons.
+ */
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--app-page);
+    color: var(--app-ink);
+    font-family: var(--font-body);
+    font-size: var(--text-body-base);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
+  }
+
+  #root {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    color: var(--app-heading);
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  input,
+  button,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
 }
 
-body {
-  margin: 0;
-  background: var(--app-page);
-  color: var(--app-ink);
-  font-family: var(--font-body);
-  font-size: var(--text-body-base);
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -webkit-tap-highlight-color: transparent;
-  overscroll-behavior-y: none;
-}
-
-#root {
-  min-height: 100dvh;
+/* Every Screen renders inside this shell — full-bleed on phones. */
+.screen-shell {
   display: flex;
   flex-direction: column;
+  min-height: 100dvh;
 }
 
-h1,
-h2,
-h3 {
-  font-family: var(--font-display);
-  font-weight: 400;
-  color: var(--app-heading);
-  letter-spacing: -0.02em;
-  margin: 0;
+/*
+ * The product is an iPhone app; this build previews it on the web. On
+ * desktop-sized viewports, present it inside a phone-sized frame instead of
+ * stretching full-bleed. The transform makes #root the containing block for
+ * the fixed tab bar, so it anchors to the frame, not the viewport.
+ */
+@media (min-width: 768px) {
+  body {
+    background: var(--color-surface-neutral-light);
+    padding: var(--spacing-md) 0;
+  }
+
+  #root {
+    width: 393px;
+    height: calc(100dvh - 2 * var(--spacing-md));
+    min-height: 0;
+    margin: 0 auto;
+    overflow: hidden;
+    border: 1px solid var(--color-border-default);
+    border-radius: 44px;
+    background: var(--app-page);
+    box-shadow: 0 24px 80px rgb(0 0 0 / 0.18);
+    transform: translate(0, 0);
+  }
+
+  .screen-shell {
+    min-height: 100%;
+    height: 100%;
+  }
 }
 
 /* Eyebrow label — smallcaps identity carried over from the Corveo editorial style */
@@ -75,14 +128,6 @@ h3 {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--app-ink-tertiary);
-}
-
-input,
-button,
-select,
-textarea {
-  font: inherit;
-  color: inherit;
 }
 
 @keyframes fade-up {

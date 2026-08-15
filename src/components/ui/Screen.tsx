@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { CORVEO_WORDMARK } from "@/copy/product";
+import logoUrl from "@/assets/brand/logo.svg";
 
 /**
  * Page wrapper: safe-area padding, Corveo wordmark header with eyebrow
@@ -21,17 +22,10 @@ export function Screen({
   withTabBar?: boolean;
 }) {
   return (
-    <div
-      className="flex min-h-dvh flex-col"
-      style={{ paddingTop: "var(--safe-top)" }}
-    >
-      <header className="flex items-baseline justify-between px-[var(--spacing-md)] pt-[var(--spacing-md)] pb-[var(--spacing-sm)]">
-        <span
-          className="font-display text-heading"
-          style={{ fontSize: "var(--text-heading-xl)", letterSpacing: "-0.01em" }}
-        >
-          {CORVEO_WORDMARK}
-        </span>
+    <div className="screen-shell" style={{ paddingTop: "var(--safe-top)" }}>
+      <header className="flex items-center justify-between px-[var(--spacing-md)] pt-[var(--spacing-md)] pb-[var(--spacing-sm)]">
+        {/* Brand logotype served from the shipped Corveo web app (brand/logo.svg) */}
+        <img src={logoUrl} alt={CORVEO_WORDMARK} style={{ height: "18px", width: "auto" }} />
         <span className="flex items-baseline gap-[var(--spacing-sm)]">
           {eyebrow ? <span className="eyebrow">{eyebrow}</span> : null}
           {action}
