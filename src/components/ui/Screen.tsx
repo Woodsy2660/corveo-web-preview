@@ -32,6 +32,7 @@ export function ProfileLink() {
  */
 export function Screen({
   eyebrow,
+  overline,
   title,
   children,
   footer,
@@ -39,6 +40,12 @@ export function Screen({
   withTabBar = false,
 }: {
   eyebrow?: string;
+  /**
+   * Small label directly above the page title, the way the site sets a
+   * chapter count or a content type over an article headline. Distinct from
+   * `eyebrow`, which sits up in the header bar.
+   */
+  overline?: string;
   title?: string;
   children: ReactNode;
   footer?: ReactNode;
@@ -61,6 +68,7 @@ export function Screen({
           withTabBar ? "pb-[calc(96px+var(--safe-bottom))]" : "pb-[var(--spacing-md)]"
         }`}
       >
+        {overline ? <p className="eyebrow pb-[var(--spacing-3xs)]">{overline}</p> : null}
         {title ? (
           <h1
             className="fade-up pb-[var(--spacing-sm)]"

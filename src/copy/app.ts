@@ -76,7 +76,15 @@ export const APP = {
       "Education content is being prepared and clinically reviewed by the Corveo team. Placeholder content is shown during development.",
     lockedNote: "Opens as your program progresses.",
     progress: (read: number, total: number) => `${read} of ${total} read`,
-    readTime: (min: number) => `${min} min read`,
+    chapterCount: (n: number) => `${n} Chapters`,
+    /** "3 min read" / "12 min watch" / "21 min listen" — matches the site. */
+    duration: (min: number, medium: "read" | "watch" | "listen") =>
+      `${min} min ${medium}`,
+    cta: {
+      read: "Read article",
+      watch: "Watch video",
+      listen: "Listen podcast",
+    },
     readLabel: "Read",
     openChapterAria: (n: number, title: string) => `Week ${n}: ${title}`,
   },

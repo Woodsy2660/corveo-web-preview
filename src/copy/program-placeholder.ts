@@ -15,6 +15,21 @@
  * Program content is static. It never varies with the reader's readings.
  */
 
+/**
+ * Userkind's chapters carry a medium — the site renders "12 min watch" and
+ * "Watch video" off it. Modelled here so the list survives real content, but
+ * every placeholder chapter is `read`: the app has no player, and whether
+ * the six weeks include video or audio is an open scope question.
+ */
+export type ChapterMedium = "read" | "watch" | "listen";
+
+/** Program-level header, mirroring a Programs record on the site. */
+export const PROGRAM = {
+  title: "The six-week program",
+  description:
+    "Short, practical education about blood pressure, alongside the record you build yourself.",
+} as const;
+
 export interface ProgramSection {
   heading: string;
   body: readonly string[];
@@ -29,6 +44,8 @@ export interface ProgramChapter {
   /** Standfirst shown under the title in the reading view. */
   deck: string;
   readMinutes: number;
+  /** Defaults to "read" — see ChapterMedium. */
+  medium?: ChapterMedium;
   /**
    * Attribution slot. The shipped site bylines articles to a named
    * cardiologist; placeholder text is deliberately attributed to nobody.

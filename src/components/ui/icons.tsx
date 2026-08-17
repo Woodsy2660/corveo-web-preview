@@ -73,6 +73,39 @@ export function ProfileIcon({ className = "" }: IconProps) {
   );
 }
 
+/** Estimated time, paired with a duration label. Userkind's Date-time pattern. */
+export function ClockIcon({ className = "" }: IconProps) {
+  return (
+    <svg {...base} className={className} width="1em" height="1em">
+      <circle cx="12" cy="12" r="8.6" />
+      <path d="M12 7.4V12l3 1.8" />
+    </svg>
+  );
+}
+
+/**
+ * Trailing arrow on an inline link-style CTA. This is the Figma Button's
+ * "With Icons" variant, used where the site uses it — on an inline pill that
+ * navigates. It stays off the full-width bottom-pinned primary, where iOS
+ * expects a bare verb.
+ */
+export function ArrowRightIcon({ className = "" }: IconProps) {
+  return (
+    <svg {...base} className={className} width="1em" height="1em">
+      <path d="M4.8 12h14.4M13.4 6.2 19.2 12l-5.8 5.8" />
+    </svg>
+  );
+}
+
+/** Chapter already read. */
+export function CheckIcon({ className = "" }: IconProps) {
+  return (
+    <svg {...base} className={className} width="1em" height="1em">
+      <path d="m4.8 12.4 4.6 4.6L19.2 7.2" />
+    </svg>
+  );
+}
+
 /** Add a reading. */
 export function PlusIcon({ className = "" }: IconProps) {
   return (
