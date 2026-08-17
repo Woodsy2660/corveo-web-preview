@@ -134,13 +134,30 @@ upload binds it permanently.
 ## 7. Environments & preview
 
 Web preview: **https://corveo-bp-reset.vercel.app** (AI Please account for
-now — decision recorded 5 Aug; transfer with the rest at handover). Deploys
-are manual for now (not wired to the repo) — ask Michael to redeploy after a
-merge. SPA fallback: `vercel.json` rewrites all routes to `index.html`. The
-preview exists so the team and Corveo can click the flow without a device;
-the product remains the iOS app.
+now — decision recorded 5 Aug; transfer with the rest at handover). SPA
+fallback: `vercel.json` rewrites all routes to `index.html`. The preview
+exists so the team and Corveo can click the flow without a device; the
+product remains the iOS app.
 
-`VITE_DEMO=true` keeps the "Reset demo data" card visible in a deployed build.
+Deploys are manual. The Vercel project is **not** connected to the repo, so
+merging a PR changes nothing until someone deploys. From this directory:
+
+```bash
+vercel --prod --yes
+```
+
+That is the Vercel CLI, authenticated and linked as of 16 Aug 2026 —
+`.vercel/project.json` holds the project and org ids and is gitignored.
+Project `corveo-bp-reset`, team `obeyd`, aliased to the URL above. Two things
+to know before running it:
+
+- **It deploys the working tree, not the branch.** Uncommitted files go live
+  and committed-but-unpushed work is included. Check `git status` first, or
+  the preview ends up ahead of the repo.
+- `VITE_DEMO=true` is set on the project, so the "Reset demo data" card
+  survives a production build. It needs to stay set: the mock persists to
+  `localStorage`, so without that card anyone who used an earlier build is
+  stuck with stale state and no in-app way to clear it.
 
 ## 8. Contractual guardrails as implemented (quick audit map)
 
