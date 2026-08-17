@@ -2,8 +2,7 @@ import { NavLink } from "react-router";
 import { APP } from "@/copy/app";
 
 const TABS = [
-  { to: "/app/readings", label: APP.tabs.readings },
-  { to: "/app/trend", label: APP.tabs.trend },
+  { to: "/app/record", label: APP.tabs.record },
   { to: "/app/program", label: APP.tabs.program },
 ];
 

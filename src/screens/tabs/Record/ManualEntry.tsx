@@ -22,7 +22,7 @@ export function ManualEntry() {
       <p className="pb-[var(--spacing-md)] text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
         {c.timeNote}
       </p>
-      <ManualEntryForm ctaLabel={c.cta} onSaved={() => navigate("/app/readings")} />
+      <ManualEntryForm ctaLabel={c.cta} onSaved={() => navigate("/app/record")} />
     </Screen>
   );
 }

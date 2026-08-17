@@ -22,7 +22,7 @@ export function Cadence() {
   const finish = async () => {
     await updateProgress.mutateAsync({ current_week: 1, completed_steps: { journey: true } });
     completeJourney();
-    navigate("/app/readings", { replace: true });
+    navigate("/app/record", { replace: true });
   };
 
   return (

@@ -9,9 +9,8 @@ import { HealthAuth } from "@/screens/journey/HealthKitAuth/HealthAuth";
 import { FirstCapture } from "@/screens/journey/FirstCapture/FirstCapture";
 import { Result } from "@/screens/journey/FirstCapture/Result";
 import { Cadence } from "@/screens/journey/FirstCapture/Cadence";
-import { Readings } from "@/screens/tabs/Readings/Readings";
-import { ManualEntry } from "@/screens/tabs/Readings/ManualEntry";
-import { Trend } from "@/screens/tabs/Trend/Trend";
+import { Record } from "@/screens/tabs/Record/Record";
+import { ManualEntry } from "@/screens/tabs/Record/ManualEntry";
 import { Program } from "@/screens/tabs/Program/Program";
 import { Chapter } from "@/screens/tabs/Program/Chapter";
 import { Settings } from "@/screens/settings/Settings";
@@ -25,7 +24,7 @@ function RequireJourneyComplete() {
 
 function JourneyOnly() {
   const { journeyComplete } = useJourney();
-  return journeyComplete ? <Navigate to="/app/readings" replace /> : <Outlet />;
+  return journeyComplete ? <Navigate to="/app/record" replace /> : <Outlet />;
 }
 
 function TabsLayout() {
@@ -44,7 +43,7 @@ export function App() {
     <Routes>
       <Route
         path="/"
-        element={<Navigate to={journeyComplete ? "/app/readings" : "/journey/welcome"} replace />}
+        element={<Navigate to={journeyComplete ? "/app/record" : "/journey/welcome"} replace />}
       />
 
       <Route element={<JourneyOnly />}>
@@ -60,14 +59,17 @@ export function App() {
 
       <Route element={<RequireJourneyComplete />}>
         <Route element={<TabsLayout />}>
-          <Route path="/app/readings" element={<Readings />} />
-          <Route path="/app/trend" element={<Trend />} />
+          <Route path="/app/record" element={<Record />} />
           <Route path="/app/program" element={<Program />} />
         </Route>
         <Route path="/app/program/:week" element={<Chapter />} />
         <Route path="/app/add" element={<ManualEntry />} />
         <Route path="/app/settings" element={<Settings />} />
         <Route path="/app/cuffs" element={<ValidatedCuffs />} />
+        {/* Readings and Trend merged into Record; the shared web preview is
+            bookmarked, so the old paths keep working. */}
+        <Route path="/app/readings" element={<Navigate to="/app/record" replace />} />
+        <Route path="/app/trend" element={<Navigate to="/app/record" replace />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

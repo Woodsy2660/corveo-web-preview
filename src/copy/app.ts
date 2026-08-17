@@ -17,14 +17,23 @@ export const APP = {
   },
 
   tabs: {
-    readings: "Readings",
-    trend: "Trend",
+    record: "Record",
     program: "Program",
   },
 
-  readings: {
+  /**
+   * The Record tab holds the trend and the history together — they are the
+   * same data at two grains, and splitting them made people toggle tabs to
+   * answer one question.
+   */
+  record: {
     eyebrow: MY_HEART_RECORD,
-    title: "Your readings.",
+    title: "Your record.",
+    trendHeading: "Your pattern",
+    historyHeading: "History",
+  },
+
+  readings: {
     empty:
       "No readings yet. Your record begins with the first reading you add or share.",
     sparse: "Building your picture — a small number of readings so far.",
@@ -34,8 +43,6 @@ export const APP = {
   },
 
   trend: {
-    eyebrow: MY_HEART_RECORD,
-    title: "Your pattern over time.",
     intro:
       "Each point is a daily summary of your readings, shown exactly as recorded. The pattern across weeks is what's worth discussing with your doctor.",
     ranges: { twoWeeks: "2W", sixWeeks: "6W", all: "All" },
