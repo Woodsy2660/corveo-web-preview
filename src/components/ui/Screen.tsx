@@ -1,6 +1,30 @@
 import type { ReactNode } from "react";
+import { Link } from "react-router";
 import { CORVEO_WORDMARK } from "@/copy/product";
+import { APP } from "@/copy/app";
+import { ProfileIcon } from "@/components/ui/icons";
 import logoUrl from "@/assets/brand/logo.svg";
+
+/**
+ * Header affordance for the tab screens: profile and settings behind a
+ * single icon, so the top of the app is the wordmark and nothing else.
+ * Account, data export, deletion and the consent receipt all live behind it.
+ */
+export function ProfileLink() {
+  return (
+    <Link
+      to="/app/settings"
+      aria-label={APP.common.profileAria}
+      title={APP.common.profileAria}
+      /* 44px hit area for a 23px glyph; negative margin keeps the icon
+         optically on the header edge rather than inset by the padding. */
+      className="-my-[11px] -mr-[11px] flex size-[44px] items-center justify-center text-ink-tertiary"
+      style={{ fontSize: "var(--text-body-lg)" }}
+    >
+      <ProfileIcon />
+    </Link>
+  );
+}
 
 /**
  * Page wrapper: safe-area padding, Corveo wordmark header with eyebrow

@@ -11,14 +11,29 @@ export const APP = {
   common: {
     unitMmHg: "mmHg",
     settingsLink: "Settings",
+    /** Accessible name for the header profile icon — no visible label. */
+    profileAria: "Profile and settings",
     cancel: "Cancel",
     back: "Back",
     busy: "…",
   },
 
+  /** Tab labels are accessible names only; the bar itself is icon-only. */
   tabs: {
+    navAria: "Main",
     record: "Record",
     program: "Program",
+    education: "Education",
+  },
+
+  education: {
+    title: "Worth knowing.",
+    intro:
+      "Reference that sits alongside the six-week program — what this app does, and how to choose a monitor.",
+    aboutTitle: "About this app",
+    cuffsTitle: "Validated monitors",
+    moreNote:
+      "The six weeks of program education live under Program. Further reading is added here as Corveo publishes it.",
   },
 
   /**
@@ -110,13 +125,6 @@ export const APP = {
       deleteCancelCta: "Keep my record",
       consentReceipt: (version: string, date: string) =>
         `You gave express consent (v${version}) on ${date}.`,
-    },
-    cuffs: {
-      title: "Validated monitors",
-      cta: "See validated upper-arm cuffs",
-    },
-    about: {
-      title: "About Corveo BP Reset",
     },
     demo: {
       title: "Demo",

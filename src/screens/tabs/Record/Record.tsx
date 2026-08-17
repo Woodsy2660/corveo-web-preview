@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
-import { Screen } from "@/components/ui/Screen";
+import { useNavigate } from "react-router";
+import { Screen, ProfileLink } from "@/components/ui/Screen";
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
+import { PlusIcon } from "@/components/ui/icons";
 import { Segmented } from "@/components/ui/Segmented";
 import { BpChart } from "@/components/ui/BpChart";
 import { APP } from "@/copy/app";
@@ -40,20 +40,7 @@ export function Record() {
   const t = APP.trend;
 
   return (
-    <Screen
-      eyebrow={c.eyebrow}
-      title={c.title}
-      withTabBar
-      action={
-        <Link to="/app/settings" className="eyebrow underline underline-offset-4">
-          {APP.common.settingsLink}
-        </Link>
-      }
-    >
-      <div className="pb-[var(--spacing-md)]">
-        <Button onClick={() => navigate("/app/add")}>{r.addCta}</Button>
-      </div>
-
+    <Screen title={c.title} withTabBar action={<ProfileLink />}>
       {/* — Pattern — */}
       <h2 className="pb-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-heading-xl)" }}>
         {c.trendHeading}
@@ -65,7 +52,12 @@ export function Record() {
         {t.intro}
       </p>
 
-      <div className="pb-[var(--spacing-sm)]">
+      {/*
+       * Range picker and the add action share a row: the primary write
+       * action sits at the far right of the chart's own controls rather
+       * than as a full-width button pushing the record down the screen.
+       */}
+      <div className="flex items-center justify-between pb-[var(--spacing-sm)]">
         <Segmented
           ariaLabel={t.rangeAria}
           value={range}
@@ -76,6 +68,26 @@ export function Record() {
             { value: "all", label: t.ranges.all },
           ]}
         />
+        {/* 40px mark inside a 44px hit area, so it sits comfortably beside
+            the 35px range control without dropping below the touch minimum. */}
+        <button
+          onClick={() => navigate("/app/add")}
+          aria-label={r.addCta}
+          title={r.addCta}
+          className="-mr-[2px] flex size-[44px] items-center justify-center active:opacity-80"
+          style={{
+            transitionProperty: "opacity",
+            transitionDuration: "var(--duration-fast)",
+            transitionTimingFunction: "var(--ease-brand)",
+          }}
+        >
+          <span
+            className="flex size-[40px] items-center justify-center rounded-round bg-action text-action-ink"
+            style={{ fontSize: "var(--text-body-lg)" }}
+          >
+            <PlusIcon />
+          </span>
+        </button>
       </div>
 
       <Card>

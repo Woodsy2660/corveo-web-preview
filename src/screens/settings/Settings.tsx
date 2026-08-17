@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router";
+import { useNavigate } from "react-router";
 import { Screen } from "@/components/ui/Screen";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { APP } from "@/copy/app";
 import { JOURNEY } from "@/copy/journey";
-import { SAFETY } from "@/copy/safety";
 import { getApi, resetApi } from "@/lib/api";
 import { useConsentStatus } from "@/lib/api/hooks";
 import { getHealthPlugin, resetHealthPlugin, type AuthorizationState } from "@/lib/health";
@@ -133,35 +132,11 @@ export function Settings() {
           ) : null}
         </Card>
 
-        <Card label={c.cuffs.title}>
-          <Link to="/app/cuffs" className="underline underline-offset-4" style={{ fontSize: "var(--text-body-sm)" }}>
-            {c.cuffs.cta}
-          </Link>
-        </Card>
-
-        <Card label={c.about.title}>
-          <h3 className="pb-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-heading-xl)" }}>
-            {SAFETY.title}
-          </h3>
-          <p className="eyebrow pb-[var(--spacing-3xs)]">{SAFETY.does.title}</p>
-          <ul className="list-disc pb-[var(--spacing-xs)] pl-[var(--spacing-sm)] text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
-            {SAFETY.does.items.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-          <p className="eyebrow pb-[var(--spacing-3xs)]">{SAFETY.doesNot.title}</p>
-          <ul className="list-disc pb-[var(--spacing-xs)] pl-[var(--spacing-sm)] text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
-            {SAFETY.doesNot.items.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-          <p className="pb-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-body-sm)" }}>
-            {SAFETY.seekAdvice}
-          </p>
-          <p className="text-ink-tertiary" style={{ fontSize: "12px" }}>
-            {SAFETY.disclaimer}
-          </p>
-        </Card>
+        {/*
+         * The safety surface and the validated-monitor list moved to the
+         * Education tab — they are reading material, not account admin.
+         * Settings is now Apple Health, your data, and the demo reset.
+         */}
 
         {import.meta.env.DEV || import.meta.env.VITE_DEMO === "true" ? (
           <Card label={c.demo.title}>

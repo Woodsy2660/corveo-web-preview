@@ -12,6 +12,7 @@ import { Cadence } from "@/screens/journey/FirstCapture/Cadence";
 import { Record } from "@/screens/tabs/Record/Record";
 import { ManualEntry } from "@/screens/tabs/Record/ManualEntry";
 import { Program } from "@/screens/tabs/Program/Program";
+import { Education } from "@/screens/tabs/Education/Education";
 import { Chapter } from "@/screens/tabs/Program/Chapter";
 import { Settings } from "@/screens/settings/Settings";
 import { ValidatedCuffs } from "@/screens/settings/ValidatedCuffs";
@@ -61,6 +62,7 @@ export function App() {
         <Route element={<TabsLayout />}>
           <Route path="/app/record" element={<Record />} />
           <Route path="/app/program" element={<Program />} />
+          <Route path="/app/education" element={<Education />} />
         </Route>
         <Route path="/app/program/:week" element={<Chapter />} />
         <Route path="/app/add" element={<ManualEntry />} />

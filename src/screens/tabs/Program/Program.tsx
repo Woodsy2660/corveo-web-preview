@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { Screen } from "@/components/ui/Screen";
+import { Screen, ProfileLink } from "@/components/ui/Screen";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { APP } from "@/copy/app";
@@ -29,16 +29,7 @@ export function Program() {
   const read = readCount(progress);
 
   return (
-    <Screen
-      eyebrow={c.eyebrow}
-      title={c.title}
-      withTabBar
-      action={
-        <Link to="/app/settings" className="eyebrow underline underline-offset-4">
-          {APP.common.settingsLink}
-        </Link>
-      }
-    >
+    <Screen title={c.title} withTabBar action={<ProfileLink />}>
       <p
         className="pb-[var(--spacing-sm)] text-ink-tertiary"
         style={{ fontSize: "var(--text-body-sm)" }}
