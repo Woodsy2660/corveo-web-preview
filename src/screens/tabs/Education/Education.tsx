@@ -1,25 +1,87 @@
 import { Link } from "react-router";
 import { Screen, ProfileLink } from "@/components/ui/Screen";
-import { Card } from "@/components/ui/Card";
+import { ArrowRightIcon, ClockIcon } from "@/components/ui/icons";
 import { APP } from "@/copy/app";
-import { SAFETY, VALIDATED_CUFFS } from "@/copy/safety";
+import {
+  IN_FOCUS_ARTICLES,
+  PULSE_ITEMS,
+  type InFocusArticle,
+  type PulseItem,
+} from "@/copy/library-placeholder";
 
 /**
- * Education tab — the reference library that sits alongside the six-week
- * program.
+ * Learn tab — the publication's two collections, in the app.
  *
- * Holds the two in-scope surfaces that are things to read rather than
- * things to administer: the safety surface ("what Corveo does and doesn't
- * do", Deliverable 12) and the validated-monitor list (Deliverable 8).
- * Both previously sat under Settings, which is now account and data only.
+ * The Pulse (short reads) is a horizontal rail of portrait cards; tapping one
+ * opens the full-screen swipe-through viewer. In Focus (long reads) is a list
+ * on the Program-tab idiom, opening the article reading template.
  *
- * Neither deliverable's content changed — only where it is reached from.
- * Worth reflecting in the Stage 2 and Stage 3 test scripts.
+ * CHANGE REQUEST: neither collection is in the sixteen deliverables — see
+ * copy/library-placeholder.ts. Built for IA review, pending Corveo's
+ * decision and a content pipeline (CMS feed vs. bundled).
  *
- * The Pulse / In Focus / Corveo Picks are NOT in the sixteen deliverables.
- * If Corveo wants the publication's articles in the app, that is a change
- * request; this tab is where they would land.
+ * The safety surface (Deliverable 12) and validated-monitor list
+ * (Deliverable 8) moved back to Settings — this tab is the publication only.
+ * The Stage 2 and Stage 3 test scripts reference their location and need
+ * updating with the move.
  */
+
+/** The three Userkind accent surfaces, cycled across the rail. Decorative only. */
+const RAIL_SURFACES = ["bg-accent-1", "bg-accent-3", "bg-accent-2"] as const;
+
+function PulseCard({ item, index }: { item: PulseItem; index: number }) {
+  const c = APP.education;
+  return (
+    <Link
+      to={`/app/education/pulse/${item.slug}`}
+      aria-label={c.openPulseAria(item.title)}
+      className={`flex h-[152px] w-[112px] flex-none flex-col justify-end rounded-md p-[var(--spacing-xs)] ${
+        RAIL_SURFACES[index % RAIL_SURFACES.length]
+      }`}
+    >
+      <span
+        style={{
+          fontFamily: "var(--font-display)",
+          fontSize: "var(--text-body-base)",
+          lineHeight: "var(--leading-heading)",
+          letterSpacing: "-0.02em",
+          color: "var(--color-text-heading-inverse)",
+        }}
+      >
+        {item.title}
+      </span>
+    </Link>
+  );
+}
+
+function InFocusRow({ article }: { article: InFocusArticle }) {
+  return (
+    <li className="border-b border-hairline last:border-b-0">
+      <Link
+        to={`/app/education/in-focus/${article.slug}`}
+        className="flex items-center gap-[var(--spacing-xs)] py-[var(--spacing-sm)]"
+      >
+        <div className="flex min-w-0 flex-1 flex-col gap-[var(--spacing-3xs)]">
+          <h2 style={{ fontSize: "var(--text-heading-xl)" }}>{article.title}</h2>
+          <p className="text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
+            {article.excerpt}
+          </p>
+          <span
+            className="flex items-center gap-[var(--spacing-3xs)] text-ink-tertiary"
+            style={{ fontSize: "var(--text-body-sm)" }}
+          >
+            <ClockIcon />
+            {APP.program.duration(article.readMinutes, "read")}
+          </span>
+        </div>
+        <span aria-hidden className="flex-none text-ink-tertiary">
+          <ArrowRightIcon />
+        </span>
+      </Link>
+    </li>
+  );
+}
+
 export function Education() {
   const c = APP.education;
 
@@ -32,62 +94,36 @@ export function Education() {
         {c.intro}
       </p>
 
-      <div className="flex flex-col gap-[var(--spacing-sm)]">
-        <Card label={c.aboutTitle}>
-          <h2 className="pb-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-heading-xl)" }}>
-            {SAFETY.title}
-          </h2>
+      <section aria-label={c.pulseHeading}>
+        <div className="flex items-baseline gap-[var(--spacing-2xs)] pb-[var(--spacing-2xs)]">
+          <h2 style={{ fontSize: "var(--text-heading-xl)" }}>{c.pulseHeading}</h2>
+          <span className="eyebrow">{c.pulseSub}</span>
+        </div>
+        {/* Full-bleed rail: escapes the screen padding so cards run to the edge. */}
+        <div className="no-scrollbar -mx-[var(--spacing-md)] flex gap-[var(--spacing-2xs)] overflow-x-auto px-[var(--spacing-md)] pb-[var(--spacing-md)]">
+          {PULSE_ITEMS.map((item, i) => (
+            <PulseCard key={item.slug} item={item} index={i} />
+          ))}
+        </div>
+      </section>
 
-          <p className="eyebrow pb-[var(--spacing-3xs)]">{SAFETY.does.title}</p>
-          <ul
-            className="list-disc pb-[var(--spacing-xs)] pl-[var(--spacing-sm)] text-ink-secondary"
-            style={{ fontSize: "var(--text-body-sm)" }}
-          >
-            {SAFETY.does.items.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-
-          <p className="eyebrow pb-[var(--spacing-3xs)]">{SAFETY.doesNot.title}</p>
-          <ul
-            className="list-disc pb-[var(--spacing-xs)] pl-[var(--spacing-sm)] text-ink-secondary"
-            style={{ fontSize: "var(--text-body-sm)" }}
-          >
-            {SAFETY.doesNot.items.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-
-          <p className="pb-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-body-sm)" }}>
-            {SAFETY.seekAdvice}
-          </p>
-          <p className="text-ink-tertiary" style={{ fontSize: "var(--text-label)" }}>
-            {SAFETY.disclaimer}
-          </p>
-        </Card>
-
-        <Card label={c.cuffsTitle}>
-          <p
-            className="pb-[var(--spacing-xs)] text-ink-secondary"
-            style={{ fontSize: "var(--text-body-sm)" }}
-          >
-            {VALIDATED_CUFFS.intro}
-          </p>
-          <Link
-            to="/app/cuffs"
-            className="underline underline-offset-4"
-            style={{ fontSize: "var(--text-body-sm)" }}
-          >
-            {VALIDATED_CUFFS.title}
-          </Link>
-        </Card>
-      </div>
+      <section aria-label={c.inFocusHeading}>
+        <div className="flex items-baseline gap-[var(--spacing-2xs)]">
+          <h2 style={{ fontSize: "var(--text-heading-xl)" }}>{c.inFocusHeading}</h2>
+          <span className="eyebrow">{c.inFocusSub}</span>
+        </div>
+        <ul className="flex list-none flex-col p-0">
+          {IN_FOCUS_ARTICLES.map((article) => (
+            <InFocusRow key={article.slug} article={article} />
+          ))}
+        </ul>
+      </section>
 
       <p
         className="pt-[var(--spacing-md)] text-ink-tertiary"
         style={{ fontSize: "var(--text-body-sm)" }}
       >
-        {c.moreNote}
+        {c.scopeNote}
       </p>
     </Screen>
   );

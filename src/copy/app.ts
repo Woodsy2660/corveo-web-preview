@@ -23,17 +23,35 @@ export const APP = {
     navAria: "Main",
     record: "Record",
     program: "Program",
-    education: "Education",
+    education: "Learn",
   },
 
   education: {
-    title: "Worth knowing.",
+    title: "Learn.",
     intro:
-      "Reference that sits alongside the six-week program — what this app does, and how to choose a monitor.",
-    aboutTitle: "About this app",
-    cuffsTitle: "Validated monitors",
-    moreNote:
-      "The six weeks of program education live under Program. Further reading is added here as Corveo publishes it.",
+      "Short reads and long reads from the Corveo publication, alongside your program.",
+    pulseHeading: "The Pulse",
+    pulseSub: "Short reads",
+    inFocusHeading: "In Focus",
+    inFocusSub: "Long reads",
+    openPulseAria: (title: string) => `Open short read: ${title}`,
+    scopeNote:
+      "The Pulse and In Focus are the website's collections, shown here so the library can be reviewed. Publishing them in the app is a change request.",
+  },
+
+  pulse: {
+    /** Position indicator in the full-screen viewer — "2 of 6". */
+    counter: (n: number, total: number) => `${n} of ${total}`,
+    closeAria: "Close",
+    swipeHint: "Swipe up for the next read",
+    pendingBody:
+      "This read is being prepared and clinically reviewed by the Corveo team.",
+  },
+
+  inFocus: {
+    back: "Learn",
+    overline: "In Focus",
+    notFound: "That article isn't available.",
   },
 
   /**
@@ -130,6 +148,8 @@ export const APP = {
   settings: {
     eyebrow: "Settings",
     title: "Your data, your record.",
+    aboutTitle: "About this app",
+    cuffsTitle: "Validated monitors",
     appleHealth: {
       title: "Apple Health",
       readsOnly: "Corveo reads blood pressure only. It never writes.",

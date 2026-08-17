@@ -106,6 +106,24 @@ export function CheckIcon({ className = "" }: IconProps) {
   );
 }
 
+/** Dismiss the full-screen Pulse viewer. */
+export function CloseIcon({ className = "" }: IconProps) {
+  return (
+    <svg {...base} className={className} width="1.25em" height="1.25em">
+      <path d="m6 6 12 12M18 6 6 18" />
+    </svg>
+  );
+}
+
+/** Swipe-up affordance in the Pulse viewer. */
+export function ChevronUpIcon({ className = "" }: IconProps) {
+  return (
+    <svg {...base} className={className} width="1em" height="1em">
+      <path d="m6 14 6-6 6 6" />
+    </svg>
+  );
+}
+
 /** Add a reading. */
 export function PlusIcon({ className = "" }: IconProps) {
   return (

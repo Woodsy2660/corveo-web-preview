@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { Link } from "react-router";
 import { Screen } from "@/components/ui/Screen";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { APP } from "@/copy/app";
 import { JOURNEY } from "@/copy/journey";
+import { SAFETY, VALIDATED_CUFFS } from "@/copy/safety";
 import { getApi, resetApi } from "@/lib/api";
 import { useConsentStatus } from "@/lib/api/hooks";
 import { getHealthPlugin, resetHealthPlugin, type AuthorizationState } from "@/lib/health";
@@ -133,10 +135,60 @@ export function Settings() {
         </Card>
 
         {/*
-         * The safety surface and the validated-monitor list moved to the
-         * Education tab — they are reading material, not account admin.
-         * Settings is now Apple Health, your data, and the demo reset.
+         * The safety surface (Deliverable 12) and the validated-monitor list
+         * (Deliverable 8) live here: "about this app" is account-adjacent
+         * reference, and the Learn tab is the publication only. This reverses
+         * the earlier move to Education — the Stage 2 and Stage 3 test
+         * scripts reference their location and need updating.
          */}
+        <Card label={c.aboutTitle}>
+          <h2 className="pb-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-heading-xl)" }}>
+            {SAFETY.title}
+          </h2>
+
+          <p className="eyebrow pb-[var(--spacing-3xs)]">{SAFETY.does.title}</p>
+          <ul
+            className="list-disc pb-[var(--spacing-xs)] pl-[var(--spacing-sm)] text-ink-secondary"
+            style={{ fontSize: "var(--text-body-sm)" }}
+          >
+            {SAFETY.does.items.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+
+          <p className="eyebrow pb-[var(--spacing-3xs)]">{SAFETY.doesNot.title}</p>
+          <ul
+            className="list-disc pb-[var(--spacing-xs)] pl-[var(--spacing-sm)] text-ink-secondary"
+            style={{ fontSize: "var(--text-body-sm)" }}
+          >
+            {SAFETY.doesNot.items.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+
+          <p className="pb-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-body-sm)" }}>
+            {SAFETY.seekAdvice}
+          </p>
+          <p className="text-ink-tertiary" style={{ fontSize: "var(--text-label)" }}>
+            {SAFETY.disclaimer}
+          </p>
+        </Card>
+
+        <Card label={c.cuffsTitle}>
+          <p
+            className="pb-[var(--spacing-xs)] text-ink-secondary"
+            style={{ fontSize: "var(--text-body-sm)" }}
+          >
+            {VALIDATED_CUFFS.intro}
+          </p>
+          <Link
+            to="/app/cuffs"
+            className="underline underline-offset-4"
+            style={{ fontSize: "var(--text-body-sm)" }}
+          >
+            {VALIDATED_CUFFS.title}
+          </Link>
+        </Card>
 
         {import.meta.env.DEV || import.meta.env.VITE_DEMO === "true" ? (
           <Card label={c.demo.title}>

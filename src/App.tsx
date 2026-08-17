@@ -13,6 +13,8 @@ import { Record } from "@/screens/tabs/Record/Record";
 import { ManualEntry } from "@/screens/tabs/Record/ManualEntry";
 import { Program } from "@/screens/tabs/Program/Program";
 import { Education } from "@/screens/tabs/Education/Education";
+import { PulseViewer } from "@/screens/tabs/Education/PulseViewer";
+import { InFocusArticle } from "@/screens/tabs/Education/InFocusArticle";
 import { Chapter } from "@/screens/tabs/Program/Chapter";
 import { ProgramBrowse } from "@/screens/tabs/Program/ProgramIndex";
 import { ProgramDetail } from "@/screens/tabs/Program/ProgramDetail";
@@ -66,6 +68,8 @@ export function App() {
           <Route path="/app/program" element={<Program />} />
           <Route path="/app/education" element={<Education />} />
         </Route>
+        <Route path="/app/education/pulse/:slug" element={<PulseViewer />} />
+        <Route path="/app/education/in-focus/:slug" element={<InFocusArticle />} />
         <Route path="/app/program/browse" element={<ProgramBrowse />} />
         <Route path="/app/program/:slug" element={<ProgramDetail />} />
         <Route path="/app/program/:slug/:week" element={<Chapter />} />
