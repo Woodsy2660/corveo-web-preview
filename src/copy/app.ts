@@ -53,6 +53,24 @@ export const APP = {
     contentPendingNotice:
       "Education content is being prepared and clinically reviewed by the Corveo team. Placeholder content is shown during development.",
     lockedNote: "Opens as your program progresses.",
+    progress: (read: number, total: number) => `${read} of ${total} read`,
+    readTime: (min: number) => `${min} min read`,
+    readLabel: "Read",
+    openChapterAria: (n: number, title: string) => `Week ${n}: ${title}`,
+  },
+
+  chapter: {
+    back: "Program",
+    metaWeek: "Week",
+    metaWeekValue: (n: number, total: number) => `${n} of ${total}`,
+    metaReadTime: "Estimated read time",
+    metaReadTimeValue: (min: number) => `${min} minutes`,
+    metaReview: "Clinical review",
+    markRead: "Mark as read",
+    markedRead: "Read",
+    previous: "Previous chapter",
+    next: "Next chapter",
+    notFound: "That chapter isn't available.",
   },
 
   manualEntry: {

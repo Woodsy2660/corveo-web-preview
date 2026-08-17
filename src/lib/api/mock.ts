@@ -36,7 +36,9 @@ function freshStore(): MockStore {
   return {
     readings: buildSeedReadings(),
     consent: { has_active_consent: false, version: null, last_event_at: null },
-    progress: { current_week: 1, completed_steps: {} },
+    // Synthetic mid-program state so both the open and locked chapter states
+    // are visible in the preview. The real cadence is server-side (Ben).
+    progress: { current_week: 3, completed_steps: { "week-1": true } },
     seenSourceUuids: [],
     programStartedAt: null,
   };

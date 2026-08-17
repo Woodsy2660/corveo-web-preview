@@ -34,6 +34,14 @@ export const SAFETY = {
     "If you are worried about a reading or how you feel, speak with your GP or cardiologist. If you feel seriously unwell, call 000.",
   disclaimer:
     "Corveo BP Reset displays and plots your blood pressure readings and provides general education. It does not diagnose, treat, or replace advice from your doctor.",
+  /**
+   * Shown at the foot of every education chapter. The shipped Corveo site
+   * carries an equivalent line on every article; putting it at the point of
+   * reading rather than only in Settings matches that, and puts it where the
+   * education is actually consumed.
+   */
+  educationNote:
+    "This is general education and is not a substitute for personalised advice from your own clinician.",
 } as const;
 
 /**

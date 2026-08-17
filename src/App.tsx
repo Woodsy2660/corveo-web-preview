@@ -13,6 +13,7 @@ import { Readings } from "@/screens/tabs/Readings/Readings";
 import { ManualEntry } from "@/screens/tabs/Readings/ManualEntry";
 import { Trend } from "@/screens/tabs/Trend/Trend";
 import { Program } from "@/screens/tabs/Program/Program";
+import { Chapter } from "@/screens/tabs/Program/Chapter";
 import { Settings } from "@/screens/settings/Settings";
 import { ValidatedCuffs } from "@/screens/settings/ValidatedCuffs";
 
@@ -63,6 +64,7 @@ export function App() {
           <Route path="/app/trend" element={<Trend />} />
           <Route path="/app/program" element={<Program />} />
         </Route>
+        <Route path="/app/program/:week" element={<Chapter />} />
         <Route path="/app/add" element={<ManualEntry />} />
         <Route path="/app/settings" element={<Settings />} />
         <Route path="/app/cuffs" element={<ValidatedCuffs />} />
