@@ -63,7 +63,9 @@ export function Program() {
       {/* Switcher appears only once there is something to switch between. */}
       {following.length > 1 ? (
         <div
-          className="no-scrollbar flex gap-[var(--spacing-2xs)] overflow-x-auto pb-[var(--spacing-sm)]"
+          /* Full-bleed: the rail runs to the screen edge so a part-visible
+             chip reads as "more to swipe" rather than as a clipped button. */
+          className="no-scrollbar -mx-[var(--spacing-md)] flex gap-[var(--spacing-2xs)] overflow-x-auto px-[var(--spacing-md)] pb-[var(--spacing-sm)]"
           role="radiogroup"
           aria-label={c.switchAria}
         >

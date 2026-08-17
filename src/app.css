@@ -155,7 +155,38 @@
   color: var(--app-ink-tertiary);
 }
 
-/* Horizontal scrollers (the program switcher) — swipe, don't show a bar. */
+/*
+ * Scrollbars.
+ *
+ * The product is an iOS app, where the system draws overlay indicators that
+ * appear only while scrolling and then fade. Nothing in iOS ever shows a
+ * track, a corner or stepper arrows — the desktop bars are an artifact of
+ * previewing in a browser, and Corveo reviews this build in a browser.
+ *
+ * Hidden outright rather than styled thin, and the reason is layout, not
+ * taste: a visible scrollbar on Windows reserves ~10px of width, while an
+ * iOS overlay scrollbar reserves none. Leaving one on would make every
+ * preview screen 10px narrower than the device it represents, and this
+ * preview is what design decisions get made against.
+ *
+ * The cost is no scroll-position feedback on a pointer device. On the phone
+ * — the actual product — the system indicator does that job.
+ */
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/*
+ * Horizontal rails. Redundant against the rule above, which already hides
+ * every thumb at rest, but kept explicit so a rail never picks up a bar if
+ * that default is ever relaxed.
+ */
 .no-scrollbar {
   scrollbar-width: none;
 }
