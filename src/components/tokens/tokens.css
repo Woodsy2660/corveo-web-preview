@@ -51,15 +51,37 @@
   --font-mono: "GeistMono", ui-monospace, "SF Mono", SFMono-Regular, Menlo,
     monospace;
 
+  /*
+   * Sizes and line heights read off the Userkind Figma text styles
+   * (Properties panel, 15 Aug 2026) — previously extrapolated from the
+   * compiled site, which had 2xl and 3xl wrong. The 5xl/6xl display steps
+   * exist in the system but are web-scale only and deliberately omitted.
+   */
+  --text-label: 12px; /* Labels/label · 12/14 */
+  --text-subheading: 14px; /* Heading/subheading · 14/100 */
   --text-heading-xl: 20px;
-  --text-heading-2xl: 22px;
-  --text-heading-3xl: 32px;
+  --text-heading-2xl: 24px;
+  --text-heading-3xl: 30px;
   --text-heading-4xl: 40px;
   --text-body-sm: 14px;
   --text-body-base: 16px;
   --text-body-lg: 18px;
   --text-label-button: 16px;
   --text-special-sm: 28px;
+
+  /* Line heights, as ratios of the size they pair with. */
+  --leading-label: 1.17; /* 12/14 and button 16/18 */
+  --leading-subheading: 1; /* 14/100% */
+  --leading-heading: 1.3; /* xl / 2xl / 3xl */
+  --leading-heading-tight: 1.1; /* 4xl and above */
+  --leading-body: 1.5; /* base */
+  --leading-body-relaxed: 1.6; /* lg — long-form reading */
+
+  /* — Motion — the Userkind curves, measured from the shipped site. — */
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-overshoot: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 160ms;
+  --duration-base: 240ms;
 
   /* — Spacing — */
   --spacing-3xs: 4px;
@@ -76,6 +98,12 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
+  /*
+   * Concentric with the device screen: an element inset from a rounded
+   * corner should use (outer radius − gap), or its corners fight the frame.
+   * The screen is 44px and the floating bar is inset 16px, so 28px.
+   */
+  --radius-xl: 28px;
   --radius-round: 100px;
 
   /* — App semantic aliases (what components actually consume) — */

@@ -32,6 +32,7 @@
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);
   --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
   --radius-round: var(--radius-round);
 }
 
@@ -64,13 +65,27 @@
     flex-direction: column;
   }
 
-  h1,
-  h2,
-  h3 {
+  /*
+   * The serif is reserved for page titles and editorial display; Userkind
+   * sets in-article section headings in the sans at medium. Confirmed on the
+   * shipped article template and against the Figma text styles (open item
+   * F-G, now closed).
+   */
+  h1 {
     font-family: var(--font-display);
     font-weight: 400;
     color: var(--app-heading);
     letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  h2,
+  h3 {
+    font-family: var(--font-body);
+    font-weight: 500;
+    color: var(--app-heading);
+    letter-spacing: -0.02em;
+    line-height: var(--leading-heading);
     margin: 0;
   }
 
@@ -125,12 +140,18 @@
   }
 }
 
-/* Eyebrow label — smallcaps identity carried over from the Corveo editorial style */
+/*
+ * Small contextual label above a page title, and the label slot on Card.
+ * This is Userkind's `Labels/label · 12/14`. It replaced a mono uppercase
+ * treatment that had no basis in the design system — `font-mono` appears
+ * zero times across the shipped site.
+ */
 .eyebrow {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  line-height: var(--leading-label);
+  font-weight: 500;
+  letter-spacing: 0.025em;
   color: var(--app-ink-tertiary);
 }
 
@@ -146,5 +167,11 @@
 }
 
 .fade-up {
-  animation: fade-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fade-up 0.4s var(--ease-brand) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up {
+    animation: none;
+  }
 }

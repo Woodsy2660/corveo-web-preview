@@ -8,7 +8,7 @@ export function Card({
 }: HTMLAttributes<HTMLDivElement> & { label?: string; children: ReactNode }) {
   return (
     <div
-      className={`rounded-lg bg-card p-[var(--spacing-sm)] ${className}`}
+      className={`rounded-md border border-hairline bg-card p-[var(--spacing-sm)] ${className}`}
       {...rest}
     >
       {label ? <div className="eyebrow pb-[var(--spacing-2xs)]">{label}</div> : null}

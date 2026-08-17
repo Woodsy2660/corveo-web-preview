@@ -7,14 +7,21 @@ const TABS = [
   { to: "/app/program", label: APP.tabs.program },
 ];
 
-/** Floating pill tab bar, fixed above the home indicator. */
+/**
+ * Floating tab bar, fixed above the home indicator.
+ *
+ * The container radius is concentric with the device screen (--radius-xl),
+ * not a full pill: at today's label-only height the two render identically,
+ * but once the bar grows to take icons a pill would read as a stadium and
+ * stop agreeing with the screen corners. The active chip stays fully round.
+ */
 export function TabBar() {
   return (
     <nav
       className="fixed inset-x-0 z-10 flex justify-center"
       style={{ bottom: "calc(var(--spacing-sm) + var(--safe-bottom))" }}
     >
-      <div className="flex rounded-round bg-action p-[var(--spacing-3xs)] shadow-lg">
+      <div className="flex rounded-xl bg-action p-[var(--spacing-3xs)] shadow-lg">
         {TABS.map((tab) => (
           <NavLink
             key={tab.to}

@@ -17,8 +17,15 @@ export function Button({
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant }) {
   return (
     <button
-      className={`block w-full rounded-round px-[var(--spacing-md)] py-[var(--spacing-sm)] text-center transition-opacity ${styles[variant]} ${className}`}
-      style={{ fontSize: "var(--text-label-button)" }}
+      className={`block w-full rounded-round px-[var(--spacing-md)] py-[var(--spacing-sm)] text-center ${styles[variant]} ${className}`}
+      style={{
+        fontSize: "var(--text-label-button)",
+        lineHeight: "var(--leading-label)",
+        fontWeight: 500,
+        transitionProperty: "opacity, background-color, color, border-color",
+        transitionDuration: "var(--duration-fast)",
+        transitionTimingFunction: "var(--ease-brand)",
+      }}
       {...rest}
     />
   );
