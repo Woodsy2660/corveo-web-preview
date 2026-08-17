@@ -71,7 +71,7 @@ export function Connect() {
               </li>
             ))}
           </ul>
-          <p className="pt-[var(--spacing-xs)] text-ink-tertiary" style={{ fontSize: "12px" }}>
+          <p className="pt-[var(--spacing-xs)] text-ink-tertiary" style={{ fontSize: "var(--text-label)" }}>
             {VALIDATED_CUFFS.sourceNote}
           </p>
         </Card>

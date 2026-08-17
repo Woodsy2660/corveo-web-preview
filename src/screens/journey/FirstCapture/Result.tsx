@@ -34,7 +34,14 @@ export function Result() {
 
       {latest ? (
         <div className="rounded-lg bg-card p-[var(--spacing-md)] text-center">
-          <div className="font-display text-heading" style={{ fontSize: "56px", lineHeight: 1.1 }}>
+          {/* Special/lg — the system's display step, not a bespoke size. */}
+          <div
+            className="font-display text-heading"
+            style={{
+              fontSize: "var(--text-special-lg)",
+              lineHeight: "var(--leading-special)",
+            }}
+          >
             {latest.systolic}
             <span className="text-ink-tertiary"> / </span>
             {latest.diastolic}

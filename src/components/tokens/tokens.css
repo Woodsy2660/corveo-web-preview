@@ -67,6 +67,8 @@
   --text-body-base: 16px;
   --text-body-lg: 18px;
   --text-label-button: 16px;
+  /* Special/lg · 40/48 — the system's oversized non-heading display step. */
+  --text-special-lg: 40px;
   --text-special-sm: 28px;
 
   /* Line heights, as ratios of the size they pair with. */
@@ -76,6 +78,7 @@
   --leading-heading-tight: 1.1; /* 4xl and above */
   --leading-body: 1.5; /* base */
   --leading-body-relaxed: 1.6; /* lg — long-form reading */
+  --leading-special: 1.2; /* Special/lg 40/48 */
 
   /* — Motion — the Userkind curves, measured from the shipped site. — */
   --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);

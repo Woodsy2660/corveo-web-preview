@@ -102,7 +102,7 @@ export function Settings() {
             <Button variant="secondary" disabled={exporting} onClick={exportData}>
               {exporting ? APP.common.busy : c.yourData.exportCta}
             </Button>
-            <p className="text-ink-tertiary" style={{ fontSize: "12px" }}>
+            <p className="text-ink-tertiary" style={{ fontSize: "var(--text-label)" }}>
               {c.yourData.exportNote}
             </p>
 
@@ -128,7 +128,7 @@ export function Settings() {
             )}
           </div>
           {consent?.has_active_consent && consent.version && consent.last_event_at ? (
-            <p className="pt-[var(--spacing-sm)] text-ink-tertiary" style={{ fontSize: "12px" }}>
+            <p className="pt-[var(--spacing-sm)] text-ink-tertiary" style={{ fontSize: "var(--text-label)" }}>
               {c.yourData.consentReceipt(consent.version, fmtFullDate(consent.last_event_at))}
             </p>
           ) : null}
@@ -195,7 +195,7 @@ export function Settings() {
             <Button variant="secondary" onClick={resetDemo}>
               {c.demo.resetCta}
             </Button>
-            <p className="pt-[var(--spacing-2xs)] text-ink-tertiary" style={{ fontSize: "12px" }}>
+            <p className="pt-[var(--spacing-2xs)] text-ink-tertiary" style={{ fontSize: "var(--text-label)" }}>
               {c.demo.note}
             </p>
           </Card>
