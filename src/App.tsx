@@ -14,6 +14,8 @@ import { ManualEntry } from "@/screens/tabs/Record/ManualEntry";
 import { Program } from "@/screens/tabs/Program/Program";
 import { Education } from "@/screens/tabs/Education/Education";
 import { Chapter } from "@/screens/tabs/Program/Chapter";
+import { ProgramBrowse } from "@/screens/tabs/Program/ProgramIndex";
+import { ProgramDetail } from "@/screens/tabs/Program/ProgramDetail";
 import { Settings } from "@/screens/settings/Settings";
 import { ValidatedCuffs } from "@/screens/settings/ValidatedCuffs";
 
@@ -64,7 +66,9 @@ export function App() {
           <Route path="/app/program" element={<Program />} />
           <Route path="/app/education" element={<Education />} />
         </Route>
-        <Route path="/app/program/:week" element={<Chapter />} />
+        <Route path="/app/program/browse" element={<ProgramBrowse />} />
+        <Route path="/app/program/:slug" element={<ProgramDetail />} />
+        <Route path="/app/program/:slug/:week" element={<Chapter />} />
         <Route path="/app/add" element={<ManualEntry />} />
         <Route path="/app/settings" element={<Settings />} />
         <Route path="/app/cuffs" element={<ValidatedCuffs />} />

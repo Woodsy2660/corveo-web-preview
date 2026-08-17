@@ -1,17 +1,12 @@
 import { Link, useNavigate, useParams } from "react-router";
 import { Screen } from "@/components/ui/Screen";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { APP } from "@/copy/app";
 import { SAFETY } from "@/copy/safety";
 import { useProgramProgress, useUpdateProgress } from "@/lib/api/hooks";
-import {
-  PROGRAM_WEEK_COUNT,
-  findChapter,
-  isAvailable,
-  isRead,
-  stepKey,
-} from "@/lib/program";
+import { findChapter, findProgram, isAvailable, isRead, stepKey } from "@/lib/programs";
 
 /**
  * Chapter reading view (Deliverable 7).
@@ -39,44 +34,48 @@ function MetaPair({ label, value }: { label: string; value: string }) {
 }
 
 export function Chapter() {
-  const { week: weekParam } = useParams();
+  const { slug, week: weekParam } = useParams();
   const navigate = useNavigate();
   const { data: progress } = useProgramProgress();
   const updateProgress = useUpdateProgress();
 
   const c = APP.chapter;
   const week = Number(weekParam);
-  const chapter = Number.isInteger(week) ? findChapter(week) : undefined;
+  const program = findProgram(slug);
+  const chapter = program && Number.isInteger(week) ? findChapter(slug, week) : undefined;
 
   const backLink = (
-    <Link to="/app/program" className="eyebrow underline underline-offset-4">
-      {c.back}
+    <Link
+      to={program ? `/app/program/${program.slug}` : "/app/program"}
+      className="eyebrow underline underline-offset-4"
+    >
+      {program ? program.title : c.back}
     </Link>
   );
 
-  if (!chapter || !isAvailable(progress, week)) {
+  if (!program || !chapter || !isAvailable(progress, program, week)) {
     return (
-      <Screen eyebrow={APP.program.eyebrow} action={backLink} title={c.notFound}>
+      <Screen action={backLink} title={c.notFound}>
         <Button onClick={() => navigate("/app/program")}>{c.back}</Button>
       </Screen>
     );
   }
 
-  const done = isRead(progress, week);
-  const previous = findChapter(week - 1);
-  const next = findChapter(week + 1);
-  const nextOpen = next ? isAvailable(progress, next.week) : false;
+  const done = isRead(progress, program.slug, week);
+  const previous = findChapter(program.slug, week - 1);
+  const next = findChapter(program.slug, week + 1);
+  const nextOpen = next ? isAvailable(progress, program, next.week) : false;
 
   return (
     <Screen
-      eyebrow={APP.program.weekLabel(chapter.week)}
+      overline={`${program.unitLabel} ${chapter.week}`}
       action={backLink}
       title={chapter.title}
       footer={
         done ? (
           <Button
             onClick={() =>
-              navigate(nextOpen && next ? `/app/program/${next.week}` : "/app/program")
+              navigate(nextOpen && next ? `/app/program/${program.slug}/${next.week}` : `/app/program/${program.slug}`)
             }
           >
             {nextOpen ? c.next : c.back}
@@ -85,7 +84,7 @@ export function Chapter() {
           <Button
             disabled={updateProgress.isPending}
             onClick={() =>
-              updateProgress.mutate({ completed_steps: { [stepKey(week)]: true } })
+              updateProgress.mutate({ completed_steps: { [stepKey(program.slug, week)]: true } })
             }
           >
             {updateProgress.isPending ? APP.common.busy : c.markRead}
@@ -111,8 +110,8 @@ export function Chapter() {
 
       <div className="flex flex-wrap gap-x-[var(--spacing-lg)] gap-y-[var(--spacing-xs)] border-y border-hairline py-[var(--spacing-sm)]">
         <MetaPair
-          label={c.metaWeek}
-          value={c.metaWeekValue(chapter.week, PROGRAM_WEEK_COUNT)}
+          label={program.unitLabel}
+          value={c.metaWeekValue(chapter.week, program.chapters.length)}
         />
         <MetaPair
           label={c.metaReadTime}
@@ -121,8 +120,16 @@ export function Chapter() {
         <MetaPair label={c.metaReview} value={chapter.reviewStatus} />
       </div>
 
+      {chapter.sections ? null : (
+        <Card className="mt-[var(--spacing-md)]">
+          <p className="text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)" }}>
+            {APP.program.contentPendingNotice}
+          </p>
+        </Card>
+      )}
+
       <article className="flex flex-col gap-[var(--spacing-md)] pt-[var(--spacing-md)]">
-        {chapter.sections.map((section) => (
+        {(chapter.sections ?? []).map((section) => (
           <section key={section.heading} className="flex flex-col gap-[var(--spacing-2xs)]">
             <h2 style={{ fontSize: "var(--text-heading-xl)" }}>{section.heading}</h2>
             {section.body.map((paragraph) => (
@@ -150,7 +157,7 @@ export function Chapter() {
       <nav className="flex justify-between gap-[var(--spacing-sm)] pt-[var(--spacing-md)]">
         {previous ? (
           <Link
-            to={`/app/program/${previous.week}`}
+            to={`/app/program/${program.slug}/${previous.week}`}
             className="text-ink-secondary underline underline-offset-4"
             style={{ fontSize: "var(--text-body-sm)" }}
           >
@@ -161,7 +168,7 @@ export function Chapter() {
         )}
         {next && nextOpen ? (
           <Link
-            to={`/app/program/${next.week}`}
+            to={`/app/program/${program.slug}/${next.week}`}
             className="text-ink-secondary underline underline-offset-4"
             style={{ fontSize: "var(--text-body-sm)" }}
           >

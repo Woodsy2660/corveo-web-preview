@@ -42,7 +42,7 @@ export interface ProgramChapter {
   /** Userkind `cardExcerpt` — the one-line summary on the chapter card. */
   excerpt: string;
   /** Standfirst shown under the title in the reading view. */
-  deck: string;
+  deck?: string;
   readMinutes: number;
   /** Defaults to "read" — see ChapterMedium. */
   medium?: ChapterMedium;
@@ -51,7 +51,8 @@ export interface ProgramChapter {
    * cardiologist; placeholder text is deliberately attributed to nobody.
    */
   reviewStatus: string;
-  sections: readonly ProgramSection[];
+  /** Absent means the body content has not been supplied yet. */
+  sections?: readonly ProgramSection[];
 }
 
 const PENDING_REVIEW = "Pending";

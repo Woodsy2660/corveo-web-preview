@@ -86,7 +86,23 @@ export const APP = {
       listen: "Listen podcast",
     },
     readLabel: "Read",
-    openChapterAria: (n: number, title: string) => `Week ${n}: ${title}`,
+    contentPending: "Content pending",
+    browseAll: "All programs",
+    switchAria: "Switch program",
+    openChapterAria: (n: number, title: string) => `Chapter ${n}: ${title}`,
+  },
+
+  programIndex: {
+    title: "Programs",
+    intro:
+      "Guided sequences you can follow alongside your own record. Follow as many as you like.",
+    emptyIntro: "You are not following a program yet. Choose one to begin.",
+    chapterCount: (n: number, unit: string) => `${n} ${unit}s`,
+    follow: "Follow",
+    following: "Following",
+    coreLabel: "Your program",
+    scopeNote:
+      "Only the six-week program is part of this release. The others are shown so the library can be reviewed.",
   },
 
   chapter: {

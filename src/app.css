@@ -155,6 +155,15 @@
   color: var(--app-ink-tertiary);
 }
 
+/* Horizontal scrollers (the program switcher) — swipe, don't show a bar. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 @keyframes fade-up {
   from {
     opacity: 0;
