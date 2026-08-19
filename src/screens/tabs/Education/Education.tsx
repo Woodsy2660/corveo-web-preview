@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { Screen, ProfileLink } from "@/components/ui/Screen";
-import { ArrowRightIcon, ClockIcon } from "@/components/ui/icons";
+import { ClockIcon } from "@/components/ui/icons";
 import { APP } from "@/copy/app";
 import {
   IN_FOCUS_ARTICLES,
@@ -54,13 +54,23 @@ function PulseCard({ item, index }: { item: PulseItem; index: number }) {
   );
 }
 
+/**
+ * One long read, on the Program-tab row idiom: the whole row is the tap
+ * target. Article artwork is a Corveo asset that has not been supplied, so
+ * the tile is a placeholder that spans the row's height.
+ */
 function InFocusRow({ article }: { article: InFocusArticle }) {
   return (
     <li className="border-b border-hairline last:border-b-0">
       <Link
         to={`/app/education/in-focus/${article.slug}`}
-        className="flex items-center gap-[var(--spacing-xs)] py-[var(--spacing-sm)]"
+        className="flex gap-[var(--spacing-xs)] py-[var(--spacing-sm)]"
       >
+        <div
+          aria-hidden
+          className="w-[96px] flex-none self-stretch rounded-sm"
+          style={{ background: "var(--color-surface-neutral-lighter)" }}
+        />
         <div className="flex min-w-0 flex-1 flex-col gap-[var(--spacing-3xs)]">
           <h2 style={{ fontSize: "var(--text-heading-xl)" }}>{article.title}</h2>
           <p className="text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
@@ -74,9 +84,6 @@ function InFocusRow({ article }: { article: InFocusArticle }) {
             {APP.program.duration(article.readMinutes, "read")}
           </span>
         </div>
-        <span aria-hidden className="flex-none text-ink-tertiary">
-          <ArrowRightIcon />
-        </span>
       </Link>
     </li>
   );
