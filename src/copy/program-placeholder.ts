@@ -69,7 +69,7 @@ export const PROGRAM_PLACEHOLDER_WEEKS: readonly ProgramChapter[] = [
       {
         heading: "What the two numbers describe",
         body: [
-          "A blood pressure reading is written as one number over another, in millimetres of mercury — mmHg. The first is systolic pressure, measured as the heart contracts. The second is diastolic pressure, measured as the heart relaxes between beats.",
+          "A blood pressure reading is written as one number over another, in millimetres of mercury (mmHg). The first is systolic pressure, measured as the heart contracts. The second is diastolic pressure, measured as the heart relaxes between beats.",
           "Both are recorded together because they describe different parts of the same cycle. Your record keeps them as a pair, exactly as your monitor reported them.",
         ],
       },
@@ -85,7 +85,7 @@ export const PROGRAM_PLACEHOLDER_WEEKS: readonly ProgramChapter[] = [
   {
     week: 2,
     title: "Measuring well",
-    excerpt: "Position, timing and rhythm — how a good home reading is taken.",
+    excerpt: "Position, timing and rhythm: how a good home reading is taken.",
     deck: "Home monitors are accurate when they are used consistently. Most of that is technique, and it takes a minute to learn.",
     readMinutes: 4,
     reviewStatus: PENDING_REVIEW,
@@ -117,7 +117,7 @@ export const PROGRAM_PLACEHOLDER_WEEKS: readonly ProgramChapter[] = [
       {
         heading: "What the trend view shows",
         body: [
-          "The trend view plots a daily summary of the readings you have recorded, drawn exactly as they were entered. There are no bands, zones or colour coding on it, because Corveo does not assess your readings — it organises and displays them.",
+          "The trend view plots a daily summary of the readings you have recorded, drawn exactly as they were entered. There are no bands, zones or colour coding on it, because Corveo does not assess your readings. It organises and displays them.",
           "Gaps in the line are days without a reading. They are not failures; they are simply days with nothing recorded.",
         ],
       },
@@ -133,7 +133,7 @@ export const PROGRAM_PLACEHOLDER_WEEKS: readonly ProgramChapter[] = [
   {
     week: 4,
     title: "Everyday influences",
-    excerpt: "Salt, sleep, movement and medication timing — what research has looked at.",
+    excerpt: "Salt, sleep, movement and medication timing: what research has looked at.",
     deck: "A short tour of the everyday factors research has examined, and why none of them applies to everyone equally.",
     readMinutes: 5,
     reviewStatus: PENDING_REVIEW,
@@ -165,7 +165,7 @@ export const PROGRAM_PLACEHOLDER_WEEKS: readonly ProgramChapter[] = [
       {
         heading: "Before the appointment",
         body: [
-          "Export your record, or have it open, so the history is available rather than remembered. Note the dates of anything that might be relevant — an illness, a change in medication, a period of poor sleep, a holiday.",
+          "Export your record, or have it open, so the history is available rather than remembered. Note the dates of anything that might be relevant: an illness, a change in medication, a period of poor sleep, a holiday.",
           "Write your questions down beforehand. It is easy to leave without asking the one that mattered.",
         ],
       },
@@ -189,7 +189,7 @@ export const PROGRAM_PLACEHOLDER_WEEKS: readonly ProgramChapter[] = [
       {
         heading: "After six weeks",
         body: [
-          "The app stays available and your record stays yours. Many people keep recording at a lower frequency than during the program — your clinician can tell you what suits your situation.",
+          "The app stays available and your record stays yours. Many people keep recording, just less often than during the program. Your clinician can tell you what suits your situation.",
           "Everything you have recorded remains exportable and deletable at any time, from Settings.",
         ],
       },

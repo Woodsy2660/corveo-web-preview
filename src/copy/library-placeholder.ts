@@ -57,7 +57,7 @@ export const PULSE_ITEMS: readonly PulseItem[] = [
     reviewStatus: PENDING,
     body: [
       "Blood pressure is not a fixed property like height. It shifts with posture, activity, conversation, caffeine, sleep and the time since you last moved.",
-      "That is why a record built over weeks says more than any single reading — and why your record keeps every reading exactly as your monitor reported it.",
+      "That is why a record built over weeks says more than any single reading, and why your record keeps every reading exactly as your monitor reported it.",
     ],
   },
   {
@@ -65,7 +65,7 @@ export const PULSE_ITEMS: readonly PulseItem[] = [
     title: "What mmHg actually measures",
     reviewStatus: PENDING,
     body: [
-      "Millimetres of mercury — mmHg — is a unit of pressure. Early monitors measured how far a column of mercury rose against a scale, and the unit outlived the mercury.",
+      "Millimetres of mercury (mmHg) is a unit of pressure. Early monitors measured how far a column of mercury rose against a scale, and the unit outlived the mercury.",
       "A reading's two numbers use the same unit: pressure as the heart contracts, and pressure as it relaxes between beats.",
     ],
   },
@@ -74,7 +74,7 @@ export const PULSE_ITEMS: readonly PulseItem[] = [
     title: "The white-coat effect",
     reviewStatus: PENDING,
     body: [
-      "Readings taken in a clinic are often different from readings taken at home — the setting itself can change the measurement. Researchers call this the white-coat effect.",
+      "Readings taken in a clinic are often different from readings taken at home. The setting itself can change the measurement, and researchers call this the white-coat effect.",
       "It is one reason clinicians ask for home readings taken over time: a record built where you live shows a picture the clinic visit can't.",
     ],
   },
@@ -107,14 +107,14 @@ export const IN_FOCUS_ARTICLES: readonly InFocusArticle[] = [
       {
         heading: "What a record contains",
         body: [
-          "Each entry in your record is one measurement: two pressures in mmHg, taken at one moment, by your own validated monitor. The app adds the time and the source — Apple Health or manual entry — and nothing else.",
+          "Each entry in your record is one measurement: two pressures in mmHg, taken at one moment, by your own validated monitor. The app adds the time and the source (Apple Health or manual entry) and nothing else.",
           "Readings are never adjusted, smoothed or scored. What your monitor reported is what your record keeps.",
         ],
       },
       {
         heading: "Why order and time matter",
         body: [
-          "A record is more than a pile of numbers — the sequence carries information. When each reading was taken, and what the record looks like across weeks, is what your own clinician can read and discuss with you.",
+          "A record is more than a pile of numbers. The sequence carries information: when each reading was taken, and what the record looks like across weeks, is what your own clinician can read and discuss with you.",
         ],
       },
       {

@@ -9,20 +9,20 @@
 
 export const SAFETY = {
   eyebrow: "About this app",
-  title: "What Corveo does — and doesn't do.",
+  title: "What Corveo does, and doesn't do.",
   does: {
     title: "Corveo BP Reset:",
     items: [
       "Displays and organises the blood pressure readings you record with your own monitor",
       "Shows your readings and their history exactly as recorded",
       "Provides general education about blood pressure over a six-week program",
-      "Keeps your record in your control — export or deletion at any time",
+      "Keeps your record in your control, with export or deletion at any time",
     ],
   },
   doesNot: {
     title: "It does not:",
     items: [
-      "Measure blood pressure — your validated cuff does that",
+      "Measure blood pressure (your validated cuff does that)",
       "Analyse, interpret, score or classify your readings",
       "Diagnose, treat, or monitor any condition",
       "Alert you or anyone else based on a reading's value",

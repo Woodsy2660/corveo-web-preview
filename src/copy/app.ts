@@ -68,7 +68,7 @@ export const APP = {
   readings: {
     empty:
       "No readings yet. Your record begins with the first reading you add or share.",
-    sparse: "Building your picture — a small number of readings so far.",
+    sparse: "Your picture is building. Only a few readings so far.",
     addCta: "Add a reading",
     sourceHealth: "Apple Health",
     sourceManual: "Manual",
@@ -157,7 +157,7 @@ export const APP = {
       deleteCta: "Request deletion",
       deleteConfirmTitle: "Request deletion of your record?",
       deleteConfirmBody:
-        "Your account and readings will be deleted. Health-records law sets a minimum retention period — deletion is carried out and logged against it. This cannot be undone from the app.",
+        "Your account and readings will be deleted. Health-records law sets a minimum retention period, and deletion is carried out and logged against it. This cannot be undone from the app.",
       deleteConfirmCta: "Request deletion",
       deleteCancelCta: "Keep my record",
       consentReceipt: (version: string, date: string) =>
@@ -166,7 +166,7 @@ export const APP = {
     demo: {
       title: "Demo",
       resetCta: "Reset demo data",
-      note: "Development build only — restores the synthetic dataset.",
+      note: "Development build only. Restores the synthetic dataset.",
     },
   },
 } as const;
