@@ -20,10 +20,11 @@ const RANGE_DAYS: Record<Range, number | null> = { "2w": 14, "6w": 42, all: null
  * list and the list is the chart's detail.
  *
  * Both remain display-only. Merging their presentation changes nothing about
- * that: the chart is still monochrome with no thresholds, zones, bands or
- * annotations, and the list still shows readings exactly as recorded. The
- * two deliverables are still demonstrated independently against the Stage 2
- * and Stage 3 test scripts.
+ * that: the chart has no thresholds, zones, bands or annotations — its two
+ * colours are fixed series identities (systolic/diastolic), never value-
+ * mapped — and the list still shows readings exactly as recorded. The two
+ * deliverables are still demonstrated independently against the Stage 2 and
+ * Stage 3 test scripts.
  */
 export function Record() {
   const navigate = useNavigate();
@@ -103,21 +104,14 @@ export function Record() {
                 className="flex items-center gap-[var(--spacing-3xs)] text-ink-secondary"
                 style={{ fontSize: "var(--text-label)" }}
               >
-                <span className="inline-block h-[2px] w-[16px] bg-chart-ink" />
+                <span className="inline-block size-[10px] rounded-xs bg-chart-series-1" />
                 {t.legendSystolic}
               </span>
               <span
                 className="flex items-center gap-[var(--spacing-3xs)] text-ink-secondary"
                 style={{ fontSize: "var(--text-label)" }}
               >
-                <span
-                  className="inline-block h-[2px] w-[16px]"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(to right, var(--app-chart-ink-soft) 60%, transparent 40%)",
-                    backgroundSize: "6px 2px",
-                  }}
-                />
+                <span className="inline-block size-[10px] rounded-xs bg-chart-series-2" />
                 {t.legendDiastolic}
               </span>
             </div>

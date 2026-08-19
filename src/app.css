@@ -17,8 +17,8 @@
   --color-ink-tertiary: var(--app-ink-tertiary);
   --color-ink-disabled: var(--app-ink-disabled);
   --color-hairline: var(--app-hairline);
-  --color-chart-ink: var(--app-chart-ink);
-  --color-chart-ink-soft: var(--app-chart-ink-soft);
+  --color-chart-series-1: var(--app-chart-series-1);
+  --color-chart-series-2: var(--app-chart-series-2);
   --color-accent-1: var(--color-surface-color-1);
   --color-accent-1-light: var(--color-surface-color-1-light);
   --color-accent-2: var(--color-surface-color-2);

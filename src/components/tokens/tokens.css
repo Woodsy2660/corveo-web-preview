@@ -9,8 +9,9 @@
  * Rule (docs/01-system-architecture.md §8): components consume semantic
  * tokens only — no raw hex or px in component files.
  *
- * Charts are monochrome. There are no threshold/zone/band colours here by
- * design, and none may be added (SOW A.3.3).
+ * Chart colour is categorical only — it names a series (systolic/diastolic),
+ * fixed per series, never value-mapped. There are no threshold/zone/band
+ * colours here by design, and none may be added (SOW A.3.3).
  */
 
 :root {
@@ -25,6 +26,12 @@
   --color-surface-neutral-light: #e5e5e5;
   --color-surface-neutral-lightest: #f2ede9;
   --color-surface-neutral-dark: #000;
+  /*
+   * Chart-step of surface-color-3: same hue, chroma raised so it reads as a
+   * colour (not grey) when used as a translucent area fill on the white card.
+   * Validated with color-1 for colour-vision separation (worst pair ΔE 13.7).
+   */
+  --color-chart-teal: #00839b;
 
   /* — Text — */
   --color-text-heading: #000;
@@ -121,9 +128,9 @@
   --app-ink-disabled: var(--color-text-disabled);
   --app-hairline: var(--color-border-default);
 
-  /* Chart marks are ink-coloured, never evaluative. */
-  --app-chart-ink: var(--color-text-heading);
-  --app-chart-ink-soft: var(--color-text-tertiary);
+  /* Series identities, fixed: systolic is always 1, diastolic always 2. */
+  --app-chart-series-1: var(--color-surface-color-1);
+  --app-chart-series-2: var(--color-chart-teal);
 
   /* iOS safe areas */
   --safe-top: env(safe-area-inset-top, 0px);

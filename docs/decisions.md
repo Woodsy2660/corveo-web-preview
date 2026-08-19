@@ -117,3 +117,13 @@ Add new decisions at the end. Do not edit or remove existing entries.
 **Decision**: Settings lives at `/app/settings`, reached from a header link on each tab, with the validated-cuff list at `/app/cuffs` beneath it. The tab bar stays three tabs.
 
 **Consequences**: Deliverables 8 and 12 have surfaces without changing the agreed information architecture.
+
+---
+
+## F-05: Trend chart uses fixed categorical series colours, not monochrome
+
+**Context**: The chart shipped monochrome (ink + soft ink) as a conservative reading of SOW A.3.3. Michael requested the shadcn gradient-area treatment for the trend card (19 Aug 2026). A.3.3 bars *evaluative* colour — thresholds, zones, bands, risk colouring — not colour that names a series.
+
+**Decision**: Systolic is always `--app-chart-series-1` (brand indigo `#3e4fb5`); diastolic is always `--app-chart-series-2` (`#00839b`, a chroma-raised chart-step of brand teal, validated for colour-vision separation against indigo — worst pair ΔE 13.7). Series are overlaid gradient areas, never stacked. Colour is fixed per series identity and never mapped to a value, range, or threshold. The chart tooltip shows raw recorded values only.
+
+**Consequences**: The monochrome rule in `tokens.css` is replaced by a categorical-only rule; `--app-chart-ink`/`--app-chart-ink-soft` are removed. Any future request to colour by *value* remains a Change Request, not a build. Stage 2's no-interpretive-feature test is unaffected but reviewers should be told the colour change is categorical before they diff screenshots.
