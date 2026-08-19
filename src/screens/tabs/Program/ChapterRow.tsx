@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { Chip } from "@/components/ui/Chip";
-import { ArrowRightIcon, CheckIcon, ClockIcon } from "@/components/ui/icons";
+import { CheckIcon, ClockIcon } from "@/components/ui/icons";
 import { APP } from "@/copy/app";
 import type { ProgramChapter } from "@/copy/program-placeholder";
 import type { ProgramProgressRow } from "@/lib/api/types";
@@ -32,12 +32,12 @@ export function ChapterList({
 
 /**
  * One chapter row, on the same pattern as corveo.vercel.app/programs:
- * thumbnail, unit tag, duration with a clock, title, excerpt, trailing-arrow
- * CTA. Adapted for 390px — the row is the tap target and the pill is the
- * affordance inside it, not a second control competing for width.
+ * thumbnail, unit tag, duration with a clock, title, excerpt. The whole row
+ * is the tap target — no CTA pill inside it.
  *
  * Chapter artwork is a Corveo asset that has not been supplied, so the tile
- * carries the chapter number rather than a broken image.
+ * is a placeholder that spans the row's height and carries the chapter
+ * number rather than a broken image.
  */
 export function ChapterRow({
   program,
@@ -58,7 +58,7 @@ export function ChapterRow({
     <div className="flex gap-[var(--spacing-xs)] py-[var(--spacing-sm)]">
       <div
         aria-hidden
-        className="flex size-[72px] flex-none items-center justify-center rounded-sm"
+        className="flex w-[96px] flex-none items-center justify-center self-stretch rounded-sm"
         style={{
           background: "var(--color-surface-neutral-lighter)",
           color: "var(--color-text-heading-inverse)",
@@ -103,15 +103,12 @@ export function ChapterRow({
           {open ? chapter.excerpt : c.lockedNote}
         </p>
 
-        {open ? (
+        {open && pending ? (
           <span
-            className={`mt-[var(--spacing-3xs)] inline-flex w-fit items-center gap-[var(--spacing-2xs)] rounded-round border border-hairline px-[var(--spacing-sm)] py-[var(--spacing-2xs)] ${
-              pending ? "text-ink-tertiary" : "text-heading"
-            }`}
+            className="mt-[var(--spacing-3xs)] text-ink-tertiary"
             style={{ fontSize: "var(--text-body-sm)", fontWeight: 500 }}
           >
-            {pending ? c.contentPending : c.cta[medium]}
-            {pending ? null : <ArrowRightIcon />}
+            {c.contentPending}
           </span>
         ) : null}
       </div>

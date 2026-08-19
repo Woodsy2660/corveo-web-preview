@@ -97,11 +97,6 @@ export const APP = {
     /** "3 min read" / "12 min watch" / "21 min listen" — matches the site. */
     duration: (min: number, medium: "read" | "watch" | "listen") =>
       `${min} min ${medium}`,
-    cta: {
-      read: "Read article",
-      watch: "Watch video",
-      listen: "Listen podcast",
-    },
     readLabel: "Read",
     contentPending: "Content pending",
     browseAll: "All programs",
@@ -117,7 +112,6 @@ export const APP = {
     chapterCount: (n: number, unit: string) => `${n} ${unit}s`,
     follow: "Follow",
     following: "Following",
-    coreLabel: "Your program",
     scopeNote:
       "Only the six-week program is part of this release. The others are shown so the library can be reviewed.",
   },
