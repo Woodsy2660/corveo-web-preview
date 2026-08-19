@@ -311,3 +311,29 @@ plausible, which is what makes them expensive to find later.
 | No health values leave the device | No analytics/crash SDKs; no console logging of readings |
 | Synthetic data only | `src/lib/mock/fixtures.ts` deterministic generator (also the Stage-1 fixtures task) |
 | Placeholder content never interprets | Answer-shaped topics render as pending — see §7 |
+
+## 12. Copy voice — how we write user-facing language
+
+Set 19 Aug 2026 (see decision F-06). These rules cover every user-visible
+string in the app, all of which live in `src/copy/`. They sit on top of the
+regulatory copy discipline (locked verb set, display-never-interpret), which
+always wins on any conflict.
+
+- **No em dashes in user-facing strings.** Use a full stop, comma, colon or
+  parentheses instead. Code comments may keep them; the rule is about what
+  renders on screen.
+- **Australian English.** Spelling (organise, colour, millimetres,
+  personalised) and en-AU date/number formats (`lib/format.ts`).
+- **Borrow the shipped site's language.** corveo.vercel.app is the voice
+  reference: "A clearer way to understand your…", "evidence-based education",
+  "minus the wellness hype", sentence-case headings. When writing new copy,
+  check how the site says it before inventing a phrasing.
+- **Warm, plain, human.** Short sentences over stacked clauses; "No worries"
+  register is fine at friendly moments. Avoid AI-flavoured constructions:
+  three-adjective stacks, "not just X, but Y", "-ing" trailers tacked onto
+  sentences for fake depth.
+
+Out of bounds for style edits: `copy/validation.ts` (frozen verbatim, docs/02
+§1.3), the `noSamplesNudge` string (verbatim from docs/03 §4), and
+`copy/consent.ts` (Deliverable 13 draft — Corveo approves that wording; note
+its rendered text is hashed, so any change produces a new consent version).

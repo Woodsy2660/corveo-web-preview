@@ -127,3 +127,13 @@ Add new decisions at the end. Do not edit or remove existing entries.
 **Decision**: Systolic is always `--app-chart-series-1` (brand indigo `#3e4fb5`); diastolic is always `--app-chart-series-2` (`#00839b`, a chroma-raised chart-step of brand teal, validated for colour-vision separation against indigo — worst pair ΔE 13.7). Series are overlaid gradient areas, never stacked. Colour is fixed per series identity and never mapped to a value, range, or threshold. The chart tooltip shows raw recorded values only.
 
 **Consequences**: The monochrome rule in `tokens.css` is replaced by a categorical-only rule; `--app-chart-ink`/`--app-chart-ink-soft` are removed. Any future request to colour by *value* remains a Change Request, not a build. Stage 2's no-interpretive-feature test is unaffected but reviewers should be told the colour change is categorical before they diff screenshots.
+
+---
+
+## F-06: Copy voice — humanised, Australian English, no em dashes, site wording
+
+**Context**: The app's copy read as machine-written in places — em dashes on most long strings, stiff constructions ("A calm, structured way…"). Michael asked for it to be humanised across every page including onboarding, in Australian English, using the language of the shipped site corveo.vercel.app (19 Aug 2026).
+
+**Decision**: All user-facing strings follow the copy voice rules in docs/04 §12: no em dashes on screen, Australian English, the site as voice reference, warm plain sentences. The regulatory discipline (IPS verb set, display-never-interpret) is unchanged and takes precedence. `validation.ts`, the `noSamplesNudge` string and `consent.ts` are excluded from style edits.
+
+**Consequences**: Any new or edited string in `src/copy/` is written to these rules; reviewers can reject copy on voice grounds, not just regulatory grounds. When Corveo's real content lands (D7, D12, D13), it arrives in their words — these rules govern our strings, not their signed-off deliverables.
