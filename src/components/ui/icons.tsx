@@ -83,20 +83,6 @@ export function ClockIcon({ className = "" }: IconProps) {
   );
 }
 
-/**
- * Trailing arrow on an inline link-style CTA. This is the Figma Button's
- * "With Icons" variant, used where the site uses it — on an inline pill that
- * navigates. It stays off the full-width bottom-pinned primary, where iOS
- * expects a bare verb.
- */
-export function ArrowRightIcon({ className = "" }: IconProps) {
-  return (
-    <svg {...base} className={className} width="1em" height="1em">
-      <path d="M4.8 12h14.4M13.4 6.2 19.2 12l-5.8 5.8" />
-    </svg>
-  );
-}
-
 /** Chapter already read. */
 export function CheckIcon({ className = "" }: IconProps) {
   return (
