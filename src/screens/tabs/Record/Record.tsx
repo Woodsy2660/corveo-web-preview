@@ -42,10 +42,8 @@ export function Record() {
 
   return (
     <Screen title={c.title} withTabBar action={<ProfileLink />}>
-      {/* — Pattern — */}
-      <h2 className="pb-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-heading-xl)" }}>
-        {c.trendHeading}
-      </h2>
+      {/* — Pattern — the screen title heads this section directly; a second
+          heading stacked under it read as a double header. */}
       <p
         className="pb-[var(--spacing-sm)] text-ink-secondary"
         style={{ fontSize: "var(--text-body-sm)" }}

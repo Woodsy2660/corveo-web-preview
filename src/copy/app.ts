@@ -62,7 +62,6 @@ export const APP = {
   record: {
     eyebrow: MY_HEART_RECORD,
     title: "Your record.",
-    trendHeading: "Your pattern",
     historyHeading: "History",
   },
 
