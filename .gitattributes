@@ -1,0 +1,5 @@
+# Keep SQL and docs LF so the §13 sha256 verification in db/migrations/README.md
+# reproduces on any clone, and so migrations hit Postgres byte-identical to the guide.
+* text=auto
+*.sql text eol=lf
+*.md  text eol=lf
