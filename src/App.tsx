@@ -20,6 +20,7 @@ import { ProgramBrowse } from "@/screens/tabs/Program/ProgramIndex";
 import { ProgramDetail } from "@/screens/tabs/Program/ProgramDetail";
 import { Settings } from "@/screens/settings/Settings";
 import { ValidatedCuffs } from "@/screens/settings/ValidatedCuffs";
+import { BehindTheScenes } from "@/screens/behind/BehindTheScenes";
 
 /** /app/* requires a completed journey; /journey/* bounces back once done. */
 function RequireJourneyComplete() {
@@ -81,6 +82,10 @@ export function App() {
         <Route path="/app/readings" element={<Navigate to="/app/record" replace />} />
         <Route path="/app/trend" element={<Navigate to="/app/record" replace />} />
       </Route>
+
+      {/* Presentation surface, outside the journey guards: it explains the
+          machinery rather than being part of the product flow. */}
+      <Route path="/behind" element={<BehindTheScenes />} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

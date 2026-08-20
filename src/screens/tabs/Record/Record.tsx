@@ -6,6 +6,7 @@ import { Chip } from "@/components/ui/Chip";
 import { PlusIcon } from "@/components/ui/icons";
 import { Segmented } from "@/components/ui/Segmented";
 import { BpChart } from "@/components/ui/BpChart";
+import { AppleHealthCard } from "@/components/ui/AppleHealthCard";
 import { APP } from "@/copy/app";
 import { useReadings, useTrend } from "@/lib/api/hooks";
 import { dayNDaysAgo, fmtDateTime } from "@/lib/format";
@@ -42,6 +43,9 @@ export function Record() {
 
   return (
     <Screen title={c.title} withTabBar action={<ProfileLink />}>
+      {/* Apple Health status — renders only once authorisation was requested. */}
+      <AppleHealthCard />
+
       {/* — Pattern — the screen title heads this section directly; a second
           heading stacked under it read as a double header. */}
       <p

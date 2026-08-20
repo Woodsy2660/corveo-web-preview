@@ -19,6 +19,8 @@ import type {
   SyncResult,
   SyncStatus,
 } from "./types";
+import { getApi } from "@/lib/api";
+import { markRead, readUnread, resetDemoHealth } from "./demo";
 
 const STATE_KEY = "corveo.mock.health.v1";
 
@@ -48,6 +50,7 @@ function load(): MockHealthState {
 
 export function resetMockHealth(): void {
   localStorage.removeItem(STATE_KEY);
+  resetDemoHealth();
 }
 
 type Listener = (data: SyncResult | SyncError) => void;
@@ -102,7 +105,39 @@ export function createMockHealthPlugin(): CorveoHealthPlugin {
     },
 
     async syncNow(): Promise<SyncResult> {
-      const result = syncResult(0);
+      // An anchored read against the simulated store. A refused store returns
+      // the same empty array an empty one does, and nothing downstream can
+      // tell the difference — which is the contract (docs/03 §4).
+      const observations = readUnread();
+      if (observations.length === 0) {
+        const empty = syncResult(0);
+        state.lastSuccessfulSyncAt = empty.completedAt;
+        commit();
+        emit("syncCompleted", empty);
+        return empty;
+      }
+
+      const res = await getApi().ingestObservations({
+        source_type: "healthkit",
+        observations,
+      });
+
+      // The cursor advances only over what the server confirmed (docs/03
+      // §2.1). Anything rejected stays unread and is offered again.
+      const confirmed = observations
+        .map((o) => o.source_uuid)
+        .filter((id) => !res.rejected.some((r) => r.source_uuid === id));
+      markRead(confirmed);
+
+      const result: SyncResult = {
+        inserted: res.inserted,
+        duplicates: res.duplicates,
+        softDeleted: res.soft_deleted,
+        rejected: res.rejected.length,
+        anchorAdvanced: confirmed.length > 0,
+        completedAt: new Date().toISOString(),
+      };
+      if (res.inserted > 0) state.samplesEverReceived = true;
       state.lastSuccessfulSyncAt = result.completedAt;
       commit();
       emit("syncCompleted", result);

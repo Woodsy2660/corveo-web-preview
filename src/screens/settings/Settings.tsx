@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { APP } from "@/copy/app";
 import { JOURNEY } from "@/copy/journey";
+import { HEALTH_SYNC } from "@/copy/health-sync";
 import { SAFETY, VALIDATED_CUFFS } from "@/copy/safety";
 import { getApi, resetApi } from "@/lib/api";
 import { useConsentStatus } from "@/lib/api/hooks";
@@ -200,6 +201,19 @@ export function Settings() {
             </p>
           </Card>
         ) : null}
+
+        {/*
+         * Quiet entry to the presentation. Deliberately the last thing on the
+         * last screen: a patient never needs it, and anyone being walked
+         * through the build will be shown where it is.
+         */}
+        <button
+          onClick={() => navigate("/behind")}
+          className="pt-[var(--spacing-2xs)] pb-[var(--spacing-md)] text-center text-ink-tertiary underline underline-offset-4"
+          style={{ fontSize: "var(--text-label)" }}
+        >
+          {HEALTH_SYNC.behindLink}
+        </button>
       </div>
     </Screen>
   );

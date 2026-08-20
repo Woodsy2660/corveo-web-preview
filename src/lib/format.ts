@@ -18,9 +18,16 @@ const fullDateFmt = new Intl.DateTimeFormat("en-AU", {
   year: "numeric",
 });
 
+const timeFmt = new Intl.DateTimeFormat("en-AU", {
+  hour: "numeric",
+  minute: "2-digit",
+});
+
 export const fmtDate = (iso: string): string => dateFmt.format(new Date(iso));
 export const fmtDateTime = (iso: string): string => dateTimeFmt.format(new Date(iso));
 export const fmtFullDate = (iso: string): string => fullDateFmt.format(new Date(iso));
+/** Time of day alone — for "Updated 7:14 am", where the date is implied. */
+export const fmtTime = (iso: string): string => timeFmt.format(new Date(iso));
 
 /** Local calendar day (YYYY-MM-DD) of a Date or ISO timestamp. */
 export function localDay(value: Date | string): string {

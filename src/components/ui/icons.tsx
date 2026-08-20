@@ -84,6 +84,22 @@ export function ClockIcon({ className = "" }: IconProps) {
 }
 
 /** Chapter already read. */
+/**
+ * Sync — two arcs chasing each other. Both are 132° of the same 8.3 radius,
+ * so the glyph reads as one continuous loop rather than two unrelated
+ * curves, and each chevron lands exactly on its arc's endpoint.
+ */
+export function SyncIcon({ className = "" }: IconProps) {
+  return (
+    <svg {...base} className={className} width="1em" height="1em">
+      <path d="M20.3 12a8.3 8.3 0 0 1-13.9 6.1" />
+      <path d="M3.7 12a8.3 8.3 0 0 1 13.9-6.1" />
+      <path d="M17.6 2.2v3.7h-3.7" />
+      <path d="M6.4 21.8v-3.7h3.7" />
+    </svg>
+  );
+}
+
 export function CheckIcon({ className = "" }: IconProps) {
   return (
     <svg {...base} className={className} width="1em" height="1em">
