@@ -1,5 +1,13 @@
-# Keep SQL and docs LF so the §13 sha256 verification in db/migrations/README.md
-# reproduces on any clone, and so migrations hit Postgres byte-identical to the guide.
-* text=auto
-*.sql text eol=lf
-*.md  text eol=lf
+# Scoped deliberately to the native lane's own paths.
+#
+# Purpose: keep SQL and docs LF so the §13 sha256 verification in
+# db/migrations/README.md reproduces on a clone from any platform, and so the
+# migrations reach Postgres byte-identical to the guide they were extracted from.
+#
+# NOT repo-wide on purpose. A `* text=auto` rule here would renormalise files
+# owned by the front-end and platform lanes and hand them a spurious whole-repo
+# diff on their next checkout. If the team wants repo-wide normalisation it
+# should be one deliberate commit, not a side effect of this branch.
+db/**          text eol=lf
+docs/native/** text eol=lf
+docs/adr/**    text eol=lf
