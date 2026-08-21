@@ -71,7 +71,7 @@ export function InFocusArticle() {
       {article.sections ? null : (
         <Card className="mt-[var(--spacing-md)]">
           <p className="text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)" }}>
-            {APP.program.contentPendingNotice}
+            {APP.education.contentPendingNotice}
           </p>
         </Card>
       )}

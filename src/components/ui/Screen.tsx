@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { Link } from "react-router";
 import { CORVEO_WORDMARK } from "@/copy/product";
 import { APP } from "@/copy/app";
@@ -37,6 +37,7 @@ export function Screen({
   children,
   footer,
   action,
+  scrollKey,
   withTabBar = false,
 }: {
   eyebrow?: string;
@@ -50,8 +51,20 @@ export function Screen({
   children: ReactNode;
   footer?: ReactNode;
   action?: ReactNode;
+  /**
+   * Changes when the content swaps underneath a screen that stays mounted —
+   * switching program, say. The scroll resets so the reader lands at the top
+   * of what they just chose rather than partway down it.
+   */
+  scrollKey?: string;
   withTabBar?: boolean;
 }) {
+  const main = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (main.current) main.current.scrollTop = 0;
+  }, [scrollKey]);
+
   return (
     <div className="screen-shell" style={{ paddingTop: "var(--safe-top)" }}>
       <header className="flex items-center justify-between px-[var(--spacing-md)] pt-[var(--spacing-md)] pb-[var(--spacing-sm)]">
@@ -64,6 +77,7 @@ export function Screen({
       </header>
 
       <main
+        ref={main}
         className={`flex-1 overflow-y-auto px-[var(--spacing-md)] ${
           withTabBar ? "pb-[calc(96px+var(--safe-bottom))]" : "pb-[var(--spacing-md)]"
         }`}

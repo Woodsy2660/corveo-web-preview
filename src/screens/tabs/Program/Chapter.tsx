@@ -1,7 +1,6 @@
 import { Link, useNavigate, useParams } from "react-router";
 import { Screen } from "@/components/ui/Screen";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { APP } from "@/copy/app";
 import { SAFETY } from "@/copy/safety";
@@ -119,14 +118,6 @@ export function Chapter() {
         />
         <MetaPair label={c.metaReview} value={chapter.reviewStatus} />
       </div>
-
-      {chapter.sections ? null : (
-        <Card className="mt-[var(--spacing-md)]">
-          <p className="text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)" }}>
-            {APP.program.contentPendingNotice}
-          </p>
-        </Card>
-      )}
 
       <article className="flex flex-col gap-[var(--spacing-md)] pt-[var(--spacing-md)]">
         {(chapter.sections ?? []).map((section) => (

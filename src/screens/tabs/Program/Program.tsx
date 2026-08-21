@@ -1,19 +1,23 @@
-import { Link } from "react-router";
 import { Screen, ProfileLink } from "@/components/ui/Screen";
-import { Card } from "@/components/ui/Card";
+import { SegmentedProgress } from "@/components/ui/SegmentedProgress";
 import { APP } from "@/copy/app";
 import { useProgramProgress } from "@/lib/api/hooks";
 import { findProgram, readCount } from "@/lib/programs";
 import { useFollowedPrograms } from "@/lib/useFollowedPrograms";
 import { ChapterList } from "@/screens/tabs/Program/ChapterRow";
 import { ProgramIndex } from "@/screens/tabs/Program/ProgramIndex";
+import { ProgramRail } from "@/screens/tabs/Program/ProgramRail";
 
 /**
  * Program tab (Deliverable 7).
  *
- * Opens on the program you are following. Follow more than one and a
- * switcher appears; follow none and the tab becomes the library instead of
- * an empty screen.
+ * Opens on the program you are following, under a fixed title: the program's
+ * own name is the subheading, so the page does not re-shape itself when you
+ * switch. Follow none and the tab becomes the library instead of an empty
+ * screen.
+ *
+ * Switching between followed programs, and following new ones, both happen
+ * in the rail at the foot of the page — see ProgramRail.
  *
  * Content is authored and clinically reviewed by Corveo (client dependency
  * 5) and is static: it never varies with the reader's readings. The core
@@ -22,7 +26,8 @@ import { ProgramIndex } from "@/screens/tabs/Program/ProgramIndex";
  */
 export function Program() {
   const { data: progress } = useProgramProgress();
-  const { following, active, setActive } = useFollowedPrograms();
+  const { following, active, isFollowing, follow, unfollow, setActive } =
+    useFollowedPrograms();
   const c = APP.program;
   const program = findProgram(active);
 
@@ -35,71 +40,34 @@ export function Program() {
   }
 
   const read = readCount(progress, program);
+  const total = program.chapters.length;
 
   return (
-    <Screen
-      overline={APP.programIndex.chapterCount(program.chapters.length, program.unitLabel)}
-      title={program.title}
-      withTabBar
-      action={<ProfileLink />}
-    >
-      <p className="text-ink-secondary" style={{ fontSize: "var(--text-body-base)" }}>
+    <Screen title={c.title} withTabBar action={<ProfileLink />} scrollKey={program.slug}>
+      <SegmentedProgress read={read} total={total} label={c.progressAria(read, total)} />
+
+      <h2
+        className="pt-[var(--spacing-md)] pb-[var(--spacing-3xs)]"
+        style={{ fontSize: "var(--text-heading-2xl)" }}
+      >
+        {program.title}
+      </h2>
+
+      <p
+        className="pb-[var(--spacing-sm)] text-ink-secondary"
+        style={{ fontSize: "var(--text-body-base)" }}
+      >
         {program.description}
       </p>
 
-      <div className="flex items-center justify-between pt-[var(--spacing-2xs)] pb-[var(--spacing-sm)]">
-        <span className="text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)" }}>
-          {c.progress(read, program.chapters.length)}
-        </span>
-        <Link
-          to="/app/program/browse"
-          className="text-ink-secondary underline underline-offset-4"
-          style={{ fontSize: "var(--text-body-sm)" }}
-        >
-          {c.browseAll}
-        </Link>
-      </div>
-
-      {/* Switcher appears only once there is something to switch between. */}
-      {following.length > 1 ? (
-        <div
-          /* Full-bleed: the rail runs to the screen edge so a part-visible
-             chip reads as "more to swipe" rather than as a clipped button. */
-          className="no-scrollbar -mx-[var(--spacing-md)] flex gap-[var(--spacing-2xs)] overflow-x-auto px-[var(--spacing-md)] pb-[var(--spacing-sm)]"
-          role="radiogroup"
-          aria-label={c.switchAria}
-        >
-          {following.map((slug) => {
-            const p = findProgram(slug);
-            if (!p) return null;
-            const on = slug === active;
-            return (
-              <button
-                key={slug}
-                role="radio"
-                aria-checked={on}
-                onClick={() => setActive(slug)}
-                className={`min-h-[44px] flex-none rounded-round px-[var(--spacing-sm)] ${
-                  on
-                    ? "bg-action text-action-ink"
-                    : "border border-hairline bg-card text-ink-secondary"
-                }`}
-                style={{ fontSize: "var(--text-body-sm)", fontWeight: on ? 500 : 400 }}
-              >
-                {p.title}
-              </button>
-            );
-          })}
-        </div>
-      ) : null}
-
-      <Card>
-        <p className="text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)" }}>
-          {c.contentPendingNotice}
-        </p>
-      </Card>
-
       <ChapterList program={program} progress={progress} />
+
+      <ProgramRail
+        active={active}
+        following={following}
+        onToggleFollow={(slug) => (isFollowing(slug) ? unfollow(slug) : follow(slug))}
+        onSwitch={setActive}
+      />
     </Screen>
   );
 }

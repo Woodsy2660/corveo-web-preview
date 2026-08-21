@@ -35,6 +35,8 @@ export const APP = {
     inFocusHeading: "In Focus",
     inFocusSub: "Long reads",
     openPulseAria: (title: string) => `Open short read: ${title}`,
+    contentPendingNotice:
+      "Education content is being prepared and clinically reviewed by the Corveo team. Placeholder content is shown during development.",
     scopeNote:
       "The Pulse and In Focus are the website's collections, shown here so the library can be reviewed. Publishing them in the app is a change request.",
   },
@@ -86,22 +88,29 @@ export const APP = {
   },
 
   program: {
-    eyebrow: "Six-week program",
-    title: "Learn, week by week.",
+    /** Stable one-line heading: the program's own name is the subheading. */
+    title: "Your program.",
     weekLabel: (n: number) => `Week ${n}`,
-    contentPendingNotice:
-      "Education content is being prepared and clinically reviewed by the Corveo team. Placeholder content is shown during development.",
     lockedNote: "Opens as your program progresses.",
     progress: (read: number, total: number) => `${read} of ${total} read`,
-    chapterCount: (n: number) => `${n} Chapters`,
+    progressAria: (read: number, total: number) => `${read} of ${total} chapters read`,
     /** "3 min read" / "12 min watch" / "21 min listen" — matches the site. */
     duration: (min: number, medium: "read" | "watch" | "listen") =>
       `${min} min ${medium}`,
     readLabel: "Read",
     contentPending: "Content pending",
     browseAll: "All programs",
-    switchAria: "Switch program",
     openChapterAria: (n: number, title: string) => `Chapter ${n}: ${title}`,
+
+    /** The rail at the foot of the tab: the way to the other programs. */
+    rail: {
+      heading: "More programs",
+      sub: "Follow to add",
+      followAria: (title: string) => `Follow ${title}`,
+      unfollowAria: (title: string) => `Unfollow ${title}`,
+      switchAria: (title: string) => `Switch to ${title}`,
+      openAria: (title: string) => `About ${title}`,
+    },
   },
 
   programIndex: {
