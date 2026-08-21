@@ -1,0 +1,6 @@
+# This app is hand-formatted at roughly 90 columns; Prettier is not installed
+# and is not part of the build. This file exists so a format-on-save editor
+# wraps at 90 rather than Prettier's 80-column default. It does NOT make
+# Prettier a no-op here: a repo-wide run still rewrites most files, so treat
+# that as a deliberate sweep, not routine tidying.
+printWidth: 90
