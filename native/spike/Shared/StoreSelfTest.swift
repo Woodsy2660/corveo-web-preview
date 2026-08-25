@@ -78,6 +78,8 @@ enum StoreSelfTest {
                 st.anchorData = Data((0..<64).map { UInt8($0) })
                 st.enqueue([MappedReading(
                     hkUuid: UUID().uuidString,
+                    systolicUuid: UUID().uuidString,
+                    diastolicUuid: UUID().uuidString,
                     systolic: 0, diastolic: 0,          // placeholders; never rendered
                     takenAt: Date(timeIntervalSince1970: 1_700_000_123.456),
                     tzOffsetMinutes: 600,

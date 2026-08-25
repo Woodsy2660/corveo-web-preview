@@ -27,7 +27,10 @@ enum Mapper {
         let d = dia.quantity.doubleValue(for: BPTypes.mmHg)
         guard s.isFinite, d.isFinite else { return nil }
         return MappedReading(
-            hkUuid: corr.uuid.uuidString, systolic: s, diastolic: d,
+            hkUuid: corr.uuid.uuidString,
+            systolicUuid: sys.uuid.uuidString,
+            diastolicUuid: dia.uuid.uuidString,
+            systolic: s, diastolic: d,
             takenAt: corr.startDate,
             tzOffsetMinutes: offsetFromMetadata(corr),   // nil when absent [R17]
             sourceBundleId: corr.sourceRevision.source.bundleIdentifier,

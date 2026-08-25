@@ -23,7 +23,7 @@ enum SpikeCommandLine {
                         || $0 == "-spikeAck" || $0 == "-spikeStartObserving"
                         || $0 == "-spikeRequestAuth" || $0 == "-spikeWipeStore"
                         || $0 == "-spikeSources" || $0 == "-spikeNoAutoArm"
-                        || $0.hasPrefix("-spikeInject") }
+                        || $0.hasPrefix("-spikeInject") || $0 == "-spikeExportSnapshot" }
     }
 
     private static func intValue(after flag: String, default def: Int) -> Int {
@@ -159,6 +159,48 @@ enum SpikeCommandLine {
                   + "malformedSources=\(s.diagnostics.malformedBySource.count) "
                   + "recentUuids=\(s.recentUuids.count)")
             for p in snap.uuidPrefixes { print("    pendingCorrelationUuid=\(p)") }
+        }
+
+        if args.contains("-spikeExportSnapshot") {
+            // The drain payload, which by definition carries values (§7.1 getPendingSnapshot).
+            // This is NOT a log line and must never be treated as one: do not commit it, do
+            // not paste it into evidence, and run it against writer-generated synthetic data
+            // only (§4.2). Delimited so a harness can lift it out of the console cleanly.
+            let s = engine.currentState()
+            struct Row: Encodable {
+                let itemId, hkUuid, enrolmentRef: String
+                let systolicUuid, diastolicUuid: String?
+                let systolic, diastolic: Double
+                let takenAt: String
+                let tzOffsetMinutes: Int?
+                let sourceBundleId, sourceName: String
+                let deviceModel: String?
+                let receivedAt: String
+            }
+            struct Payload: Encodable { let snapshotId: String; let readings: [Row] }
+            let iso = ISO8601DateFormatter()
+            iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            iso.timeZone = TimeZone(identifier: "UTC")
+            let payload = Payload(
+                snapshotId: s.snapshotToken,
+                readings: s.queue.map {
+                    Row(itemId: $0.itemId, hkUuid: $0.hkUuid, enrolmentRef: $0.enrolmentRef,
+                        systolicUuid: $0.systolicUuid, diastolicUuid: $0.diastolicUuid,
+                        systolic: $0.systolic, diastolic: $0.diastolic,
+                        takenAt: iso.string(from: $0.takenAt),
+                        tzOffsetMinutes: $0.tzOffsetMinutes,
+                        sourceBundleId: $0.sourceBundleId, sourceName: $0.sourceName,
+                        deviceModel: $0.deviceModel,
+                        receivedAt: iso.string(from: $0.receivedAt))
+                })
+            let enc = JSONEncoder(); enc.outputFormatting = [.sortedKeys]
+            if let data = try? enc.encode(payload), let json = String(data: data, encoding: .utf8) {
+                print("SPIKE-SNAPSHOT-JSON-BEGIN")
+                print(json)
+                print("SPIKE-SNAPSHOT-JSON-END")
+            } else {
+                print("  exportSnapshot=FAILED encode")
+            }
         }
 
         if args.contains("-spikeSources") {

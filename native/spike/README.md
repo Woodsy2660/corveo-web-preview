@@ -249,6 +249,50 @@ still earns its bundle: it is the control that proves the abort is the *set* and
 **Not touched:** Path A. SPK-1 is about anchored *queries* on the correlation type, a
 different API surface from authorisation — and those work (below).
 
+## END-TO-END PIPELINE RUN, 26 Aug — the whole chain, proven
+
+```
+iPhone → Apple Health → HKAnchoredObjectQuery → plugin queue (two-generation store)
+  → snapshot → drain → PostgREST → Postgres (client's DDL, RLS on)
+  → observation + observation_component → acknowledge → queue empty
+```
+
+Three synthetic writer readings. **Every field round-tripped exactly**, including both child
+sample UUIDs, verified by comparison rather than inspection. Three panels, six components,
+correctly paired, `source_type=healthkit`, `source_system=dev.lucab.bpwriter`. Replay of the
+same snapshot inserted nothing (`inserted=0 skipped=3`). The acknowledge returned
+`removed=3`, emptied the queue and advanced the snapshot generation `gen-1 → gen-2` (B2).
+
+**What it ran against.** A local stand-in — Postgres plus PostgREST — carrying the client's DDL
+verbatim, with a JWT minted for an `authenticated` role. **Not** the client's Supabase. Theirs is
+reachable and its RLS is enforced (every table 401s through `get_app_user_id`), but nobody on the
+build team can authenticate against it: signups require email confirmation, anonymous auth is
+off, and the lane has no dashboard access. The RLS policies and the `get_app_user_id` body in the
+stand-in are **reconstructed** — the client's dump is tables only, with no policies, functions,
+grants or `auth` schema — so this validates the shape, not their exact policies.
+
+**Set-up is in [`drain/README.md`](drain/README.md); the harness is [`drain/drain.py`](drain/drain.py).**
+
+### What it found
+
+Neither of these came from reading the schema — the payload validated cleanly on paper. They
+surfaced only by pushing data through and then deliberately trying to break it.
+
+- **No uniqueness constraint on `observation`.** Inserting the same `source_uuid` twice, bypassing
+  the harness, was accepted. The only unique index is the primary key. §8.1 says Layer-1
+  idempotency *"depends solely on the constraint"* — it does not exist. Logged as **Q6**; raised
+  as a 1 Critical issue for the backend lane.
+- **`effective_tz` fabricates provenance.** It is `NOT NULL DEFAULT 'Australia/Sydney'`, so
+  readings with no `HKMetadataKeyTimeZone` are stamped Sydney by the database. Contradicts
+  pitfall 14. Logged as **Q7**; raised as 2 Major.
+
+### What it does not prove
+
+**Connectivity to the client's project**, and **atomicity**. With no ingest RPC in the deployed
+schema, one reading is three PostgREST calls with no transaction across them — if the components
+fail after the panel lands, the panel is orphaned. The harness reports orphans explicitly rather
+than hiding them. That is C15 in the flesh rather than in the abstract.
+
 ## ACCEPTANCE-DEVICE RUN, 26 Aug — Path A accepted
 
 Full record in [`../../docs/adr/ADR-0006-spike-outcome.md`](../../docs/adr/ADR-0006-spike-outcome.md).

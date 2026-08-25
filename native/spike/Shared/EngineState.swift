@@ -21,6 +21,12 @@ struct ArmResult: Codable, Equatable {
 /// here — `StateStore.commit` assigns both exactly once at first enqueue (§12 P1).
 struct MappedReading: Equatable {
     let hkUuid: String
+    /// The two child quantity samples' own UUIDs. The client schema's
+    /// `observation_component.source_uuid` is NOT NULL, so the correlation UUID alone is
+    /// not enough to write a component row — these were previously read for their values
+    /// and discarded.
+    let systolicUuid: String
+    let diastolicUuid: String
     let systolic: Double
     let diastolic: Double
     let takenAt: Date
@@ -34,6 +40,9 @@ struct MappedReading: Equatable {
 struct QueuedReading: Codable, Equatable {
     let itemId: String            // native queue identity — the ACK key (ULID)
     let hkUuid: String            // HealthKit CORRELATION UUID — backend idempotency key
+    /// Optional so an existing store still decodes; populated on every fresh capture.
+    let systolicUuid: String?
+    let diastolicUuid: String?
     let enrolmentRef: String      // binding stamped at commit (§6.1)
     let systolic: Double          // mmHg, as recorded; no rounding, no evaluation
     let diastolic: Double         // mmHg
@@ -108,6 +117,8 @@ struct EngineState: Codable, Equatable {
             queue.append(QueuedReading(
                 itemId: ULID.generate(now: now),
                 hkUuid: r.hkUuid,
+                systolicUuid: r.systolicUuid,
+                diastolicUuid: r.diastolicUuid,
                 enrolmentRef: enrolmentRef,
                 systolic: r.systolic,
                 diastolic: r.diastolic,
