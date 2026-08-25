@@ -12,7 +12,7 @@ as you go. Evidence carries UUID prefixes, counts and error codes — never valu
 ## Step 0 — Gates ✅ BOTH GREEN, 20 August 2026
 
 - [x] **iPhone on iOS 26.6 or later.** Confirmed 20 Aug. **Still outstanding: the exact build
-      number**, which goes in every evidence artefact (§3.5) and in ADR-0006's environment
+      number**, which goes in every evidence artefact (§3.5) and in ADR-0004's environment
       table. Settings → General → About → Software Version. Results against any other build
       are **void** — the 26.5 Blood Pressure authorisation sheet rendered blank/incomplete
       [R23], which is the whole reason the baseline is frozen.
@@ -42,8 +42,10 @@ as you go. Evidence carries UUID prefixes, counts and error codes — never valu
 
 </details>
 
-- [ ] Xcode 26.x, device provisioned. Free team: profiles expire in 7 days — if a demo is
-      near, rebuild that morning. **This is now the only thing between you and SPK-1.**
+- [x] **Xcode 26.x, device provisioned — done 26 Aug.** Xcode 26.6 (17F113), a personal free (sandbox)
+      team, developer mode enabled, three targets signed and installed. Free team:
+      profiles expire in 7 days — if a demo is near, rebuild that morning; 3 installed dev apps
+      per device, which these three exactly consume.
 
 ## Step 1 — Three targets
 
@@ -98,7 +100,7 @@ correlation query → both quantity observer registrations → error codes.
 
 **Pass:** the chosen minimal quantity-only set authorises correlation reads and observer
 registration cleanly. Any divergence amends `BPTypes.authorizationRead` in §7.4 **and only
-there**, recorded in ADR-0006 and `deviations.md`. The spike wins over the document.
+there**, recorded in ADR-0004 and `deviations.md`. The spike wins over the document.
 
 ## Step 5 — SPK-4 · state store and anchor survival
 
@@ -131,6 +133,15 @@ DEVIATION against §9.2. Cheapest possible answer to a question we would otherwi
 
 ## Step 8 — Close out, same day
 
-- [ ] ADR-0006 filled: Path A or B, device model, exact iOS build, per-SPK results.
-- [ ] `docs/deviations.md` updated — even if it reads "none".
-- [ ] Every retained artefact audited for values before it leaves the device (T-EV).
+- [x] **ADR-0004 filled, 26 Aug — Path A accepted.** Device `iPhone17,2`, iOS 27.0 build
+      `24A5424a`, per-SPK results recorded. Carries a `BASELINE-MISMATCH` callout: the handset
+      is a different OS generation from the validated 26.x baseline (D-003).
+- [x] **`docs/native/deviations.md` updated.** Three deviations (D-001, D-002, D-003); S1 closed by
+      SPK-extra; S2 confirmed on the acceptance device and owed a §2.1 / §11 amendment.
+- [x] **Artefacts audited (T-EV).** Everything emitted by the run is UUID prefixes, counts,
+      states and error codes. No reading value appears in the ADR, the logs, or any artefact —
+      the `Log` wrapper's value-carrying overloads are `unavailable`, so a slip is a compile
+      error rather than a review finding.
+- [ ] **Still owed:** the §9.4 Omron chain on *this* handset (only `com.withings.wiScaleNG` is
+      present), and the SPK-3 operator observation — which Blood Pressure controls the sheet
+      displayed.
