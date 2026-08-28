@@ -1,0 +1,326 @@
+/*
+ * Corveo — the Userkind design system, exported from Figma.
+ *
+ * Source: `Corveo UI Design` (xwz2b8vWOhSQhBeKIMmb9q), Variables panel,
+ * 28 Aug 2026. Three collections, 132 variables, read verbatim.
+ * Reference docs: /docs/corveo-design-system.md
+ *
+ * This is the AUTHORITATIVE copy. Everything in it came out of the Figma
+ * variable collections directly — nothing here is reverse-engineered from the
+ * shipped site, which is how the older tokens.css was built.
+ *
+ * NAMESPACE: every custom property is prefixed `--fig-`. That is deliberate.
+ * It lets this file sit alongside the existing tokens.css without a single
+ * name collision, so importing it can never silently restyle the app. See
+ * ./README.md for how to adopt it.
+ *
+ * STRUCTURE mirrors Figma's three collections:
+ *   1. Brand      — raw primitives. Do not consume these in components.
+ *   2. Alias      — semantic roles. Consume these.
+ *   3. Responsive — scale values. Consume these. Mode-switched, see below.
+ */
+
+:root {
+  /* ==========================================================================
+   * 1. BRAND — primitives (56)
+   * Private layer. Components must never reference these directly; go through
+   * the Alias or Responsive layers so a palette change lands in one place.
+   * ========================================================================== */
+
+  /* -- Neutral (13) -- */
+  --fig-color-neutral-black: #000000;
+  --fig-color-neutral-900: #1a1a1a;
+  --fig-color-neutral-800: #333333;
+  --fig-color-neutral-700: #4d4d4d;
+  --fig-color-neutral-600: #666666;
+  --fig-color-neutral-500: #808080;
+  --fig-color-neutral-400: #999999;
+  --fig-color-neutral-300: #b2b2b2;
+  --fig-color-neutral-200: #cccccc;
+  --fig-color-neutral-100: #e5e5e5;
+  --fig-color-neutral-60: #f0f0f0;
+  --fig-color-neutral-20: #fafafa;
+  --fig-color-neutral-white-0: #ffffff;
+
+  /* -- Blue (5) — the primary accent -- */
+  --fig-color-blue-900: #081e7e;
+  --fig-color-blue-700: #293f9d;
+  --fig-color-blue-500: #3e4fb5;
+  --fig-color-blue-300: #6a91e4;
+  --fig-color-blue-200: #b2caff;
+
+  /* -- Brown (3) — ramp stops at 500; there is no 300 or 100 -- */
+  --fig-color-brown-900: #3a170b;
+  --fig-color-brown-700: #4a230d;
+  --fig-color-brown-500: #9e6850;
+
+  /*
+   * -- Beige (5) --
+   * NOTE: beige-500 is #1C7A8C, a teal, sitting between two browns. That is
+   * what the Figma variable holds, so it is what this export holds. It drives
+   * surface/color-3. Not our error to fix; recorded so nobody "corrects" it
+   * later and silently changes the third accent.
+   */
+  --fig-color-beige-900: #523e31;
+  --fig-color-beige-700: #664d3c;
+  --fig-color-beige-500: #1c7a8c;
+  --fig-color-beige-300: #c9b4a5;
+  --fig-color-beige-100: #f2ede9;
+
+  /* -- Warning (5) -- */
+  --fig-color-warning-900: #78350f;
+  --fig-color-warning-700: #a16207;
+  --fig-color-warning-500: #eab308;
+  --fig-color-warning-300: #fde047;
+  --fig-color-warning-100: #fef9c3;
+
+  /* -- Information (5) — note this blue is NOT the brand blue -- */
+  --fig-color-information-900: #0d2876;
+  --fig-color-information-700: #1847cc;
+  --fig-color-information-500: #3275e3;
+  --fig-color-information-300: #93c5fd;
+  --fig-color-information-100: #dbeafe;
+
+  /* -- Error (5) -- */
+  --fig-color-error-900: #960707;
+  --fig-color-error-700: #c81111;
+  --fig-color-error-500: #ea2121;
+  --fig-color-error-300: #fca5a5;
+  --fig-color-error-100: #fee2e2;
+
+  /* -- Success (5) -- */
+  --fig-color-success-900: #09672e;
+  --fig-color-success-700: #0b8036;
+  --fig-color-success-500: #32a45c;
+  --fig-color-success-300: #66c388;
+  --fig-color-success-100: #d4f1de;
+
+  /*
+   * -- Type families (4) --
+   * Figma names the licensed faces `Reckless Standard M-TRIAL` and
+   * `Haffer VF-TRIAL`. Those are trial cuts and are not the names the app
+   * loads, so the stacks below use the app's @font-face families with the
+   * Figma source noted. Swap the first entry when licensed files land.
+   */
+  --fig-font-family-heading-lg: "reckless", ui-serif, Georgia, "Times New Roman",
+    serif; /* Figma: Reckless Standard M-TRIAL */
+  --fig-font-family-special: "reckless", ui-serif, Georgia, "Times New Roman",
+    serif; /* Figma: Reckless Standard M-TRIAL */
+  --fig-font-family-heading-sm: "haffer", -apple-system, "SF Pro Text",
+    ui-sans-serif, system-ui, sans-serif; /* Figma: Haffer VF-TRIAL */
+  --fig-font-family-body: "haffer", -apple-system, "SF Pro Text", ui-sans-serif,
+    system-ui, sans-serif; /* Figma: Haffer VF-TRIAL */
+
+  /*
+   * -- Type weights (4) --
+   * Figma stores these as names, not numbers. `medium` = 500 and
+   * `regular` = 400 are confirmed from bound text styles; `bold` = 700 and
+   * `light` = 300 follow the usual mapping but were not observed in use.
+   */
+  --fig-font-weight-light: 300;
+  --fig-font-weight-regular: 400;
+  --fig-font-weight-medium: 500;
+  --fig-font-weight-bold: 700;
+
+  /* ==========================================================================
+   * 2. ALIAS — semantic roles (33)
+   * This is the layer components consume for colour.
+   * ========================================================================== */
+
+  /* -- text (15) -- */
+  --fig-text-heading: var(--fig-color-neutral-black);
+  --fig-text-heading-inverse: var(--fig-color-neutral-white-0);
+  --fig-text-primary: var(--fig-color-neutral-800);
+  --fig-text-primary-inverse: var(--fig-color-neutral-white-0);
+  --fig-text-secondary: var(--fig-color-neutral-700);
+  --fig-text-secondary-inverse: var(--fig-color-beige-100);
+  --fig-text-tertiary: var(--fig-color-neutral-500);
+  /* Resolves to the same value as --fig-text-tertiary. Verbatim from Figma. */
+  --fig-text-tertiary-inverse: var(--fig-color-neutral-500);
+  --fig-text-disabled: var(--fig-color-neutral-400);
+  --fig-text-disabled-inverse: var(--fig-color-neutral-200);
+  --fig-text-link: var(--fig-color-blue-500);
+  --fig-text-link-hover: var(--fig-color-blue-700);
+  --fig-text-error: var(--fig-color-error-500);
+  --fig-text-success: var(--fig-color-success-700);
+  /* Maps to Brown, not to the Information ramp. Verbatim from Figma. */
+  --fig-text-info: var(--fig-color-brown-500);
+
+  /* -- surface (12) -- */
+  --fig-surface-action: var(--fig-color-neutral-black);
+  --fig-surface-action-hover: var(--fig-color-neutral-700);
+  --fig-surface-action-disabled: var(--fig-color-neutral-500);
+  --fig-surface-color-1: var(--fig-color-blue-500);
+  --fig-surface-color-1-light: var(--fig-color-blue-200);
+  --fig-surface-color-2: var(--fig-color-brown-500);
+  --fig-surface-color-3: var(--fig-color-beige-500);
+  --fig-surface-neutral-dark: var(--fig-color-neutral-black);
+  --fig-surface-neutral-light: var(--fig-color-neutral-100);
+  --fig-surface-neutral-lighter: var(--fig-color-beige-300);
+  --fig-surface-neutral-lightest: var(--fig-color-beige-100);
+  --fig-surface-white: var(--fig-color-neutral-white-0);
+
+  /* -- border (6) -- */
+  --fig-border-default: var(--fig-color-neutral-200);
+  --fig-border-default-active: var(--fig-color-neutral-black);
+  --fig-border-primary: var(--fig-color-neutral-black);
+  --fig-border-primary-inverse: var(--fig-color-neutral-white-0);
+  --fig-border-disabled: var(--fig-color-neutral-200);
+  --fig-border-error: var(--fig-color-error-500);
+
+  /* ==========================================================================
+   * 3. RESPONSIVE — scale (43 values x 3 modes)
+   *
+   * Figma models this as one collection with three modes: Desktop, Tablet,
+   * Mobile. Below is MOBILE, declared as the base, with Tablet and Desktop
+   * layered on in the media queries at the end of this file.
+   *
+   * Mobile-first is deliberate: Corveo BP Reset is an iPhone app and the
+   * preview frame is 393px, so the mobile mode is the one that renders in
+   * production. The larger modes exist for the web surface.
+   *
+   * BREAKPOINT PIXEL VALUES ARE AN ASSUMPTION. Figma names the modes but does
+   * not define the widths at which they switch. 768 / 1024 below are the
+   * conventional defaults and are the one thing in this file not taken from
+   * the source. Confirm with Userkind before relying on them.
+   * ========================================================================== */
+
+  /* -- Spacing (10) — Mobile -- */
+  --fig-spacing-3xs: 4px;
+  --fig-spacing-2xs: 6px;
+  --fig-spacing-xs: 10px;
+  --fig-spacing-sm: 12px;
+  --fig-spacing-md: 16px;
+  --fig-spacing-lg: 24px;
+  --fig-spacing-xl: 32px;
+  --fig-spacing-2xl: 56px;
+  --fig-spacing-3xl: 80px;
+  --fig-spacing-side-padding: 12px;
+
+  /* -- Radius (5) — Mobile -- */
+  --fig-radius-none: 0px;
+  --fig-radius-xs: 3px;
+  --fig-radius-sm: 6px;
+  --fig-radius-md: 10px;
+  --fig-radius-round: 100px;
+
+  /* -- Font size, body (4) — Mobile -- */
+  --fig-font-size-body-lg: 17px;
+  --fig-font-size-body-base: 15px;
+  --fig-font-size-body-sm: 13px;
+  --fig-font-size-body-xs: 12px;
+
+  /* -- Font size, headings (7) — Mobile -- */
+  --fig-font-size-heading-6xl: 42px;
+  --fig-font-size-heading-5xl: 36px;
+  --fig-font-size-heading-4xl: 28px;
+  --fig-font-size-heading-3xl: 22px;
+  --fig-font-size-heading-2xl: 18px;
+  --fig-font-size-heading-xl: 16px;
+  --fig-font-size-heading-subheading: 13px;
+
+  /* -- Font size, special (2) — Mobile -- */
+  --fig-font-size-special-lg: 32px;
+  --fig-font-size-special-sm: 20px;
+
+  /* -- Font size, label (3) — Mobile -- */
+  --fig-font-size-label-base: 14px;
+  --fig-font-size-label-button: 15px;
+  --fig-font-size-label-xs: 12px;
+
+  /*
+   * -- Line height, headings (6) — Mobile --
+   * Absolute px, keyed h1-h5. Note these do NOT share names with the font
+   * sizes above (which run xl..6xl), so the pairing is not derivable from the
+   * tokens — it comes from the published text styles. See
+   * /docs/figma-tokens-2026-08-25.md for the style list.
+   */
+  --fig-line-height-h1: 44px;
+  --fig-line-height-h2: 44px;
+  --fig-line-height-h3: 32px;
+  --fig-line-height-h4: 24px;
+  --fig-line-height-h5: 18px;
+  --fig-line-height-subheading: 14px;
+
+  /* -- Line height, body (3) — Mobile -- */
+  --fig-line-height-body-lg: 24px;
+  --fig-line-height-body-md: 20px;
+  --fig-line-height-body-sm: 18px;
+
+  /* -- Paragraph spacing, body (3) — all modes identical -- */
+  --fig-paragraph-spacing-body-sm: 16px;
+  --fig-paragraph-spacing-body-md: 16px;
+  --fig-paragraph-spacing-body-lg: 20px;
+}
+
+/*
+ * TABLET mode.
+ * Spacing and radius are identical to Mobile except `side-padding`, so only
+ * the values that actually change are redeclared.
+ */
+@media (min-width: 768px) {
+  :root {
+    --fig-spacing-side-padding: 24px;
+
+    --fig-radius-xs: 4px;
+    --fig-radius-sm: 8px;
+    --fig-radius-md: 12px;
+
+    --fig-font-size-body-lg: 18px;
+    --fig-font-size-body-base: 16px;
+    --fig-font-size-body-sm: 14px;
+
+    --fig-font-size-heading-6xl: 64px;
+    --fig-font-size-heading-5xl: 48px;
+    --fig-font-size-heading-4xl: 40px;
+    --fig-font-size-heading-3xl: 30px;
+    --fig-font-size-heading-2xl: 20px;
+    --fig-font-size-heading-xl: 18px;
+
+    --fig-font-size-special-lg: 32px;
+
+    --fig-font-size-label-base: 15px;
+
+    --fig-line-height-h1: 60px;
+    --fig-line-height-h2: 54px;
+    --fig-line-height-h4: 24px;
+    --fig-line-height-h5: 18px;
+  }
+}
+
+/* DESKTOP mode. */
+@media (min-width: 1024px) {
+  :root {
+    --fig-spacing-2xs: 8px;
+    --fig-spacing-xs: 12px;
+    --fig-spacing-sm: 16px;
+    --fig-spacing-md: 24px;
+    --fig-spacing-lg: 32px;
+    --fig-spacing-xl: 48px;
+    --fig-spacing-2xl: 80px;
+    --fig-spacing-3xl: 120px;
+    --fig-spacing-side-padding: 48px;
+
+    --fig-font-size-heading-6xl: 68px;
+    --fig-font-size-heading-5xl: 50px;
+    --fig-font-size-heading-2xl: 24px;
+    --fig-font-size-heading-xl: 20px;
+    --fig-font-size-heading-subheading: 14px;
+
+    --fig-font-size-special-lg: 40px;
+    --fig-font-size-special-sm: 28px;
+
+    --fig-font-size-label-base: 16px;
+    --fig-font-size-label-button: 16px;
+
+    --fig-line-height-h1: 80px;
+    --fig-line-height-h2: 60px;
+    --fig-line-height-h3: 48px;
+    --fig-line-height-h4: 32px;
+    --fig-line-height-h5: 28px;
+
+    --fig-line-height-body-lg: 30px;
+    --fig-line-height-body-md: 24px;
+    --fig-line-height-body-sm: 20px;
+  }
+}

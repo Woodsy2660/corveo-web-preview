@@ -42,7 +42,12 @@
   --color-text-secondary-inverse: #f2ede9;
   --color-text-tertiary: #808080;
   --color-text-disabled: #999;
-  --color-text-link: #000;
+  /*
+   * `text/link` resolves to Blue/500 in the Figma variables (28 Aug export).
+   * This was #000 — read off the homepage, which is the outlier; article
+   * bodies use the blue. See ./README.md.
+   */
+  --color-text-link: #3e4fb5;
   --color-text-link-hover: #293f9d;
 
   /* — Borders — */
