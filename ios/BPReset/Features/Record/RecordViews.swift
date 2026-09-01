@@ -122,6 +122,9 @@ struct ReadingRow: View {
             Spacer()
             VStack(alignment: .trailing, spacing: Spacing.xxxs) {
                 Chip(text: reading.sourceType == .healthkit ? AppCopy.readings.sourceHealth : AppCopy.readings.sourceManual)
+                // Provenance exactly as HealthKit reported it: the writing app's name, never an
+                // inference that it was a cuff (rulebook §4.6).
+                if reading.sourceType == .healthkit, let name = reading.sourceName, !name.isEmpty { Chip(text: name) }
                 // Most readings are left-arm; only flag the exception.
                 if let site = reading.bodySiteDisplay, site != "Left arm" { Chip(text: site) }
             }
@@ -135,7 +138,7 @@ struct ReadingRow: View {
 
     /// Spoken form per the rulebook §8.2: date, systolic, diastolic, provenance.
     private var accessibilityText: String {
-        "\(Format.fullDate(reading.effectiveTime)). Systolic \(Format.mmHg(reading.systolic)) millimetres of mercury. Diastolic \(Format.mmHg(reading.diastolic)) millimetres of mercury. \(reading.sourceType == .healthkit ? "From Apple Health" : "Entered manually")."
+        "\(Format.fullDate(reading.effectiveTime)). Systolic \(Format.mmHg(reading.systolic)) millimetres of mercury. Diastolic \(Format.mmHg(reading.diastolic)) millimetres of mercury. \(reading.sourceType == .healthkit ? "From Apple Health\(reading.sourceName.map { ", via \($0)" } ?? "")" : "Entered manually")."
     }
 }
 
