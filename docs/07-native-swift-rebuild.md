@@ -87,6 +87,16 @@ Bundle ID `dev.aiplease.bpreset` (throwaway, sandbox team). Deployment target iO
   That is Stage 2 criterion (a) on a physical device against the dev project. One defect found
   and fixed on the way: PostgREST resolves an RPC by its named parameters, so a nil display name
   must be sent as an explicit null, never omitted.
+- **Apple Health path verified live the same day, same handset.** With Luca's synthetic writer
+  (`dev.lucab.bpwriter`, the only app carrying the write permission) installed beside the product:
+  a synthetic correlation saved to Apple Health arrived on the Record tab with the Apple Health
+  provenance chip after a foreground activation (foreground catch-up and drain through
+  `ingest_observations`). Then, with BP Reset backgrounded and the phone locked, a delayed save
+  from the writer was already in the record when the app was reopened: the observer query woke
+  the app, the engine committed to the protected queue, and the drain uploaded on activation.
+  That is the T4 and T5a shape of Stage 2 criterion (c) on a physical device, synthetic data
+  only. Still owed for acceptance: the loan Omron cuff on this handset (criteria (b) and (d)),
+  the 48-hour soak (T6), the client non-production environment (T15/T16), and the written script.
 
 ## 5. Phase 1 exit checks
 
@@ -106,7 +116,7 @@ Bundle ID `dev.aiplease.bpreset` (throwaway, sandbox team). Deployment target iO
 | P1 Capacitor shell | Done as the SwiftUI shell above. |
 | P2 Plugin package (`packages/bp-healthkit`, TS definitions, web mock) | Replaced by the `Engine/` module already in the app. Remaining P2 work: XCTest port of the store self-test, device runs of T1–T3, T-L, T-L2, and the retry funnel on protected-data-available. |
 | P3 Backend wiring (supabase-js, Keychain plugin) | `supabase-swift` via SPM; its Keychain session storage configured after-first-unlock, this device only. `SupabaseAPI: CorveoAPI`. Auth screens gain a password field and call `enrol_patient`. |
-| P4 Drain + Apple Health UX | The drain exists; P4 becomes device evidence (T4, T5a, T5b, T7, T9, T10, T10b, T13, T14) and the soak. |
+| P4 Drain + Apple Health UX | Foreground (T4 shape) and background (T5a shape) verified live on 2 Sep with the writer. Remaining device evidence: T5b, T7, T9, T10, T10b, T13, T14, and the soak. |
 | N-07 WebView storage rule | Moot. Replaced by "no reading value outside the engine's protected queue". |
 | N-10 presentation surfaces | Not ported. The replica sheet and Behind-the-scenes stay web-only. |
 | N-12 CR-scope tabs | Ported for IA review; a release build flag still needs to hide them. |
