@@ -20,15 +20,20 @@ struct BPResetApp: App {
     @State private var appState = AppState()
     @State private var model: AppModel
     @State private var health: HealthModel
+    @State private var session: SessionModel
     @State private var router = Router()
     @State private var follow = FollowState()
 
     init() {
         let state = AppState()
-        let model = AppModel(api: MockAPI())
+        // Backend when configured (Secrets.xcconfig), the synthetic mock otherwise.
+        let client = SupabaseFactory.makeClient()
+        let api: CorveoAPI = client.map { SupabaseAPI(client: $0) } ?? MockAPI()
+        let model = AppModel(api: api)
         _appState = State(initialValue: state)
         _model = State(initialValue: model)
         _health = State(initialValue: HealthModel(app: model, appState: state))
+        _session = State(initialValue: SessionModel(client: client, appState: state))
     }
 
     var body: some Scene {
@@ -37,6 +42,7 @@ struct BPResetApp: App {
                 .environment(appState)
                 .environment(model)
                 .environment(health)
+                .environment(session)
                 .environment(router)
                 .environment(follow)
                 .preferredColorScheme(.light)
@@ -94,9 +100,16 @@ final class AppState {
         d.set(enrolmentRef, forKey: Self.key + ".enrolmentRef")
     }
 
-    /// The enrolment moment. In P3 this becomes `enrol_patient()`; the server clock wins.
+    /// Mock mode only: the enrolment moment without a server.
     func markEnrolled() {
         if programStartedAt == nil { programStartedAt = Date() }
+    }
+
+    /// Backend mode: the tuple from the `app_user` row. The server clock wins, and the pair is
+    /// immutable once set (a different pair is a different enrolment, §6.2).
+    func setEnrolment(ref: String, start: Date) {
+        if enrolmentRef != ref { enrolmentRef = ref }
+        if programStartedAt != start { programStartedAt = start }
     }
 
     func completeJourney() { journeyComplete = true }
@@ -138,15 +151,22 @@ final class Router {
 
 struct RootView: View {
     @Environment(AppState.self) private var appState
+    @Environment(SessionModel.self) private var session
 
     var body: some View {
         Group {
-            if appState.journeyComplete {
+            if !session.restored {
+                CColor.page.ignoresSafeArea()
+            } else if appState.journeyComplete && session.hasBackend && !session.isSignedIn {
+                SignInView()
+            } else if appState.journeyComplete {
                 MainTabsView()
             } else {
                 JourneyFlow()
             }
         }
         .animation(Motion.brand, value: appState.journeyComplete)
+        .animation(Motion.brand, value: session.isSignedIn)
+        .task { await session.restore() }
     }
 }

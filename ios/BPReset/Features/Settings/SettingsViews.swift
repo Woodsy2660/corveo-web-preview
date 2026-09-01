@@ -7,6 +7,7 @@ struct SettingsView: View {
     @Environment(AppState.self) private var appState
     @Environment(HealthModel.self) private var health
     @Environment(FollowState.self) private var follow
+    @Environment(SessionModel.self) private var session
     @Environment(Router.self) private var router
 
     @State private var confirmingDelete = false
@@ -24,6 +25,7 @@ struct SettingsView: View {
             VStack(spacing: Spacing.sm) {
                 appleHealthCard
                 yourDataCard
+                if session.hasBackend { accountCard }
                 aboutCard
                 cuffsCard
                 #if DEBUG
@@ -132,6 +134,27 @@ struct SettingsView: View {
         }
     }
 
+    // MARK: Account
+
+    private var accountCard: some View {
+        Card(label: AppCopy.settings.account.title) {
+            if let email = session.email {
+                Text(AppCopy.settings.account.signedInAs(email)).cText(TypeScale.bodySm).foregroundStyle(CColor.ink)
+                    .padding(.bottom, Spacing.sm)
+            }
+            CButton(title: AppCopy.settings.account.signOutCta, variant: .secondary) {
+                Task {
+                    // Logout attempts one final drain first (§6.3); engine state persists.
+                    await health.drain(trigger: .manual)
+                    await session.signOut()
+                    router.popToRoot()
+                }
+            }
+            Text(AppCopy.settings.account.signOutNote).cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
+                .padding(.top, Spacing.xxs)
+        }
+    }
+
     // MARK: About (the safety surface, Deliverable 12)
 
     private var aboutCard: some View {
@@ -216,6 +239,7 @@ struct SettingsView: View {
     private func requestDeletion() async {
         try? await model.requestAccountDeletion()
         await health.disconnect(.confirmedDiscard)
+        await session.signOut()
         follow.reset()
         appState.resetJourney()
         router.popToRoot()

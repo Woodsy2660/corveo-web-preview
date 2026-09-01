@@ -9,3 +9,8 @@
 // of any demo.
 
 DEVELOPMENT_TEAM = RQD4CW5B4V
+
+// Backend configuration. Secrets.xcconfig is generated from ../.env.local by gen-secrets.sh
+// and is gitignored: only the NON-PRODUCTION URL and the anon/publishable key ever go in it.
+// When it is absent the build has no backend and the app runs on the synthetic mock.
+#include? "Secrets.xcconfig"

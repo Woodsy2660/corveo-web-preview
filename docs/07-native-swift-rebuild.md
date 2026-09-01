@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Phase 1 delivered, 2 September 2026. Supersedes the Capacitor-shell assumptions in `06-native-app-build-plan.md` wherever the two differ; the decisions, backend contract, test map and asks in 06 still stand. |
+| **Status** | Phase 1 delivered and Phase 3 (backend wiring) built, 2 September 2026. Supersedes the Capacitor-shell assumptions in `06-native-app-build-plan.md` wherever the two differ; the decisions, backend contract, test map and asks in 06 still stand. |
 | **Owner** | Nick (integration), with Luca (native), Michael (front end), Ben (platform) |
 | **Direction** | Rebuild the React front end as a native SwiftUI app. No Capacitor, no WebView, no JavaScript bridge. The HealthKit engine proven by the spike becomes the app's own module and the app calls it directly. |
 
@@ -60,6 +60,30 @@ Bundle ID `dev.aiplease.bpreset` (throwaway, sandbox team). Deployment target iO
 - Every screen ported: welcome, signup, consent, connect, Apple Health explainer (real system sheet), first capture, result, cadence; Record with the Swift Charts trend and history; Program with chapter list, reading view, library and rail; Learn with the Pulse viewer and In Focus; Settings with the Apple Health card, export via the share sheet, deletion, safety surface, cuffs; validated cuffs.
 - The engine wired end to end against the mock: connect → configure → real permission sheet → observe → catch-up → snapshot → ingest → acknowledge, with the Apple Health card reporting mechanism only.
 - Simulator run verified by screenshot (welcome, record). No errors in the app log; the engine's backup-exclusion attribute confirmed set on its directory at first launch.
+
+## 4a. Phase 3: backend wiring (built 2 Sep, live test pending a confirmed user)
+
+- `supabase-swift` 2.55 via Swift Package Manager. `SupabaseFactory` builds the client only when
+  `Secrets.xcconfig` (generated from `.env.local` by `ios/gen-secrets.sh`, gitignored) supplies the
+  non-production URL and publishable key through `Config/Info.plist`; otherwise the app runs on the
+  mock. `AppConfig` is the single reader.
+- `KeychainSessionStorage`: the auth session in the Keychain, after-first-unlock, this device only,
+  never synchronisable. No token ever touches UserDefaults or a backup.
+- `SupabaseAPI: CorveoAPI`: reads through `v_bp_readings`, `v_bp_trend`, `v_consent_status`,
+  `v_program_progress`; writes through `ingest_observations`, `record_consent`, `withdraw_consent`,
+  `enrol_patient`, `delete_account`, `export_patient_data`; progress upserts `program_progress`
+  under RLS. `CONSENT_REQUIRED` and `UNAUTHORIZED` map to whole-call errors the drain never
+  acknowledges against.
+- `SessionModel`: restore on launch, sign up (email confirmation pending state), sign in, sign out,
+  enrol. The engine's binding tuple now comes from the `app_user` row: `id` and `created_at`.
+- Screens: the account step gains a password field and a sign-in switch; a sign-in gate shows for
+  a returning patient whose session is gone; Settings gains sign out (drains first, engine state
+  persists); deletion signs out after `delete_account`.
+- Verified: builds; the backend-configured build launches on the simulator, detects the backend,
+  restores no session and shows the sign-in gate; no errors in the app log.
+- **Not yet verified: a live round trip.** The dev project requires email confirmation and has no
+  confirmed user. Either sign up from the app with a real address and confirm, or Ben turns
+  confirmation off on dev. Then T-A (manual reading lands in `v_bp_readings`) is the first live test.
 
 ## 5. Phase 1 exit checks
 

@@ -171,6 +171,12 @@ enum AppCopy {
                 "You gave express consent (v\(version)) on \(date)."
             }
         }
+        enum account {
+            static let title = "Account"
+            static func signedInAs(_ email: String) -> String { "Signed in as \(email)." }
+            static let signOutCta = "Sign out"
+            static let signOutNote = "Readings waiting on this phone stay here, encrypted, until you sign in again."
+        }
         enum demo {
             static let title = "Development"
             static let resetCta = "Reset synthetic data"
@@ -224,6 +230,15 @@ enum JourneyCopy {
         static let passwordLabel = "Password"
         static let adultAttestation = "I am 18 years or older."
         static let cta = "Create account"
+        static let signInTitle = "Welcome back."
+        static let signInIntro = "Sign in to your record."
+        static let signInCta = "Sign in"
+        static let haveAccount = "I already have an account"
+        static let needAccount = "I need to create an account"
+        static let attestIntro = "One thing before your record begins."
+        static func confirmIntro(_ email: String) -> String {
+            "We've sent a confirmation link to \(email). Open it, then come back and sign in."
+        }
         static let note = "Prototype note: sign-in is simulated. Account creation is wired at integration."
     }
 

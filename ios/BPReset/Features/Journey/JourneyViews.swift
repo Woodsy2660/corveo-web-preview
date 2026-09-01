@@ -64,42 +64,6 @@ struct WelcomeView: View {
     }
 }
 
-// MARK: - Step 2: account (MOCK until P3)
-
-struct SignupView: View {
-    @Binding var path: [JourneyStep]
-    @Environment(AppState.self) private var appState
-    @State private var email = ""
-    @State private var adult = false
-
-    private var canContinue: Bool { email.contains("@") && adult }
-
-    var body: some View {
-        Screen(
-            eyebrow: JourneyCopy.signup.eyebrow,
-            title: JourneyCopy.signup.title,
-            footer: AnyView(CButton(title: JourneyCopy.signup.cta, disabled: !canContinue) {
-                appState.markEnrolled()
-                path.append(.consent)
-            })
-        ) {
-            StepDots(total: 5, current: 1)
-            Text(JourneyCopy.signup.intro)
-                .cText(TypeScale.bodyBase).foregroundStyle(CColor.inkSecondary)
-                .padding(.bottom, Spacing.md)
-
-            VStack(alignment: .leading, spacing: Spacing.sm) {
-                CField(label: JourneyCopy.signup.emailLabel, text: $email, keyboard: .emailAddress, contentType: .emailAddress)
-                CheckRow(checked: $adult, label: JourneyCopy.signup.adultAttestation)
-            }
-
-            Text(JourneyCopy.signup.note)
-                .cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
-                .padding(.top, Spacing.md)
-        }
-    }
-}
-
 // MARK: - Step 2b: express consent
 
 struct ConsentView: View {
