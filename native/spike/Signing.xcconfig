@@ -1,0 +1,23 @@
+// Signing for the three §11 spike targets — one place, not three.
+//
+// DEVELOPMENT_TEAM is the 10-character Team ID of the sandbox team: the personal free team
+// or the studio paid login (§4.3). It is a *signing* identity, so the throwaway rule applies
+// to the bundle IDs it signs — never a production identifier, never an App Store Connect
+// record. The spike apps never ship.
+//
+// Find it in Xcode → Settings → Accounts → your Apple ID → the team row (right-hand column),
+// or in any target's Signing & Capabilities editor once a team is selected.
+//
+// Free-team mechanics, for when this starts biting: 10 App IDs, 3 devices per platform,
+// 3 installed dev apps per device, and profiles that expire after 7 days — rebuild the
+// morning of any demo (§4.3, pitfall 12).
+
+// Left blank deliberately: each contributor signs with their own team.
+DEVELOPMENT_TEAM =
+
+// T14 — build once WITHOUT the background-delivery entitlement, deliberately, and verify the
+// arming failure surfaces as BG_DELIVERY_FAILED with the engine in armFailed while foreground
+// catch-up keeps working (§14 T14). CODE_SIGN_ENTITLEMENTS is set per target in the project,
+// so drive T14 from the command line rather than from here:
+//
+//   xcodebuild ... CODE_SIGN_ENTITLEMENTS=Entitlements/BPSpikeQ-NoBackgroundDelivery.entitlements
