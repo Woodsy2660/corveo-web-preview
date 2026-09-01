@@ -1,27 +1,41 @@
 # Database Migrations
 
+Implemented against `docs/migration-plan-v0.2.md`, which supersedes the v0.1 draft in `docs/05-migration-plan.md`.
+
 ## Rules
 
-Migrations in this directory follow these conventions:
+1. **Forward-only** — Never rolled back in production. Write a compensating migration instead.
+2. **One concern per file** — Do not bundle unrelated changes.
+3. **Never edited after merge** — Once merged to `main`, a file is immutable.
+4. **Applied to production only through CI** — Corveo-held credential. Never apply to `staging` or `prod` from a local terminal. The `dev` project may be pushed from a local machine during platform work.
 
-1. **Forward-only** — Migrations are never rolled back in production. Write compensating migrations instead.
+## Sequence (v0.2)
 
-2. **One concern per file** — Each migration addresses a single, focused change. Do not bundle unrelated changes.
+| # | File | Notes |
+|---|---|---|
+| 01 | `create_app_user` | Unique `auth_user_id`. No trigger on `auth.users`. |
+| 02 | `create_observation_definition` | Unit-or-panel CHECK. |
+| 03 | `seed_observation_definitions_bp` | BP panel only. Heart rate blocked on D-01. |
+| 04 | `create_observation` | Denormalised `is_panel`, enum CHECKs, FK to definition. |
+| 05 | `create_observation_component` | `source_uuid NOT NULL`, join and deletion indexes. |
+| 06 | `create_consent_event` | Append-only log. |
+| 07 | `create_audit_event` | Actor and event-type CHECKs. |
+| 08 | `create_program_progress` | `updated_at` trigger, week 1–6. |
+| 09 | `create_helper_functions` | Pinned `search_path` on security definers. |
+| 10 | `create_append_only_guards` | Trigger + revoke, not a comment. |
+| 11 | `create_rls_policies` | No patient INSERT on consent or observations. |
+| 12 | `create_views` | `security_invoker = true`. |
+| 13 | `create_ingest_rpc` | Consent-gated; parent-or-component deletion match. |
+| 14 | `create_patient_rpcs` | `enrol_patient`, `record_consent`, `withdraw_consent`, `soft_delete_observation`, `delete_account`. |
+| 15 | `create_export_rpc` | FHIR Bundle + CSV (Deliverable 12). |
+| 16 | `grants` | Explicit GRANT/REVOKE. |
 
-3. **Never edited after merge** — Once a migration is merged to `main`, it is immutable. Any correction requires a new migration file.
-
-4. **Applied to production only through CI** — Migrations are applied using Corveo's credential held in GitHub secrets. Never apply migrations to `staging` or `prod` from a local terminal.
+Heart rate seed is **not** in this series (D-01).
 
 ## Naming
 
-Use the format: `YYYYMMDDHHMMSS_description.sql`
+`YYYYMMDDHHMMSS_description.sql`
 
-Example: `20260729120000_create_observation_table.sql`
+## Review
 
-## Review requirements
-
-All PRs touching this directory require Ben's review before merge.
-
-## Key custody
-
-The migration credential is held by Corveo in GitHub secrets. Ben authors and reviews; the CI pipeline applies.
+PRs touching this directory require Ben's review before merge.
