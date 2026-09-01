@@ -213,9 +213,19 @@ private struct IngestParams: Encodable {
     let payload: IngestPayload
 }
 
+/// PostgREST resolves an RPC by its named parameters, so every parameter must be present in
+/// the body: a nil display name is sent as an explicit JSON null, never omitted.
 private struct EnrolParams: Encodable {
     let p_display_name: String?
     let p_adult_attested: Bool
+
+    enum CodingKeys: String, CodingKey { case p_display_name, p_adult_attested }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(p_display_name, forKey: .p_display_name)   // writes null when nil
+        try c.encode(p_adult_attested, forKey: .p_adult_attested)
+    }
 }
 
 private struct ProgressUpsert: Encodable {
