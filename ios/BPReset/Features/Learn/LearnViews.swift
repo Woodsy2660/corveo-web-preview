@@ -1,0 +1,215 @@
+import SwiftUI
+
+// MARK: - Learn tab (change-request scope, CR-1)
+
+/// The publication's two collections, in the app. The Pulse (short reads) is a horizontal
+/// rail of portrait cards opening the full-screen swipe viewer; In Focus (long reads) is a
+/// list opening the article template. Built for IA review, behind placeholder content.
+struct LearnView: View {
+    @Environment(Router.self) private var router
+
+    private let railSurfaces: [Color] = [CColor.surfaceColor1, CColor.surfaceColor3, CColor.surfaceColor2]
+
+    var body: some View {
+        Screen(title: AppCopy.education.title, withTabBar: true,
+               action: AnyView(ProfileLink { router.push(.settings) })) {
+            Text(AppCopy.education.intro)
+                .cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary)
+                .padding(.bottom, Spacing.md)
+
+            HStack(alignment: .firstTextBaseline, spacing: Spacing.xxs) {
+                SectionHeading(text: AppCopy.education.pulseHeading)
+                Text(AppCopy.education.pulseSub).eyebrow()
+            }
+            .padding(.bottom, Spacing.xxs)
+
+            ScrollView(.horizontal) {
+                HStack(spacing: Spacing.xxs) {
+                    ForEach(Array(pulseItems.enumerated()), id: \.element.id) { i, item in
+                        Button { router.push(.pulse(slug: item.slug)) } label: {
+                            VStack {
+                                Spacer()
+                                Text(item.title)
+                                    .cDisplay(TypeScale.bodyBase)
+                                    .foregroundStyle(CColor.textHeadingInverse)
+                                    .multilineTextAlignment(.leading)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .padding(Spacing.xs)
+                            .frame(width: 112, height: 152)
+                            .background(railSurfaces[i % railSurfaces.count], in: RoundedRectangle(cornerRadius: Radius.md, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel(AppCopy.education.openPulseAria(item.title))
+                    }
+                }
+                .padding(.horizontal, Spacing.md)
+                .padding(.bottom, Spacing.md)
+            }
+            .scrollIndicators(.hidden)
+            .padding(.horizontal, -Spacing.md)
+
+            HStack(alignment: .firstTextBaseline, spacing: Spacing.xxs) {
+                SectionHeading(text: AppCopy.education.inFocusHeading)
+                Text(AppCopy.education.inFocusSub).eyebrow()
+            }
+
+            VStack(spacing: 0) {
+                ForEach(inFocusArticles) { article in
+                    Button { router.push(.inFocus(slug: article.slug)) } label: {
+                        HStack(alignment: .center, spacing: Spacing.xs) {
+                            VStack(alignment: .leading, spacing: Spacing.xxxs) {
+                                SectionHeading(text: article.title)
+                                Text(article.excerpt).cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary)
+                                    .multilineTextAlignment(.leading)
+                                HStack(spacing: Spacing.xxxs) {
+                                    Image(systemName: CIcon.clock).font(.system(size: 12))
+                                    Text(AppCopy.program.duration(article.readMinutes, .read))
+                                }
+                                .cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
+                            }
+                            Spacer()
+                            Image(systemName: CIcon.arrowRight).foregroundStyle(CColor.inkTertiary)
+                        }
+                        .padding(.vertical, Spacing.sm)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    if article.slug != inFocusArticles.last?.slug { Hairline() }
+                }
+            }
+
+            Text(AppCopy.education.scopeNote)
+                .cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
+                .padding(.top, Spacing.md)
+        }
+    }
+}
+
+// MARK: - In Focus article
+
+struct InFocusArticleView: View {
+    @Environment(Router.self) private var router
+    let slug: String
+
+    var body: some View {
+        if let article = inFocusArticles.first(where: { $0.slug == slug }) {
+            Screen(overline: AppCopy.inFocus.overline, title: article.title,
+                   action: AnyView(HeaderLink(title: AppCopy.inFocus.back) { router.pop() })) {
+                if let deck = article.deck {
+                    Text(deck).cText(TypeScale.bodyLg).lineSpacing(4).foregroundStyle(CColor.inkSecondary)
+                        .padding(.bottom, Spacing.sm)
+                }
+                VStack(alignment: .leading, spacing: 0) {
+                    Hairline()
+                    HStack(alignment: .top, spacing: Spacing.lg) {
+                        MetaPair(label: AppCopy.chapter.metaReadTime, value: AppCopy.chapter.metaReadTimeValue(article.readMinutes))
+                        MetaPair(label: AppCopy.chapter.metaReview, value: article.reviewStatus)
+                    }
+                    .padding(.vertical, Spacing.sm)
+                    Hairline()
+                }
+                if article.sections == nil {
+                    Card { Text(AppCopy.education.contentPendingNotice).cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary) }
+                        .padding(.top, Spacing.md)
+                }
+                ArticleBody(sections: article.sections ?? [])
+            }
+        } else {
+            Screen(title: AppCopy.inFocus.notFound, action: AnyView(HeaderLink(title: AppCopy.inFocus.back) { router.pop() })) {
+                CButton(title: AppCopy.inFocus.back) { router.pop() }
+            }
+        }
+    }
+}
+
+// MARK: - The Pulse viewer
+
+/// Full-screen swipe-through viewer for the short reads: one read per screen, swiped
+/// vertically, on the model of short-form video feeds. Native paging does the gesture work.
+struct PulseViewerView: View {
+    @Environment(Router.self) private var router
+    let slug: String
+    @State private var position: String?
+
+    private var index: Int { pulseItems.firstIndex { $0.slug == position } ?? 0 }
+
+    var body: some View {
+        ZStack(alignment: .top) {
+            CColor.action.ignoresSafeArea()
+
+            ScrollView(.vertical) {
+                LazyVStack(spacing: 0) {
+                    ForEach(pulseItems) { item in
+                        PulseSlide(item: item)
+                            .containerRelativeFrame(.vertical)
+                            .id(item.slug)
+                    }
+                }
+                .scrollTargetLayout()
+            }
+            .scrollTargetBehavior(.paging)
+            .scrollPosition(id: $position)
+            .scrollIndicators(.hidden)
+            .ignoresSafeArea()
+
+            HStack {
+                Text("\(AppCopy.education.pulseHeading) · \(AppCopy.pulse.counter(index + 1, pulseItems.count))")
+                    .eyebrow().foregroundStyle(CColor.textSecondaryInverse)
+                Spacer()
+                Button { router.pop() } label: {
+                    Image(systemName: CIcon.close)
+                        .font(.system(size: 18))
+                        .foregroundStyle(CColor.actionInk)
+                        .frame(width: 44, height: 44)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(AppCopy.pulse.closeAria)
+            }
+            .padding(.horizontal, Spacing.md)
+            .padding(.top, Spacing.sm)
+
+            if index < pulseItems.count - 1 {
+                VStack {
+                    Spacer()
+                    VStack(spacing: Spacing.xxxs) {
+                        Image(systemName: CIcon.chevronUp).font(.system(size: 14))
+                        Text(AppCopy.pulse.swipeHint).cText(TypeScale.label)
+                    }
+                    .foregroundStyle(CColor.inkTertiary)
+                    .padding(.bottom, Spacing.sm)
+                }
+                .allowsHitTesting(false)
+            }
+        }
+        .toolbar(.hidden, for: .navigationBar)
+        .onAppear { position = slug }
+    }
+}
+
+struct PulseSlide: View {
+    let item: PulseItem
+    var body: some View {
+        let pending = item.body == nil
+        VStack(alignment: .leading, spacing: Spacing.sm) {
+            Spacer()
+            Text(item.title)
+                .cDisplay(TypeScale.heading2XL)
+                .foregroundStyle(CColor.textHeadingInverse)
+                .fixedSize(horizontal: false, vertical: true)
+            ForEach(item.body ?? [AppCopy.pulse.pendingBody], id: \.self) { paragraph in
+                Text(paragraph)
+                    .cText(TypeScale.bodyLg).lineSpacing(5)
+                    .foregroundStyle(pending ? CColor.textTertiary : CColor.textSecondaryInverse)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer()
+            Text(SafetyCopy.educationNote).cText(TypeScale.label).foregroundStyle(CColor.textTertiary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, Spacing.md)
+        .padding(.top, 72)
+        .padding(.bottom, 64)
+        .accessibilityElement(children: .combine)
+    }
+}

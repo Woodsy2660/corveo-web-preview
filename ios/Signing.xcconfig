@@ -1,0 +1,11 @@
+// Signing for the BP Reset app target.
+//
+// DEVELOPMENT_TEAM is the 10-character Team ID of the SANDBOX team (personal free team or
+// the AI Please paid team). The bundle ID it signs is a throwaway development identifier:
+// the production identifier is created only inside Intelecor's organisation account,
+// because a first upload binds an App ID to its App Store Connect record permanently.
+//
+// Free-team mechanics: 3 installed dev apps per device, 7-day profiles. Rebuild the morning
+// of any demo.
+
+DEVELOPMENT_TEAM = RQD4CW5B4V
