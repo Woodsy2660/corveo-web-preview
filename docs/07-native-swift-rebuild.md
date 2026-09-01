@@ -81,9 +81,12 @@ Bundle ID `dev.aiplease.bpreset` (throwaway, sandbox team). Deployment target iO
   persists); deletion signs out after `delete_account`.
 - Verified: builds; the backend-configured build launches on the simulator, detects the backend,
   restores no session and shows the sign-in gate; no errors in the app log.
-- **Not yet verified: a live round trip.** The dev project requires email confirmation and has no
-  confirmed user. Either sign up from the app with a real address and confirm, or Ben turns
-  confirmation off on dev. Then T-A (manual reading lands in `v_bp_readings`) is the first live test.
+- **Live round trip verified, 2 Sep 2026, on an iPhone 17 (iOS 26.6.1, build 23G83).** With a
+  dashboard-created confirmed user: sign in, `enrol_patient`, `record_consent`, a manual reading
+  through `ingest_observations`, and the reading read back from `v_bp_readings` on the Record tab.
+  That is Stage 2 criterion (a) on a physical device against the dev project. One defect found
+  and fixed on the way: PostgREST resolves an RPC by its named parameters, so a nil display name
+  must be sent as an explicit null, never omitted.
 
 ## 5. Phase 1 exit checks
 
@@ -94,7 +97,7 @@ Bundle ID `dev.aiplease.bpreset` (throwaway, sandbox team). Deployment target iO
 | Share key present, update key absent, Clinical Health Records absent | Yes |
 | Privacy manifest bundled | Yes |
 | Launches and renders on the simulator | Yes (screenshots in the session) |
-| Launches on the acceptance iPhone | **Not yet.** The iPhone was not connected during this session. Run from Xcode when it is. |
+| Launches on a physical iPhone | Yes: iPhone 17 (`iPhone18,3`), iOS 26.6.1 build 23G83, paired and in Developer Mode on 2 Sep. This handset is on the frozen 26.x baseline, so re-running the spike scripts on it closes D-003. |
 
 ## 6. What changes in the plan (06)
 
