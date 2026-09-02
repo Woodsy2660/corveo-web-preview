@@ -96,6 +96,8 @@ export const JOURNEY = {
     cta: "Save reading",
     healthkitWaiting:
       "Once your monitor's app syncs with Apple Health, readings will appear here on their own. You can also add one yourself now.",
+    /** Health users only. Goes to the rhythm step; the record begins when the sync does. */
+    skipHealth: "My readings come from Apple Health",
   },
 
   result: {
