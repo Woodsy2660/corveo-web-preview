@@ -79,8 +79,14 @@ export const APP = {
   trend: {
     intro:
       "Each point is a daily summary of your readings, shown exactly as recorded. The pattern across weeks is what's worth discussing with your doctor.",
-    ranges: { twoWeeks: "2W", sixWeeks: "6W", all: "All" },
+    ranges: { oneWeek: "1W", sixWeeks: "6W", all: "All" },
     rangeAria: "Trend range",
+    /** The mean of the readings on screen. A summary, never a threshold or a target. */
+    averageLabel: {
+      "1w": "Average of this week",
+      "6w": "Average of these 6 weeks",
+      all: "Average of all your readings",
+    },
     chartAria: "Blood pressure readings over time, shown as recorded",
     legendSystolic: "Systolic",
     legendDiastolic: "Diastolic",
