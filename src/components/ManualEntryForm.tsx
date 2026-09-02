@@ -34,7 +34,9 @@ export function ManualEntryForm({
   const [systolic, setSystolic] = useState("");
   const [diastolic, setDiastolic] = useState("");
   const [takenAt, setTakenAt] = useState(nowLocalInputValue());
-  const [arm, setArm] = useState<"left" | "right">("left");
+  // No default: the arm is the patient's to state, not the form's to assume.
+  // The record allows it to be absent (docs/02 §body_site, 0..1).
+  const [arm, setArm] = useState<"left" | "right" | null>(null);
   const [showErrors, setShowErrors] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -72,8 +74,8 @@ export function ManualEntryForm({
           source_name: null,
           source_device_model: null,
           source_user_entered: true,
-          body_site_code: arm === "left" ? "368208006" : "368209003",
-          context: { arm },
+          body_site_code: arm === "left" ? "368208006" : arm === "right" ? "368209003" : null,
+          context: arm ? { arm } : {},
           components: [
             {
               source_uuid: crypto.randomUUID(),
