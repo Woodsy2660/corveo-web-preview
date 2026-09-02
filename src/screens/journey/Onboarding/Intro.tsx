@@ -13,7 +13,7 @@ export function Intro() {
 
   return (
     <Screen
-      eyebrow={c.eyebrow}
+      overline={c.eyebrow}
       title={c.title}
       footer={<Button onClick={() => navigate("/journey/signup")}>{c.cta}</Button>}
     >
