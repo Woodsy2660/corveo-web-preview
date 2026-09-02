@@ -3,7 +3,6 @@ import { useNavigate } from "react-router";
 import { Screen, ProfileLink } from "@/components/ui/Screen";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Chip } from "@/components/ui/Chip";
 import { CheckIcon, PlusIcon, SyncIcon } from "@/components/ui/icons";
 import { Segmented } from "@/components/ui/Segmented";
 import { BpChart } from "@/components/ui/BpChart";
@@ -22,6 +21,7 @@ const LEAD_DAYS: Record<Range, number> = { "1w": 2, "6w": 7, all: 0 };
 
 /** Full screen width: the chart bleeds past the page padding on both sides. */
 const CHART_WIDTH = 393;
+const CHART_HEIGHT = 250;
 
 /** Mean of the readings behind the daily rows, weighted by how many each day holds. */
 function periodAverage(rows: BpTrendRow[]): { systolic: number; diastolic: number } | null {
@@ -68,26 +68,29 @@ export function Record() {
 
   return (
     <Screen title={c.title} withTabBar action={<ProfileLink />}>
-      {/* — Average for the period on screen — */}
-      {average ? (
-        <div className="pb-[var(--spacing-sm)]">
-          <p className="eyebrow pb-[var(--spacing-3xs)]">{t.averageLabel[range]}</p>
-          <p
-            className="font-display text-heading"
-            style={{ fontSize: "var(--text-special-lg)", lineHeight: "var(--leading-special)" }}
+      {/* — Average for the period on screen. The block keeps its height while
+          the readings load, so nothing beneath it hops when they land. — */}
+      <div
+        className="pb-[var(--spacing-sm)]"
+        style={{ visibility: average ? "visible" : "hidden" }}
+        aria-hidden={!average}
+      >
+        <p className="eyebrow pb-[var(--spacing-3xs)]">{t.averageLabel[range]}</p>
+        <p
+          className="font-display text-heading"
+          style={{ fontSize: "var(--text-special-lg)", lineHeight: "var(--leading-special)" }}
+        >
+          {average?.systolic ?? "\u2013"}
+          <span className="text-ink-tertiary"> / </span>
+          {average?.diastolic ?? "\u2013"}
+          <span
+            className="pl-[var(--spacing-2xs)] font-body text-ink-tertiary"
+            style={{ fontSize: "var(--text-body-sm)" }}
           >
-            {average.systolic}
-            <span className="text-ink-tertiary"> / </span>
-            {average.diastolic}
-            <span
-              className="pl-[var(--spacing-2xs)] font-body text-ink-tertiary"
-              style={{ fontSize: "var(--text-body-sm)" }}
-            >
-              {APP.common.unitMmHg}
-            </span>
-          </p>
-        </div>
-      ) : null}
+            {APP.common.unitMmHg}
+          </span>
+        </p>
+      </div>
 
       {/* — Period, above the chart: outlined pills, flush with the number. — */}
       <div className="pb-[var(--spacing-xs)]">
@@ -107,7 +110,9 @@ export function Record() {
           the scale in a gutter on the right by the newest point. The days
           before the period sit faded at the left edge, so the unfaded plot
           is exactly the period chosen; on All nothing comes before. */}
-      {trendLoading ? null : chartEmpty ? (
+      {trendLoading ? (
+        <div style={{ height: CHART_HEIGHT }} aria-hidden />
+      ) : chartEmpty ? (
         <Card>
           <p className="text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
             {t.empty}
@@ -120,7 +125,7 @@ export function Record() {
             leadCount={leadCount}
             ariaLabel={t.chartAria}
             width={CHART_WIDTH}
-            height={250}
+            height={CHART_HEIGHT}
           />
         </div>
       )}
@@ -209,32 +214,35 @@ export function Record() {
               {r.sparse}
             </p>
           ) : null}
-          <ul className="flex flex-col gap-[var(--spacing-2xs)]">
+          {/* Quiet rows on the page ground, a hairline between: the record is
+              a list, not a stack of cards. */}
+          <ul className="flex flex-col">
             {(showAll ? readings : readings.slice(0, 3)).map((reading) => (
               <li
                 key={reading.id}
-                className="flex items-center justify-between rounded-md bg-card px-[var(--spacing-sm)] py-[var(--spacing-xs)]"
+                className="flex items-baseline justify-between gap-[var(--spacing-sm)] border-b border-hairline py-[var(--spacing-xs)]"
               >
-                <div>
-                  <span style={{ fontSize: "var(--text-body-lg)", fontWeight: 500 }}>
+                <div className="flex items-baseline gap-[var(--spacing-2xs)]">
+                  <span style={{ fontSize: "var(--text-body-base)", fontWeight: 500 }}>
                     {reading.systolic}/{reading.diastolic}
                   </span>
-                  <span
-                    className="pl-[var(--spacing-2xs)] text-ink-tertiary"
-                    style={{ fontSize: "var(--text-body-sm)" }}
-                  >
+                  <span className="text-ink-tertiary" style={{ fontSize: "var(--text-label)" }}>
                     {APP.common.unitMmHg}
                   </span>
-                  <span className="block text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)" }}>
-                    {fmtDateTime(reading.effective_time)}
-                  </span>
                 </div>
-                <div className="flex flex-col items-end gap-[var(--spacing-3xs)]">
-                  <Chip>{reading.source_type === "healthkit" ? r.sourceHealth : r.sourceManual}</Chip>
-                  {/* Most readings are left-arm; only flag the exception. */}
-                  {reading.body_site_display && reading.body_site_display !== "Left arm" ? (
-                    <Chip>{reading.body_site_display}</Chip>
-                  ) : null}
+                <div
+                  className="flex flex-1 items-baseline justify-end gap-[var(--spacing-2xs)] text-right text-ink-tertiary"
+                  style={{ fontSize: "var(--text-body-sm)" }}
+                >
+                  <span>{fmtDateTime(reading.effective_time)}</span>
+                  <span aria-hidden>·</span>
+                  <span>
+                    {reading.source_type === "healthkit" ? r.sourceHealth : r.sourceManual}
+                    {/* Most readings are left-arm; only flag the exception. */}
+                    {reading.body_site_display && reading.body_site_display !== "Left arm"
+                      ? `, ${reading.body_site_display.toLowerCase()}`
+                      : null}
+                  </span>
                 </div>
               </li>
             ))}
