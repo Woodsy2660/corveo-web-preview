@@ -151,6 +151,16 @@ struct AppleHealthSettingsView: View {
                     Text(problem).cText(TypeScale.bodySm).foregroundStyle(CColor.ink)
                         .padding(.top, Spacing.sm)
                 }
+                if let rejected = health.rejectedText {
+                    HStack(alignment: .firstTextBaseline, spacing: Spacing.xs) {
+                        Text(rejected).cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary)
+                        Spacer(minLength: Spacing.xs)
+                        Button(HealthSyncCopy.card.dismissRejected) { health.dismissRejected() }
+                            .cText(TypeScale.bodySm, weight: .medium).foregroundStyle(CColor.inkSecondary)
+                            .buttonStyle(.plain)
+                    }
+                    .padding(.top, Spacing.sm)
+                }
                 if health.status.heldCount > 0 {
                     Text(HealthSyncCopy.card.held(health.status.heldCount))
                         .cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary)

@@ -245,6 +245,16 @@ enum HealthSyncCopy {
         static func arrived(_ n: Int) -> String { n == 1 ? "1 new reading from Apple Health" : "\(n) new readings from Apple Health" }
         static func pending(_ n: Int) -> String { n == 1 ? "1 reading waiting to upload" : "\(n) readings waiting to upload" }
         static func rejected(_ n: Int) -> String { n == 1 ? "1 reading could not be imported" : "\(n) readings could not be imported" }
+        static let dismissRejected = "Dismiss"
+        /// The server's rule, in plain words. A data-quality bound or a format, never a verdict.
+        static func rejectedReason(_ code: String) -> String? {
+            switch code {
+            case "VALUE_OUT_OF_BOUNDS": return "outside the range the record accepts"
+            case "SYSTOLIC_NOT_GREATER": return "systolic was not above diastolic"
+            case "UNIT_MISMATCH", "UNKNOWN_CODE", "MALFORMED_TIMESTAMP", "MISSING_COMPONENT": return "in a form the record could not accept"
+            default: return nil
+            }
+        }
         static func held(_ n: Int) -> String { n == 1 ? "1 reading is held from a previous sign-in" : "\(n) readings are held from a previous sign-in" }
         static let heldNote = "Held readings stay on this phone until that account signs in again. Discarding removes them from this phone only; Apple Health is unaffected."
         static let discardHeldCta = "Discard held readings"

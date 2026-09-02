@@ -589,6 +589,16 @@ final class HealthKitEngine: @unchecked Sendable {
         }
     }
 
+    /// The patient has seen the rejection notice; the counts start again from zero. The rows
+    /// themselves were acknowledged when they were rejected, so nothing else changes.
+    func clearRejected() {
+        try? mutate { st in
+            st.diagnostics.rejectedBySource = [:]
+            st.diagnostics.rejectionReasons = [:]
+        }
+        Log.event("rejected.cleared")
+    }
+
     /// Counts-only record of rows the backend rejected and the drain acknowledged (N-04).
     func recordRejected(bySource counts: [String: Int], reasons: [String: Int] = [:]) {
         try? mutate { st in

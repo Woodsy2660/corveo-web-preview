@@ -127,10 +127,15 @@ struct RecordView: View {
                 Text(problem).cText(TypeScale.bodySm).foregroundStyle(CColor.ink)
                     .padding(.bottom, Spacing.xs)
             }
-            if health.status.rejectedCount > 0 {
-                Text(HealthSyncCopy.card.rejected(health.status.rejectedCount))
-                    .cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
-                    .padding(.bottom, Spacing.xs)
+            if let rejected = health.rejectedText {
+                HStack(alignment: .firstTextBaseline, spacing: Spacing.xs) {
+                    Text(rejected).cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
+                    Spacer(minLength: Spacing.xs)
+                    Button(HealthSyncCopy.card.dismissRejected) { health.dismissRejected() }
+                        .cText(TypeScale.label, weight: .medium).foregroundStyle(CColor.inkSecondary)
+                        .buttonStyle(.plain)
+                }
+                .padding(.bottom, Spacing.xs)
             }
 
             if model.readingsLoading && model.readings.isEmpty {

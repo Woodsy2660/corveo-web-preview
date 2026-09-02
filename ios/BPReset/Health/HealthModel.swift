@@ -156,6 +156,22 @@ final class HealthModel {
         await drain(trigger: .foreground)
     }
 
+    /// The rejection notice, dismissed: counts and reason codes cleared, nothing else touched.
+    func dismissRejected() {
+        engine.clearRejected()
+        refresh()
+    }
+
+    /// One line for the rejection notice: the count, and the rule that refused the reading
+    /// when it is known. Mechanical wording only (a bound or a format), never an evaluation.
+    var rejectedText: String? {
+        guard status.rejectedCount > 0 else { return nil }
+        let base = HealthSyncCopy.card.rejected(status.rejectedCount)
+        let reason = status.rejectionReasons.max { $0.value < $1.value }?.key
+        if let reason, let why = HealthSyncCopy.card.rejectedReason(reason) { return "\(base): \(why)." }
+        return base
+    }
+
     /// Explicit destructive exit for buckets held under some other enrolment (B1). The
     /// confirmation is the caller's; nothing is uploaded, Apple Health is untouched.
     func discardForeignHeld() {
