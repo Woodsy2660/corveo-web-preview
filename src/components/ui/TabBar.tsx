@@ -19,9 +19,21 @@ const TABS = [
  * The container radius is concentric with the device screen (--radius-xl)
  * rather than a full pill, so it keeps agreeing with the frame at this
  * taller icon height. The active chip stays fully round.
+ *
+ * Beneath it the page fades to its own ground, so a long list dissolves
+ * under the bar instead of being cut by it.
  */
 export function TabBar() {
   return (
+    <>
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-10"
+        style={{
+          height: "calc(120px + var(--safe-bottom))",
+          background: "linear-gradient(to top, var(--app-page) 45%, transparent)",
+        }}
+      />
     <nav
       className="fixed inset-x-0 z-10 flex justify-center"
       style={{ bottom: "calc(var(--spacing-sm) + var(--safe-bottom))" }}
@@ -51,5 +63,6 @@ export function TabBar() {
         ))}
       </div>
     </nav>
+    </>
   );
 }
