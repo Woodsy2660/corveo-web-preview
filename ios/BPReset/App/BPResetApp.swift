@@ -23,6 +23,7 @@ struct BPResetApp: App {
     @State private var session: SessionModel
     @State private var router = Router()
     @State private var follow = FollowState()
+    @State private var reminders = ReminderModel()
 
     init() {
         let state = AppState()
@@ -45,6 +46,7 @@ struct BPResetApp: App {
                 .environment(session)
                 .environment(router)
                 .environment(follow)
+                .environment(reminders)
                 .preferredColorScheme(.light)
                 .tint(CColor.heading)
                 .onChange(of: scenePhase) { _, phase in

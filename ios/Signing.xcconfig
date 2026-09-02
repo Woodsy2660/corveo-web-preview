@@ -14,3 +14,8 @@ DEVELOPMENT_TEAM = RQD4CW5B4V
 // and is gitignored: only the NON-PRODUCTION URL and the anon/publishable key ever go in it.
 // When it is absent the build has no backend and the app runs on the synthetic mock.
 #include? "Secrets.xcconfig"
+
+// Change-request scope (plan N-12): the Learn tab and the programs library ship only when the
+// CR is signed. Shown in Debug for IA review, hidden in Release until then.
+CR_SCOPE_ENABLED = YES
+CR_SCOPE_ENABLED[config=Release] = NO

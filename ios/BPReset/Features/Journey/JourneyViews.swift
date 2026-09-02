@@ -276,7 +276,9 @@ struct CadenceView: View {
     @Binding var path: [JourneyStep]
     @Environment(AppState.self) private var appState
     @Environment(AppModel.self) private var model
+    @Environment(ReminderModel.self) private var reminders
     @State private var busy = false
+    @State private var remind = true
 
     private var options: [(CadenceChoice, String, String)] {
         [
@@ -294,6 +296,8 @@ struct CadenceView: View {
                 Task {
                     busy = true
                     defer { busy = false }
+                    // The system prompt appears once, here, after the explanation on screen.
+                    if remind { await reminders.enable(cadence: appState.cadence) }
                     await model.updateProgress(currentWeek: 1, completedSteps: ["journey": true])
                     appState.completeJourney()
                 }
@@ -312,9 +316,11 @@ struct CadenceView: View {
                 }
             }
 
+            CheckRow(checked: $remind, label: ReminderCopy.journey.toggle)
+                .padding(.top, Spacing.md)
             Text(JourneyCopy.cadence.reminderNote)
                 .cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
-                .padding(.top, Spacing.md)
+                .padding(.top, Spacing.xs)
         }
     }
 }

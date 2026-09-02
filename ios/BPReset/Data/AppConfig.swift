@@ -26,6 +26,21 @@ enum AppConfig {
     /// True when a backend is configured. Screens never branch on this; the API factory does.
     static var hasSupabase: Bool { supabaseURL != nil && !supabasePublishableKey.isEmpty }
 
+    /// Change-request surfaces (the Learn tab, the programs library and rail) ship only once
+    /// the CR is signed (plan N-12). `CR_SCOPE_ENABLED` in Signing.xcconfig is YES for Debug,
+    /// NO for Release; an absent key falls back the same way.
+    static let crScopeEnabled: Bool = {
+        let raw = plist("CRScopeEnabled").uppercased()
+        if raw.isEmpty {
+            #if DEBUG
+            return true
+            #else
+            return false
+            #endif
+        }
+        return raw == "YES" || raw == "TRUE" || raw == "1"
+    }()
+
     /// Release builds must never point at the dev project or ship the synthetic mock.
     /// Asserted at launch in DEBUG; a production build gate belongs in the archive checklist.
     static var isProductionShaped: Bool { environment == .prod && hasSupabase }

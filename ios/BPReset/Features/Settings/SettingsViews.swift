@@ -9,6 +9,7 @@ struct SettingsView: View {
     @Environment(FollowState.self) private var follow
     @Environment(SessionModel.self) private var session
     @Environment(Router.self) private var router
+    @Environment(ReminderModel.self) private var reminders
 
     @State private var confirmingDelete = false
     @State private var confirmingDisconnect = false
@@ -24,6 +25,7 @@ struct SettingsView: View {
         ) {
             VStack(spacing: Spacing.sm) {
                 appleHealthCard
+                remindersCard
                 yourDataCard
                 if session.hasBackend { accountCard }
                 aboutCard
@@ -36,6 +38,7 @@ struct SettingsView: View {
         .task {
             await model.loadConsent()
             health.refresh()
+            await reminders.refresh()
         }
         .sheet(isPresented: $showShare) {
             ShareSheet(items: exportItems)
@@ -147,11 +150,51 @@ struct SettingsView: View {
                     // Logout attempts one final drain first (§6.3); engine state persists.
                     await health.drain(trigger: .manual)
                     await session.signOut()
+                    reminders.disable()                         // a different person may sign in next
                     router.popToRoot()
                 }
             }
             Text(AppCopy.settings.account.signOutNote).cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
                 .padding(.top, Spacing.xxs)
+        }
+    }
+
+    // MARK: Reminders (rhythm only; the scheduler never sees a reading)
+
+    private var remindersCard: some View {
+        Card(label: ReminderCopy.settings.title) {
+            Text(ReminderCopy.settings.body).cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary)
+                .padding(.bottom, Spacing.xs)
+            Segmented(
+                options: CadenceChoice.allCases.map { (value: $0, label: ReminderCopy.settings.short($0)) },
+                selection: Binding(
+                    get: { appState.cadence ?? .daily },
+                    set: { choice in
+                        appState.cadence = choice
+                        Task { await reminders.reschedule(cadence: choice) }
+                    }),
+                ariaLabel: ReminderCopy.settings.rhythmAria)
+            Text(ReminderModel.scheduleNote(for: appState.cadence))
+                .cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
+                .padding(.top, Spacing.xxs)
+            CheckRow(
+                checked: Binding(
+                    get: { reminders.enabled },
+                    set: { on in
+                        Task {
+                            if on { await reminders.enable(cadence: appState.cadence) } else { reminders.disable() }
+                        }
+                    }),
+                label: ReminderCopy.settings.toggle)
+                .padding(.top, Spacing.sm)
+            if reminders.enabled && reminders.isDeniedByiOS {
+                Text(ReminderCopy.settings.deniedNote).cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
+                    .padding(.top, Spacing.xxs)
+                CButton(title: ReminderCopy.settings.openSettings, variant: .ghost) {
+                    if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+                }
+                .padding(.top, Spacing.xxs)
+            }
         }
     }
 
@@ -204,6 +247,7 @@ struct SettingsView: View {
                 Task {
                     await model.resetSynthetic()
                     await health.disconnect(.confirmedDiscard)
+                    reminders.disable()
                     follow.reset()
                     appState.resetJourney()
                     router.popToRoot()
@@ -248,6 +292,7 @@ struct SettingsView: View {
         try? await model.requestAccountDeletion()
         await health.disconnect(.confirmedDiscard)
         await session.signOut()
+        reminders.disable()
         follow.reset()
         appState.resetJourney()
         router.popToRoot()

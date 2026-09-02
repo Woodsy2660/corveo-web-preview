@@ -30,9 +30,11 @@ struct ProgramView: View {
 
                     ChapterList(program: program, progress: model.progress)
 
-                    ProgramRail(active: follow.active, following: follow.following,
-                                onToggleFollow: { slug in follow.isFollowing(slug) ? follow.unfollow(slug) : follow.follow(slug) },
-                                onSwitch: { slug in follow.setActive(slug) })
+                    if AppConfig.crScopeEnabled {
+                        ProgramRail(active: follow.active, following: follow.following,
+                                    onToggleFollow: { slug in follow.isFollowing(slug) ? follow.unfollow(slug) : follow.follow(slug) },
+                                    onSwitch: { slug in follow.setActive(slug) })
+                    }
                 }
             } else {
                 Screen(title: AppCopy.programIndex.title, withTabBar: true,

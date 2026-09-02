@@ -305,6 +305,7 @@ struct HeaderLink: View {
     var body: some View {
         Button(action: action) {
             Text(title).eyebrow().underline()
+                .frame(minHeight: 44)                               // rulebook §8.3 hit target
         }
         .buttonStyle(.plain)
     }
@@ -314,6 +315,9 @@ struct HeaderLink: View {
 
 enum MainTab: Hashable, CaseIterable {
     case program, record, education
+
+    /// The tabs this build ships. Learn is change-request scope (N-12).
+    static var available: [MainTab] { AppConfig.crScopeEnabled ? allCases : [.program, .record] }
 
     var icon: String {
         switch self {
@@ -338,7 +342,7 @@ struct FloatingTabBar: View {
 
     var body: some View {
         HStack(spacing: Spacing.xxxs) {
-            ForEach(MainTab.allCases, id: \.self) { tab in
+            ForEach(MainTab.available, id: \.self) { tab in
                 let on = tab == selection
                 Button {
                     withAnimation(Motion.brand) { selection = tab }
@@ -348,6 +352,7 @@ struct FloatingTabBar: View {
                         .foregroundStyle(on ? CColor.heading : CColor.actionInk)
                         .padding(.horizontal, Spacing.md)
                         .padding(.vertical, Spacing.xs)
+                        .frame(minHeight: 44)                       // rulebook §8.3 hit target
                         .background(on ? CColor.card : .clear, in: Capsule())
                 }
                 .buttonStyle(.plain)

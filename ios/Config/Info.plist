@@ -8,5 +8,7 @@
 	<string>$(SUPABASE_PUBLISHABLE_KEY)</string>
 	<key>AppEnvironment</key>
 	<string>$(APP_ENV)</string>
+	<key>CRScopeEnabled</key>
+	<string>$(CR_SCOPE_ENABLED)</string>
 </dict>
 </plist>

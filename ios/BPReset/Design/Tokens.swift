@@ -111,8 +111,10 @@ enum TypeScale {
 enum Motion {
     static let fast: Double = 0.16
     static let base: Double = 0.24
-    /// The Userkind brand curve, measured from the shipped site.
-    static let brand = Animation.timingCurve(0.22, 1, 0.36, 1, duration: base)
+    private static let brandCurve = Animation.timingCurve(0.22, 1, 0.36, 1, duration: base)
+    /// The Userkind brand curve, measured from the shipped site. Nil under Reduce Motion, so
+    /// `withAnimation(Motion.brand)` and `.animation(Motion.brand, value:)` become immediate.
+    static var brand: Animation? { UIAccessibility.isReduceMotionEnabled ? nil : brandCurve }
 }
 
 /// The two faces. Reckless (display serif) and Haffer (body sans) are licensed files that

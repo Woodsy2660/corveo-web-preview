@@ -67,8 +67,8 @@ struct RecordView: View {
                 } else {
                     BpChart(rows: model.trend)
                     HStack(spacing: Spacing.sm) {
-                        legend(CColor.chartSeries1, AppCopy.trend.legendSystolic)
-                        legend(CColor.chartSeries2, AppCopy.trend.legendDiastolic)
+                        legend(CColor.chartSeries1, AppCopy.trend.legendSystolic, square: false, dashed: false)
+                        legend(CColor.chartSeries2, AppCopy.trend.legendDiastolic, square: true, dashed: true)
                     }
                     .padding(.top, Spacing.xxs)
                 }
@@ -99,11 +99,23 @@ struct RecordView: View {
         .task(id: range) { await model.loadTrend(sinceDay: sinceDay) }
     }
 
-    private func legend(_ color: Color, _ label: String) -> some View {
+    /// Series identity is carried three ways (colour, marker shape, line dash) so the chart
+    /// reads without colour (rulebook §8.3). Colour is a fixed identity, never a value.
+    private func legend(_ color: Color, _ label: String, square: Bool, dashed: Bool) -> some View {
         HStack(spacing: Spacing.xxxs) {
-            RoundedRectangle(cornerRadius: 2).fill(color).frame(width: 10, height: 10)
+            ZStack {
+                Path { p in p.move(to: CGPoint(x: 0, y: 5)); p.addLine(to: CGPoint(x: 20, y: 5)) }
+                    .stroke(color, style: StrokeStyle(lineWidth: 1.5, dash: dashed ? [3, 2.5] : []))
+                    .frame(width: 20, height: 10)
+                if square {
+                    Rectangle().fill(color).frame(width: 7, height: 7)
+                } else {
+                    Circle().fill(color).frame(width: 8, height: 8)
+                }
+            }
             Text(label).cText(TypeScale.label).foregroundStyle(CColor.inkSecondary)
         }
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -183,8 +195,8 @@ struct BpChart: View {
 
     var body: some View {
         Chart {
-            series(CColor.chartSeries1, "Systolic") { $0.meanSystolic }
-            series(CColor.chartSeries2, "Diastolic") { $0.meanDiastolic }
+            series(CColor.chartSeries1, "Systolic", square: false, dashed: false) { $0.meanSystolic }
+            series(CColor.chartSeries2, "Diastolic", square: true, dashed: true) { $0.meanDiastolic }
 
             if let row = selectedRow {
                 RuleMark(x: .value("Selected", row.date))
@@ -201,9 +213,9 @@ struct BpChart: View {
                         .background(CColor.action, in: RoundedRectangle(cornerRadius: Radius.sm, style: .continuous))
                     }
                 PointMark(x: .value("Day", row.date), y: .value("mmHg", row.meanSystolic))
-                    .foregroundStyle(CColor.chartSeries1).symbolSize(48)
+                    .symbol(.circle).foregroundStyle(CColor.chartSeries1).symbolSize(48)
                 PointMark(x: .value("Day", row.date), y: .value("mmHg", row.meanDiastolic))
-                    .foregroundStyle(CColor.chartSeries2).symbolSize(48)
+                    .symbol(.square).foregroundStyle(CColor.chartSeries2).symbolSize(48)
             }
         }
         .chartYScale(domain: domain, range: .plotDimension(startPadding: 4, endPadding: 12))
@@ -229,11 +241,14 @@ struct BpChart: View {
     }
 
     @ChartContentBuilder
-    private func series(_ color: Color, _ name: String, _ pick: @escaping (BpTrendRow) -> Double) -> some ChartContent {
+    private func series(_ color: Color, _ name: String, square: Bool, dashed: Bool,
+                        _ pick: @escaping (BpTrendRow) -> Double) -> some ChartContent {
+        let symbol: BasicChartSymbolShape = square ? .square : .circle
+        let dash: [CGFloat] = dashed ? [5, 4] : []
         if sparse {
             ForEach(rows) { row in
                 PointMark(x: .value("Day", row.date), y: .value("mmHg", pick(row)))
-                    .foregroundStyle(color).symbolSize(40)
+                    .symbol(symbol).foregroundStyle(color).symbolSize(40)
             }
         } else {
             ForEach(rows) { row in
@@ -248,11 +263,11 @@ struct BpChart: View {
                 LineMark(x: .value("Day", row.date), y: .value("mmHg", pick(row)), series: .value("Series", name))
                     .interpolationMethod(.monotone)
                     .foregroundStyle(color)
-                    .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
+                    .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round, dash: dash))
             }
             if let last = rows.last {
                 PointMark(x: .value("Day", last.date), y: .value("mmHg", pick(last)))
-                    .foregroundStyle(color).symbolSize(40)
+                    .symbol(symbol).foregroundStyle(color).symbolSize(40)
             }
         }
     }

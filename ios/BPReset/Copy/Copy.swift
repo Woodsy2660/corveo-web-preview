@@ -369,3 +369,35 @@ enum ValidatedCuffsCopy {
     ]
     static let sourceNote = "Validation status per STRIDE BP (stridebp.org), accessed August 2026."
 }
+
+// MARK: - Reminders (local notifications; rhythm only, never a reading)
+
+enum ReminderCopy {
+    /// The one notification. Identical every time; it carries no value and no verdict.
+    static let title = "Time for a reading"
+    static let body = "A quiet moment for your blood pressure reading. Open BP Reset when you're ready."
+
+    enum journey {
+        static let toggle = "Remind me at these times"
+    }
+
+    enum settings {
+        static let title = "Reminders"
+        static let body = "Reminders follow your rhythm only. They are never triggered by a reading."
+        static let toggle = "Remind me"
+        static let rhythmAria = "Reading rhythm"
+        static let twiceDailyTimes = "Mornings at 8 am and evenings at 8 pm."
+        static let dailyTimes = "Mornings at 8 am."
+        static let fewWeeklyTimes = "Monday, Wednesday and Friday mornings at 8 am."
+        static let noRhythm = "Choose a rhythm to set reminder times."
+        static let deniedNote = "Notifications for BP Reset are off in iOS Settings. Turn them on there to receive reminders."
+        static let openSettings = "Open iOS Settings"
+        static func short(_ c: CadenceChoice) -> String {
+            switch c {
+            case .twiceDaily: return "Twice daily"
+            case .daily: return "Once a day"
+            case .fewWeekly: return "A few a week"
+            }
+        }
+    }
+}
