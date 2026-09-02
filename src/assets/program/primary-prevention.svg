@@ -1,0 +1,8 @@
+<!--
+  PLACEHOLDER program art, primary-prevention. Abstract on purpose; Corveo's program
+  artwork (a client asset, not yet supplied) replaces this file verbatim.
+-->
+<svg viewBox="0 0 300 192" width="300" height="192" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="192" fill="#c9b4a5"/>
+  <path d="M40,140 L40,60 M110,140 L110,90 M180,140 L180,40 M250,140 L250,100" fill="none" stroke="#3e4fb5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+</svg>
