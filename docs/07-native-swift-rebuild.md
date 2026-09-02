@@ -151,7 +151,8 @@ Bundle ID `dev.aiplease.bpreset` (throwaway, sandbox team). Deployment target iO
 
 A review of the native tree (nine angles, every finding independently verified) produced
 fifteen fixes, all in the repo and simulator-verified with the unit suite (45 tests). The
-soak build on the phone was not touched. In severity order:
+phone was then rebuilt on the finished build and the soak restarted on it (`docs/soak-log.md`).
+In severity order:
 
 1. **Cross-account upload closed.** `signIn` binds the enrolment before the app is told it is
    signed in, and sign-out clears the app-level tuple (`AppState.clearEnrolment`), so readings
@@ -194,6 +195,39 @@ soak build on the phone was not touched. In severity order:
 15. **One teardown.** Sign-out, deletion and the development reset share one routine; the
     development reset now signs out as well.
 
+## 4d. The 2 Sep front-end iteration, the name, and the polish (3 Sep)
+
+Michael's React iteration (merge `8b4cff2`, `src/` only) was ported into the native app the
+same day (`e50977e`) and followed by a polish pass driven from the phone. All of it is on the
+handset as `37c09ff`, the build the soak runs on.
+
+- **Ported from the iteration.** A landing screen (logo, "Welcome.", Get started) ahead of the
+  intro; overlines instead of eyebrows; Settings as "Profile and settings" with pages (Apple
+  Health, Reminders, About, Your data, Arm monitors, Account); the Record tab restyled with a
+  period average (1 week, 6 weeks, all), an edge-to-edge chart with the day readout fixed at the
+  top, and History beneath; chapter rows, Pulse cards and In Focus rows carry photographs
+  (`Data/Art.swift` maps slugs to placeholder image sets).
+- **Name and icon.** Display name **Corveo**; every user-facing "BP Reset" string is now
+  "Corveo" (bundle id, target and scheme unchanged). The icon is the logo's "co" mark cut from
+  `src/assets/brand/logo.svg` on the cream ground (`AppIcon.source.svg` kept beside the PNG).
+  `ios/Corveo.xcworkspace` opens the product and the two harness apps together; they stay
+  separate targets because only the writer may carry Health write permission.
+- **Type policy.** The first phone build read far larger than the simulator because brand
+  styles scaled 1:1 with the text-size setting. `TypeScale.multiplier(for:)` now dampens the
+  standard sizes (0.90 to 1.16) and follows the system rate through the accessibility sizes
+  (1.35 to 2.50). A no-truncation pass lifted line limits on chapter rows, the average block
+  and history rows; rows stack at accessibility sizes.
+- **Navigation.** Every module (chapter, program, article) has a quiet Back at the right of
+  the header (`HeaderBack`), the tab bar stays visible inside modules (`Router.showsTabBar`),
+  and a tab tap pops to that tab's root (`Router.select`). The Pulse viewer's close control is
+  hardened (`contentShape`, `zIndex`) after a tap missed on the phone.
+- **Rejected readings.** The Record tab names the rule mechanically
+  (`HealthSyncCopy.card.rejectedReason`) and offers Dismiss, which calls
+  `engine.clearRejected()`; the count and codes are cleared together.
+- **Provenance on tap.** History rows show value and time only. Tapping a row reveals where it
+  came from: Apple Health with the writing app's name, or Manual, plus the arm when it is not
+  left. Rulebook §4.6 provenance stays available without labelling every row.
+
 ## 5. Phase 1 exit checks
 
 | Check | Result |
@@ -210,12 +244,12 @@ soak build on the phone was not touched. In severity order:
 | Plan item | Now |
 |---|---|
 | P1 Capacitor shell | Done as the SwiftUI shell above. |
-| P2 Plugin package (`packages/bp-healthkit`, TS definitions, web mock) | Replaced by the `Engine/` module already in the app. Remaining P2 work: XCTest port of the store self-test, device runs of T1–T3, T-L, T-L2, and the retry funnel on protected-data-available. |
+| P2 Plugin package (`packages/bp-healthkit`, TS definitions, web mock) | Replaced by the `Engine/` module already in the app. The store self-test is ported to XCTest and the retry funnel on protected-data-available is in (2 Sep). Remaining: device runs of T1–T3, T-L, T-L2. |
 | P3 Backend wiring (supabase-js, Keychain plugin) | `supabase-swift` via SPM; its Keychain session storage configured after-first-unlock, this device only. `SupabaseAPI: CorveoAPI`. Auth screens gain a password field and call `enrol_patient`. |
 | P4 Drain + Apple Health UX | Foreground (T4 shape) and background (T5a shape) verified live on 2 Sep with the writer. Remaining device evidence: T5b, T7, T9, T10, T10b, T13, T14, and the soak. |
 | N-07 WebView storage rule | Moot. Replaced by "no reading value outside the engine's protected queue". |
 | N-10 presentation surfaces | Not ported. The replica sheet and Behind-the-scenes stay web-only. |
-| N-12 CR-scope tabs | Ported for IA review; a release build flag still needs to hide them. |
+| N-12 CR-scope tabs | Ported for IA review behind `CR_SCOPE_ENABLED` (Debug YES, Release NO; verified in a Release build). |
 | L-5 device pass (scroll-snap, safe areas, mount heights) | Moot; native paging and safe areas. Replaced by the rulebook §8.3 accessibility pass. |
 
 ## 7. Running it
