@@ -9,7 +9,13 @@
  */
 
 export const JOURNEY = {
+  /** Landing screen: the brand, a greeting, one action. Nothing to read yet. */
   welcome: {
+    title: "Welcome.",
+    cta: "Get started",
+  },
+
+  intro: {
     eyebrow: "Six-week program",
     title: "Understand your blood pressure.",
     intro:
@@ -40,11 +46,12 @@ export const JOURNEY = {
     passwordLabel: "Password",
     adultAttestation: "I am 18 years or older.",
     cta: "Create account",
-    note: "Prototype note: sign-in is simulated. Account creation is wired at integration.",
   },
 
   connect: {
     eyebrow: "Your monitor",
+    /** Link to the validated-cuff list from the no-monitor option. */
+    cuffsLink: "Choosing a monitor",
     title: "How will readings arrive?",
     intro:
       "Corveo organises readings from a validated upper-arm cuff. Choose how yours will come in. You can change this later in Settings.",
@@ -91,6 +98,8 @@ export const JOURNEY = {
     cta: "Save reading",
     healthkitWaiting:
       "Once your monitor's app syncs with Apple Health, readings will appear here on their own. You can also add one yourself now.",
+    /** Health users only. Goes to the rhythm step; the record begins when the sync does. */
+    skipHealth: "My readings come from Apple Health",
   },
 
   result: {

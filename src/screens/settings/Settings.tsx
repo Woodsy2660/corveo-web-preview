@@ -1,219 +1,116 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Screen } from "@/components/ui/Screen";
-import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { ChevronRightIcon } from "@/components/ui/icons";
 import { APP } from "@/copy/app";
 import { JOURNEY } from "@/copy/journey";
-import { HEALTH_SYNC } from "@/copy/health-sync";
-import { SAFETY, VALIDATED_CUFFS } from "@/copy/safety";
-import { getApi, resetApi } from "@/lib/api";
-import { useConsentStatus } from "@/lib/api/hooks";
-import { getHealthPlugin, resetHealthPlugin, type AuthorizationState } from "@/lib/health";
+import { useConsentStatus, useProgramProgress, useReadings } from "@/lib/api/hooks";
+import { CORE_PROGRAM_SLUG, findProgram } from "@/lib/programs";
+import { useFollowedPrograms } from "@/lib/useFollowedPrograms";
 import { useJourney } from "@/lib/journey/state";
 import { fmtFullDate } from "@/lib/format";
-import { useQueryClient } from "@tanstack/react-query";
 
 /**
- * Settings — Apple Health status, export and deletion (Deliverable 12),
- * consent receipt, the safety surface, and the dev-only demo reset.
+ * Settings, which is as much the patient's page as the app's: it opens on
+ * who they are in the program (week, how readings arrive, the rhythm they
+ * chose), then a short menu, each row a page: Apple Health (status,
+ * refresh, pause), about this app (the safety surface, Deliverable 12),
+ * your data (export, deletion, consent receipt, and the dev-only demo
+ * reset) and the validated monitors (Deliverable 8).
  */
 export function Settings() {
   const navigate = useNavigate();
-  const qc = useQueryClient();
+  const { connectChoice, cadence } = useJourney();
+  const { data: progress } = useProgramProgress();
+  const { data: readings } = useReadings(400);
   const { data: consent } = useConsentStatus();
-  const { resetJourney } = useJourney();
-  const [health, setHealth] = useState<AuthorizationState | null>(null);
-  const [confirmingDelete, setConfirmingDelete] = useState(false);
-  const [exporting, setExporting] = useState(false);
+  const { following } = useFollowedPrograms();
   const c = APP.settings;
 
-  useEffect(() => {
-    void getHealthPlugin().getAuthorizationState().then(setHealth);
-  }, []);
+  const program = findProgram(CORE_PROGRAM_SLUG);
+  const followedTitles = following
+    .filter((slug) => slug !== CORE_PROGRAM_SLUG)
+    .map((slug) => findProgram(slug)?.title)
+    .filter((title): title is string => Boolean(title));
+  // The list arrives newest first; the record began with the last of it.
+  const earliest = readings && readings.length > 0 ? readings[readings.length - 1] : undefined;
 
-  const exportData = async () => {
-    setExporting(true);
-    try {
-      // On device this hands the files to the iOS share sheet (docs/02 §4.4).
-      const result = await getApi().exportPatientData();
-      const blob = new Blob([result.csv], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "corveo-my-heart-record.csv";
-      a.click();
-      URL.revokeObjectURL(url);
-    } finally {
-      setExporting(false);
-    }
-  };
+  const profileRows: [string, string][] = [
+    [
+      c.profile.programLabel,
+      program ? c.profile.program(progress?.current_week ?? 1, program.chapters.length) : "",
+    ],
+    [c.profile.followingLabel, followedTitles.length > 0 ? followedTitles.join(", ") : c.profile.followingNone],
+    [
+      c.profile.readingsLabel,
+      `${connectChoice ? c.profile.readings[connectChoice] : c.profile.readings.none} · ${c.profile.readingCount(readings?.length ?? 0)}`,
+    ],
+    [c.profile.beganLabel, earliest ? fmtFullDate(earliest.effective_time) : c.profile.beganNone],
+    [c.profile.rhythmLabel, cadence ? JOURNEY.cadence.options[cadence].title : c.profile.rhythmUnset],
+    [
+      c.profile.consentLabel,
+      consent?.has_active_consent && consent.version && consent.last_event_at
+        ? c.profile.consentGiven(fmtFullDate(consent.last_event_at), consent.version)
+        : c.profile.consentNone,
+    ],
+  ];
 
-  const requestDeletion = async () => {
-    await getApi().requestAccountDeletion();
-    resetJourney();
-    resetHealthPlugin();
-    await qc.invalidateQueries();
-    navigate("/journey/welcome", { replace: true });
-  };
-
-  const resetDemo = async () => {
-    resetApi();
-    resetHealthPlugin();
-    resetJourney();
-    qc.clear();
-    navigate("/journey/welcome", { replace: true });
-  };
-
-  const connected = health?.state === "requested";
+  const menu: [string, string][] = [
+    [c.menu.appleHealth, "/app/settings/apple-health"],
+    [c.menu.about, "/app/settings/about"],
+    [c.menu.data, "/app/settings/data"],
+    [c.menu.monitors, "/app/cuffs"],
+  ];
 
   return (
     <Screen
-      eyebrow={c.eyebrow}
       title={c.title}
       footer={
-        <Button variant="ghost" onClick={() => navigate(-1)}>
+        <Button variant="ghost" onClick={() => navigate("/app/record")}>
           {APP.common.back}
         </Button>
       }
     >
       <div className="flex flex-col gap-[var(--spacing-sm)]">
-        <Card label={c.appleHealth.title}>
-          <p style={{ fontSize: "var(--text-body-sm)" }}>
-            {connected ? c.appleHealth.readsOnly : c.appleHealth.notConnected}
-          </p>
-          {connected && health && !health.samplesEverReceived ? (
-            // Neutral nudge, verbatim from docs/03 §4 — absence of data is
-            // indistinguishable from denial, and we never imply denial.
-            <p className="pt-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-body-sm)" }}>
-              {JOURNEY.healthAuth.noSamplesNudge}
-            </p>
-          ) : null}
-          <p className="pt-[var(--spacing-3xs)] text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)" }}>
-            {c.appleHealth.manageHint}
-          </p>
-        </Card>
-
-        <Card label={c.yourData.title}>
-          <p className="pb-[var(--spacing-sm)]" style={{ fontSize: "var(--text-body-sm)" }}>
-            {c.yourData.body}
-          </p>
-          <div className="flex flex-col gap-[var(--spacing-2xs)]">
-            <Button variant="secondary" disabled={exporting} onClick={exportData}>
-              {exporting ? APP.common.busy : c.yourData.exportCta}
-            </Button>
-            <p className="text-ink-tertiary" style={{ fontSize: "var(--text-label)" }}>
-              {c.yourData.exportNote}
-            </p>
-
-            {confirmingDelete ? (
-              <div className="rounded-md border border-hairline p-[var(--spacing-sm)]">
-                <h3 className="pb-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-heading-xl)" }}>
-                  {c.yourData.deleteConfirmTitle}
-                </h3>
-                <p className="pb-[var(--spacing-sm)] text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
-                  {c.yourData.deleteConfirmBody}
-                </p>
-                <div className="flex flex-col gap-[var(--spacing-2xs)]">
-                  <Button onClick={requestDeletion}>{c.yourData.deleteConfirmCta}</Button>
-                  <Button variant="secondary" onClick={() => setConfirmingDelete(false)}>
-                    {c.yourData.deleteCancelCta}
-                  </Button>
-                </div>
+        {/* — You — the facts the patient set on the way in, as a quiet list. */}
+        <section aria-label={c.profile.title} className="pb-[var(--spacing-2xs)]">
+          <p className="eyebrow pb-[var(--spacing-2xs)]">{c.profile.title}</p>
+          <dl className="m-0 flex flex-col">
+            {profileRows.map(([label, value]) => (
+              <div
+                key={label}
+                className="flex items-baseline justify-between gap-[var(--spacing-sm)] border-b border-hairline py-[var(--spacing-2xs)]"
+              >
+                <dt className="text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)" }}>
+                  {label}
+                </dt>
+                <dd className="m-0 text-right" style={{ fontSize: "var(--text-body-sm)" }}>
+                  {value}
+                </dd>
               </div>
-            ) : (
-              <Button variant="secondary" onClick={() => setConfirmingDelete(true)}>
-                {c.yourData.deleteCta}
-              </Button>
-            )}
-          </div>
-          {consent?.has_active_consent && consent.version && consent.last_event_at ? (
-            <p className="pt-[var(--spacing-sm)] text-ink-tertiary" style={{ fontSize: "var(--text-label)" }}>
-              {c.yourData.consentReceipt(consent.version, fmtFullDate(consent.last_event_at))}
-            </p>
-          ) : null}
-        </Card>
+            ))}
+          </dl>
+        </section>
 
-        {/*
-         * The safety surface (Deliverable 12) and the validated-monitor list
-         * (Deliverable 8) live here: "about this app" is account-adjacent
-         * reference, and the Learn tab is the publication only. This reverses
-         * the earlier move to Education — the Stage 2 and Stage 3 test
-         * scripts reference their location and need updating.
-         */}
-        <Card label={c.aboutTitle}>
-          <h2 className="pb-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-heading-xl)" }}>
-            {SAFETY.title}
-          </h2>
-
-          <p className="eyebrow pb-[var(--spacing-3xs)]">{SAFETY.does.title}</p>
-          <ul
-            className="list-disc pb-[var(--spacing-xs)] pl-[var(--spacing-sm)] text-ink-secondary"
-            style={{ fontSize: "var(--text-body-sm)" }}
-          >
-            {SAFETY.does.items.map((item) => (
-              <li key={item}>{item}</li>
+        {/* — Menu — each row is a page of its own; the whole row is the tap. */}
+        <nav aria-label={c.menuAria}>
+          <ul className="m-0 flex list-none flex-col p-0">
+            {menu.map(([label, to]) => (
+              <li key={to} className="border-b border-hairline">
+                <Link
+                  to={to}
+                  className="flex items-center justify-between py-[var(--spacing-sm)] text-heading"
+                  style={{ fontSize: "var(--text-body-base)", fontWeight: 500 }}
+                >
+                  {label}
+                  <span className="text-ink-tertiary" style={{ fontSize: "var(--text-body-lg)" }}>
+                    <ChevronRightIcon />
+                  </span>
+                </Link>
+              </li>
             ))}
           </ul>
-
-          <p className="eyebrow pb-[var(--spacing-3xs)]">{SAFETY.doesNot.title}</p>
-          <ul
-            className="list-disc pb-[var(--spacing-xs)] pl-[var(--spacing-sm)] text-ink-secondary"
-            style={{ fontSize: "var(--text-body-sm)" }}
-          >
-            {SAFETY.doesNot.items.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-
-          <p className="pb-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-body-sm)" }}>
-            {SAFETY.seekAdvice}
-          </p>
-          <p className="text-ink-tertiary" style={{ fontSize: "var(--text-label)" }}>
-            {SAFETY.disclaimer}
-          </p>
-        </Card>
-
-        <Card label={c.cuffsTitle}>
-          <p
-            className="pb-[var(--spacing-xs)] text-ink-secondary"
-            style={{ fontSize: "var(--text-body-sm)" }}
-          >
-            {VALIDATED_CUFFS.intro}
-          </p>
-          <Link
-            to="/app/cuffs"
-            className="underline underline-offset-4"
-            style={{ fontSize: "var(--text-body-sm)" }}
-          >
-            {VALIDATED_CUFFS.title}
-          </Link>
-        </Card>
-
-        {import.meta.env.DEV || import.meta.env.VITE_DEMO === "true" ? (
-          <Card label={c.demo.title}>
-            <Button variant="secondary" onClick={resetDemo}>
-              {c.demo.resetCta}
-            </Button>
-            <p className="pt-[var(--spacing-2xs)] text-ink-tertiary" style={{ fontSize: "var(--text-label)" }}>
-              {c.demo.note}
-            </p>
-          </Card>
-        ) : null}
-
-        {/*
-         * Quiet entry to the presentation. Deliberately the last thing on the
-         * last screen: a patient never needs it, and anyone being walked
-         * through the build will be shown where it is.
-         */}
-        <button
-          onClick={() => navigate("/behind")}
-          className="pt-[var(--spacing-2xs)] pb-[var(--spacing-md)] text-center text-ink-tertiary underline underline-offset-4"
-          style={{ fontSize: "var(--text-label)" }}
-        >
-          {HEALTH_SYNC.behindLink}
-        </button>
+        </nav>
       </div>
     </Screen>
   );

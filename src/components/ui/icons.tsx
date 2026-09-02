@@ -126,6 +126,24 @@ export function ChevronUpIcon({ className = "" }: IconProps) {
   );
 }
 
+/** Leads to a page of its own. */
+export function ChevronRightIcon({ className = "" }: IconProps) {
+  return (
+    <svg {...base} className={className} width="1em" height="1em">
+      <path d="m9 6 6 6-6 6" />
+    </svg>
+  );
+}
+
+/** Navigate back to the previous screen. */
+export function ChevronLeftIcon({ className = "" }: IconProps) {
+  return (
+    <svg {...base} className={className} width="1em" height="1em">
+      <path d="m15 6-6 6 6 6" />
+    </svg>
+  );
+}
+
 /** Add a reading. */
 export function PlusIcon({ className = "" }: IconProps) {
   return (

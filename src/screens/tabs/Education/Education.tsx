@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { Screen, ProfileLink } from "@/components/ui/Screen";
 import { ClockIcon } from "@/components/ui/icons";
 import { APP } from "@/copy/app";
+import { ARTICLE_ART, PULSE_ART } from "@/assets/photos";
 import {
   IN_FOCUS_ARTICLES,
   PULSE_ITEMS,
@@ -26,20 +27,27 @@ import {
  * updating with the move.
  */
 
-/** The three Userkind accent surfaces, cycled across the rail. Decorative only. */
-const RAIL_SURFACES = ["bg-accent-1", "bg-accent-3", "bg-accent-2"] as const;
-
-function PulseCard({ item, index }: { item: PulseItem; index: number }) {
+/**
+ * A Pulse card: a photograph with the title over it. One even scrim, no
+ * gradient, keeps the white serif legible on any picture.
+ */
+function PulseCard({ item }: { item: PulseItem }) {
   const c = APP.education;
   return (
     <Link
       to={`/app/education/pulse/${item.slug}`}
       aria-label={c.openPulseAria(item.title)}
-      className={`flex h-[152px] w-[112px] flex-none flex-col justify-end rounded-md p-[var(--spacing-xs)] ${
-        RAIL_SURFACES[index % RAIL_SURFACES.length]
-      }`}
+      className="relative flex h-[152px] w-[112px] flex-none flex-col justify-end overflow-hidden rounded-md p-[var(--spacing-xs)]"
     >
+      <img
+        src={PULSE_ART[item.slug]}
+        alt=""
+        aria-hidden
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      <span aria-hidden className="absolute inset-0" style={{ background: "rgba(0, 0, 0, 0.4)" }} />
       <span
+        className="relative"
         style={{
           fontFamily: "var(--font-display)",
           fontSize: "var(--text-body-base)",
@@ -55,30 +63,45 @@ function PulseCard({ item, index }: { item: PulseItem; index: number }) {
 }
 
 /**
- * One long read, on the Program-tab row idiom: the whole row is the tap
- * target. Article artwork is a Corveo asset that has not been supplied, so
- * the tile is a placeholder that spans the row's height.
+ * One long read, on the chapter-row pattern: every row the same height,
+ * photograph left, title and excerpt at the top, the read time as a quiet
+ * line at the bottom. The whole row is the tap target. Article artwork is
+ * a Corveo asset that has not been supplied; a placeholder photograph
+ * stands in.
  */
 function InFocusRow({ article }: { article: InFocusArticle }) {
   return (
     <li className="border-b border-hairline last:border-b-0">
       <Link
         to={`/app/education/in-focus/${article.slug}`}
-        className="flex gap-[var(--spacing-xs)] py-[var(--spacing-sm)]"
+        className="flex h-[112px] gap-[var(--spacing-xs)] py-[var(--spacing-xs)]"
       >
-        <div
+        <img
+          src={ARTICLE_ART[article.slug]}
+          alt=""
           aria-hidden
-          className="w-[96px] flex-none self-stretch rounded-sm"
-          style={{ background: "var(--color-surface-neutral-lighter)" }}
+          className="h-full w-[66px] flex-none rounded-sm object-cover"
         />
-        <div className="flex min-w-0 flex-1 flex-col gap-[var(--spacing-3xs)]">
-          <h2 style={{ fontSize: "var(--text-heading-xl)" }}>{article.title}</h2>
-          <p className="text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
-            {article.excerpt}
-          </p>
+        <div className="flex min-w-0 flex-1 flex-col justify-between">
+          <div className="min-w-0">
+            {/* Article titles run longer than chapter titles: two lines for
+                the title, one for the excerpt, same row height. */}
+            <h2
+              className="line-clamp-2"
+              style={{ fontSize: "var(--text-body-lg)", lineHeight: "var(--leading-heading)" }}
+            >
+              {article.title}
+            </h2>
+            <p
+              className="line-clamp-1 text-ink-secondary"
+              style={{ fontSize: "var(--text-body-sm)" }}
+            >
+              {article.excerpt}
+            </p>
+          </div>
           <span
             className="flex items-center gap-[var(--spacing-3xs)] text-ink-tertiary"
-            style={{ fontSize: "var(--text-body-sm)" }}
+            style={{ fontSize: "var(--text-label)", lineHeight: "var(--leading-label)" }}
           >
             <ClockIcon />
             {APP.program.duration(article.readMinutes, "read")}
@@ -108,8 +131,8 @@ export function Education() {
         </div>
         {/* Full-bleed rail: escapes the screen padding so cards run to the edge. */}
         <div className="no-scrollbar -mx-[var(--spacing-md)] flex gap-[var(--spacing-2xs)] overflow-x-auto px-[var(--spacing-md)] pb-[var(--spacing-md)]">
-          {PULSE_ITEMS.map((item, i) => (
-            <PulseCard key={item.slug} item={item} index={i} />
+          {PULSE_ITEMS.map((item) => (
+            <PulseCard key={item.slug} item={item} />
           ))}
         </div>
       </section>
@@ -126,12 +149,6 @@ export function Education() {
         </ul>
       </section>
 
-      <p
-        className="pt-[var(--spacing-md)] text-ink-tertiary"
-        style={{ fontSize: "var(--text-body-sm)" }}
-      >
-        {c.scopeNote}
-      </p>
     </Screen>
   );
 }

@@ -1,44 +1,42 @@
 import { useNavigate } from "react-router";
-import { Screen } from "@/components/ui/Screen";
-import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { StepDots } from "@/components/ui/StepDots";
 import { JOURNEY } from "@/copy/journey";
-import { SAFETY } from "@/copy/safety";
+import { CORVEO_WORDMARK } from "@/copy/product";
+import logoUrl from "@/assets/brand/logo.svg";
 
-/** Journey step 1 — educate. */
+/**
+ * Landing — the first thing the app shows. Deliberately empty: the logotype
+ * at full size, a greeting, one button. The reading starts on the next
+ * screen, so this one carries no eyebrow, no step dots and no copy to
+ * scroll. Not wrapped in <Screen>, which would add the small header mark.
+ */
 export function Welcome() {
   const navigate = useNavigate();
   const c = JOURNEY.welcome;
 
   return (
-    <Screen
-      eyebrow={c.eyebrow}
-      title={c.title}
-      footer={<Button onClick={() => navigate("/journey/signup")}>{c.cta}</Button>}
-    >
-      <StepDots total={5} current={1} />
-      <p className="pb-[var(--spacing-md)] text-ink-secondary">{c.intro}</p>
+    <div className="screen-shell" style={{ paddingTop: "var(--safe-top)" }}>
+      <main className="flex flex-1 flex-col items-center justify-center px-[var(--spacing-md)]">
+        <img
+          src={logoUrl}
+          alt={CORVEO_WORDMARK}
+          className="fade-up"
+          style={{ width: "176px", height: "auto" }}
+        />
+        <h1
+          className="fade-up pt-[var(--spacing-lg)] text-center"
+          style={{ fontSize: "var(--text-heading-4xl)", lineHeight: "var(--leading-heading-tight)" }}
+        >
+          {c.title}
+        </h1>
+      </main>
 
-      <div className="flex flex-col gap-[var(--spacing-xs)]">
-        {c.cards.map((card) => (
-          <Card key={card.title}>
-            <h2 className="pb-[var(--spacing-3xs)]" style={{ fontSize: "var(--text-heading-xl)" }}>
-              {card.title}
-            </h2>
-            <p className="text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
-              {card.body}
-            </p>
-          </Card>
-        ))}
-      </div>
-
-      <p
-        className="pt-[var(--spacing-md)] text-ink-tertiary"
-        style={{ fontSize: "var(--text-body-sm)" }}
+      <footer
+        className="px-[var(--spacing-md)] pt-[var(--spacing-xs)]"
+        style={{ paddingBottom: "calc(var(--spacing-md) + var(--safe-bottom))" }}
       >
-        {SAFETY.disclaimer}
-      </p>
-    </Screen>
+        <Button onClick={() => navigate("/journey/intro")}>{c.cta}</Button>
+      </footer>
+    </div>
   );
 }

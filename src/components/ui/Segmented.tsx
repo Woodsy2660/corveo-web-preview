@@ -1,4 +1,9 @@
-/** Segmented control (e.g. trend range 2W / 6W / All). */
+/**
+ * Segmented control (e.g. trend range 1W / 6W / All). One outlined pill
+ * holding the options, the chosen one filled: the same shape as the tab
+ * bar, so the two read as the same kind of thing. Transparent inside, so
+ * it sits on the page ground rather than as a second card.
+ */
 export function Segmented<T extends string>({
   options,
   value,
@@ -12,7 +17,7 @@ export function Segmented<T extends string>({
 }) {
   return (
     <div
-      className="inline-flex rounded-round border border-hairline bg-card p-[2px]"
+      className="inline-flex gap-[2px] rounded-round border border-hairline p-[2px]"
       role="radiogroup"
       aria-label={ariaLabel}
     >

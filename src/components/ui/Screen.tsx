@@ -1,25 +1,52 @@
 import { useEffect, useRef, type ReactNode } from "react";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { CORVEO_WORDMARK } from "@/copy/product";
 import { APP } from "@/copy/app";
 import { ProfileIcon } from "@/components/ui/icons";
 import logoUrl from "@/assets/brand/logo.svg";
 
 /**
- * Header affordance for the tab screens: profile and settings behind a
- * single icon, so the top of the app is the wordmark and nothing else.
- * Account, data export, deletion and the consent receipt all live behind it.
+ * Header affordance: profile and settings behind a single icon, so the top
+ * of the app is the wordmark and nothing else. Account, data export,
+ * deletion and the consent receipt all live behind it.
+ *
+ * It toggles. On any page it opens Settings; on Settings it is drawn
+ * pressed and takes you back to where you came from, so the same spot in
+ * the header opens and closes the one drawer the app has.
  */
 export function ProfileLink() {
-  return (
+  const navigate = useNavigate();
+  const location = useLocation();
+  const onSettings = location.pathname === "/app/settings";
+  // Where Settings was opened from, carried on the history entry so a trip
+  // into a sub-page and back does not change where "close" lands.
+  const openedFrom = (location.state as { from?: string } | null)?.from ?? "/app/record";
+  const className = `-my-[11px] -mr-[11px] flex size-[44px] items-center justify-center ${
+    onSettings ? "text-heading" : "text-ink-tertiary"
+  }`;
+  const style = { fontSize: "var(--text-body-lg)" };
+
+  // 44px hit area for a 23px glyph; negative margin keeps the icon
+  // optically on the header edge rather than inset by the padding.
+  return onSettings ? (
+    <button
+      onClick={() => navigate(openedFrom)}
+      aria-label={APP.common.profileCloseAria}
+      title={APP.common.profileCloseAria}
+      aria-pressed
+      className={className}
+      style={style}
+    >
+      <ProfileIcon />
+    </button>
+  ) : (
     <Link
       to="/app/settings"
+      state={{ from: location.pathname }}
       aria-label={APP.common.profileAria}
       title={APP.common.profileAria}
-      /* 44px hit area for a 23px glyph; negative margin keeps the icon
-         optically on the header edge rather than inset by the padding. */
-      className="-my-[11px] -mr-[11px] flex size-[44px] items-center justify-center text-ink-tertiary"
-      style={{ fontSize: "var(--text-body-lg)" }}
+      className={className}
+      style={style}
     >
       <ProfileIcon />
     </Link>
@@ -39,6 +66,7 @@ export function Screen({
   action,
   scrollKey,
   withTabBar = false,
+  className = "",
 }: {
   eyebrow?: string;
   /**
@@ -58,6 +86,8 @@ export function Screen({
    */
   scrollKey?: string;
   withTabBar?: boolean;
+  /** Extra classes on the shell, e.g. an entrance animation. */
+  className?: string;
 }) {
   const main = useRef<HTMLElement>(null);
 
@@ -66,7 +96,7 @@ export function Screen({
   }, [scrollKey]);
 
   return (
-    <div className="screen-shell" style={{ paddingTop: "var(--safe-top)" }}>
+    <div className={`screen-shell ${className}`} style={{ paddingTop: "var(--safe-top)" }}>
       <header className="flex items-center justify-between px-[var(--spacing-md)] pt-[var(--spacing-md)] pb-[var(--spacing-sm)]">
         {/* Brand logotype served from the shipped Corveo web app (brand/logo.svg) */}
         <img src={logoUrl} alt={CORVEO_WORDMARK} style={{ height: "18px", width: "auto" }} />
@@ -86,7 +116,7 @@ export function Screen({
         {title ? (
           <h1
             className="fade-up pb-[var(--spacing-sm)]"
-            style={{ fontSize: "var(--text-heading-3xl)", lineHeight: 1.15 }}
+            style={{ fontSize: "var(--text-heading-2xl)", lineHeight: 1.15 }}
           >
             {title}
           </h1>
@@ -96,8 +126,12 @@ export function Screen({
 
       {footer ? (
         <footer
-          className="px-[var(--spacing-md)] pt-[var(--spacing-xs)]"
-          style={{ paddingBottom: "calc(var(--spacing-md) + var(--safe-bottom))" }}
+          className="relative z-[15] bg-page px-[var(--spacing-md)] pt-[var(--spacing-xs)]"
+          style={{
+            paddingBottom: withTabBar
+              ? "calc(96px + var(--safe-bottom))"
+              : "calc(var(--spacing-md) + var(--safe-bottom))",
+          }}
         >
           {footer}
         </footer>

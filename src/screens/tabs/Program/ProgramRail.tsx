@@ -1,7 +1,9 @@
 import { Link } from "react-router";
+import { Button } from "@/components/ui/Button";
 import { CheckIcon, PlusIcon } from "@/components/ui/icons";
 import { APP } from "@/copy/app";
 import { CORE_PROGRAM_SLUG, PROGRAMS } from "@/lib/programs";
+import { PROGRAM_ART } from "@/assets/photos";
 
 /**
  * The other programs, as a rail at the foot of the Program tab.
@@ -51,11 +53,12 @@ export function ProgramRail({
             <li key={program.slug} className="w-[150px] flex-none">
               <div className="relative">
                 {/* Program artwork is a Corveo asset that has not been
-                    supplied, so the tile is a placeholder. */}
-                <div
+                    supplied; a placeholder tile stands in. */}
+                <img
+                  src={PROGRAM_ART[program.slug]}
+                  alt=""
                   aria-hidden
-                  className="h-[96px] rounded-sm"
-                  style={{ background: "var(--color-surface-neutral-lighter)" }}
+                  className="h-[96px] w-full rounded-sm object-cover"
                 />
 
                 {core ? null : (
@@ -107,6 +110,14 @@ export function ProgramRail({
           );
         })}
       </ul>
+
+      {/* The library page, where every program has its description and its
+          own Follow: reached from here, not from a page of the core program. */}
+      <Link to="/app/program/browse" className="block pt-[var(--spacing-md)]">
+        <Button variant="secondary" tabIndex={-1}>
+          {c.seeAll}
+        </Button>
+      </Link>
     </section>
   );
 }

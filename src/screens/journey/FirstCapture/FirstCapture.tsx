@@ -1,19 +1,25 @@
 import { useNavigate } from "react-router";
 import { Screen } from "@/components/ui/Screen";
 import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { StepDots } from "@/components/ui/StepDots";
 import { ManualEntryForm } from "@/components/ManualEntryForm";
 import { JOURNEY } from "@/copy/journey";
 import { useJourney } from "@/lib/journey/state";
 
-/** Journey step 4 — first capture. */
+/**
+ * Journey step 4 — first capture. A Health user may skip the form: the app
+ * cannot know whether permission was granted (docs/03 §4), so the choice is
+ * theirs, and it lands on the rhythm step rather than the result, which
+ * would have nothing to show until the first sync runs.
+ */
 export function FirstCapture() {
   const navigate = useNavigate();
   const { connectChoice } = useJourney();
   const c = JOURNEY.firstCapture;
 
   return (
-    <Screen eyebrow={c.eyebrow} title={c.title}>
+    <Screen overline={c.eyebrow} title={c.title}>
       <StepDots total={5} current={4} />
       <p className="pb-[var(--spacing-md)] text-ink-secondary">{c.intro}</p>
 
@@ -31,6 +37,16 @@ export function FirstCapture() {
           navigate("/journey/result", { state: { reading: submitted } })
         }
       />
+
+      {connectChoice === "healthkit" ? (
+        <Button
+          variant="ghost"
+          className="mt-[var(--spacing-xs)]"
+          onClick={() => navigate("/journey/cadence")}
+        >
+          {c.skipHealth}
+        </Button>
+      ) : null}
     </Screen>
   );
 }

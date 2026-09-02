@@ -13,6 +13,7 @@ export const APP = {
     settingsLink: "Settings",
     /** Accessible name for the header profile icon — no visible label. */
     profileAria: "Profile and settings",
+    profileCloseAria: "Close settings",
     cancel: "Cancel",
     back: "Back",
     busy: "…",
@@ -37,8 +38,6 @@ export const APP = {
     openPulseAria: (title: string) => `Open short read: ${title}`,
     contentPendingNotice:
       "Education content is being prepared and clinically reviewed by the Corveo team. Placeholder content is shown during development.",
-    scopeNote:
-      "The Pulse and In Focus are the website's collections, shown here so the library can be reviewed. Publishing them in the app is a change request.",
   },
 
   pulse: {
@@ -72,6 +71,9 @@ export const APP = {
       "No readings yet. Your record begins with the first reading you add or share.",
     sparse: "Your picture is building. Only a few readings so far.",
     addCta: "Add a reading",
+    /** History shows the latest few; the rest unfold on request. */
+    showAll: "See all readings",
+    showFewer: "Show fewer",
     sourceHealth: "Apple Health",
     sourceManual: "Manual",
   },
@@ -79,8 +81,14 @@ export const APP = {
   trend: {
     intro:
       "Each point is a daily summary of your readings, shown exactly as recorded. The pattern across weeks is what's worth discussing with your doctor.",
-    ranges: { twoWeeks: "2W", sixWeeks: "6W", all: "All" },
+    ranges: { oneWeek: "1W", sixWeeks: "6W", all: "All" },
     rangeAria: "Trend range",
+    /** The mean of the readings on screen. A summary, never a threshold or a target. */
+    averageLabel: {
+      "1w": "Average of this week",
+      "6w": "Average of these 6 weeks",
+      all: "Average of all your readings",
+    },
     chartAria: "Blood pressure readings over time, shown as recorded",
     legendSystolic: "Systolic",
     legendDiastolic: "Diastolic",
@@ -106,6 +114,7 @@ export const APP = {
     rail: {
       heading: "More programs",
       sub: "Follow to add",
+      seeAll: "See all programs",
       followAria: (title: string) => `Follow ${title}`,
       unfollowAria: (title: string) => `Unfollow ${title}`,
       switchAria: (title: string) => `Switch to ${title}`,
@@ -148,15 +157,51 @@ export const APP = {
   },
 
   settings: {
-    eyebrow: "Settings",
-    title: "Your data, your record.",
-    aboutTitle: "About this app",
-    cuffsTitle: "Validated monitors",
+    title: "Profile and settings",
+    /** The page opens on the patient: where they are, how readings arrive, the rhythm chosen. */
+    profile: {
+      title: "You",
+      programLabel: "Program",
+      program: (week: number, total: number) => `Week ${week} of ${total}`,
+      followingLabel: "Following",
+      followingNone: "The six-week program only",
+      readingsLabel: "Readings",
+      readings: {
+        healthkit: "Apple Health",
+        manual: "Entered by hand",
+        none: "No monitor yet",
+      },
+      readingCount: (n: number) => (n === 1 ? "1 reading" : `${n} readings`),
+      beganLabel: "Record began",
+      beganNone: "With your first reading",
+      rhythmLabel: "Rhythm",
+      rhythmUnset: "Not chosen yet",
+      consentLabel: "Consent",
+      consentGiven: (date: string, version: string) => `Given ${date} (v${version})`,
+      consentNone: "Not recorded",
+    },
+    /** The menu: each row is a page of its own. */
+    menuAria: "Settings",
+    menu: {
+      appleHealth: "Apple Health",
+      about: "About this app",
+      data: "Your data",
+      monitors: "Arm monitors",
+    },
     appleHealth: {
       title: "Apple Health",
       readsOnly: "Corveo reads blood pressure only. It never writes.",
       manageHint: "Manage access in Settings › Health › Data Access & Devices.",
       notConnected: "Not connected. You can connect Apple Health at any time.",
+      statusLabel: "Status",
+      connected: "Connected",
+      paused: "Paused",
+      lastLookedLabel: "Last checked",
+      connectCta: "Connect Apple Health",
+      pauseCta: "Pause syncing",
+      resumeCta: "Resume syncing",
+      pauseNote:
+        "Paused means Corveo stops looking for new readings. Nothing already in your record changes, and you can resume at any time.",
     },
     yourData: {
       title: "Your data",

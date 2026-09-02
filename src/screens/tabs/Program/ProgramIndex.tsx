@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { PROGRAM_ART } from "@/assets/photos";
 import { Screen } from "@/components/ui/Screen";
 import { Card } from "@/components/ui/Card";
 import { APP } from "@/copy/app";
@@ -8,14 +9,7 @@ import { useFollowedPrograms } from "@/lib/useFollowedPrograms";
 /** The library as its own screen, reached from the Program tab. */
 export function ProgramBrowse() {
   return (
-    <Screen
-      title={APP.programIndex.title}
-      action={
-        <Link to="/app/program" className="eyebrow underline underline-offset-4">
-          {APP.chapter.back}
-        </Link>
-      }
-    >
+    <Screen title={APP.programIndex.title} withTabBar>
       <ProgramIndex />
     </Screen>
   );
@@ -53,13 +47,13 @@ export function ProgramIndex({ embedded = false }: { embedded?: boolean }) {
             <li key={program.slug}>
               <Card>
                 {/* Program artwork is a Corveo asset that has not been
-                    supplied, so the tile is a placeholder that spans the
-                    card's height. */}
+                    supplied; a placeholder tile spans the card's height. */}
                 <div className="flex gap-[var(--spacing-xs)]">
-                  <div
+                  <img
+                    src={PROGRAM_ART[program.slug]}
+                    alt=""
                     aria-hidden
-                    className="w-[96px] flex-none self-stretch rounded-sm"
-                    style={{ background: "var(--color-surface-neutral-lighter)" }}
+                    className="w-[96px] flex-none self-stretch rounded-sm object-cover"
                   />
 
                   <div className="flex min-w-0 flex-1 flex-col">

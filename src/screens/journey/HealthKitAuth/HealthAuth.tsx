@@ -4,6 +4,7 @@ import { Screen } from "@/components/ui/Screen";
 import { Button } from "@/components/ui/Button";
 import { StepDots } from "@/components/ui/StepDots";
 import { AppleHealthSheet } from "@/components/ui/AppleHealthSheet";
+import { HealthLink } from "@/components/ui/HealthLink";
 import { APP } from "@/copy/app";
 import { JOURNEY } from "@/copy/journey";
 import { CORVEO_WORDMARK } from "@/copy/product";
@@ -47,7 +48,7 @@ export function HealthAuth() {
   return (
     <>
       <Screen
-        eyebrow={c.eyebrow}
+        overline={c.eyebrow}
         title={c.title}
         footer={
           <div className="flex flex-col gap-[var(--spacing-xs)]">
@@ -62,6 +63,9 @@ export function HealthAuth() {
       >
         <StepDots total={5} current={3} />
         <p className="text-ink-secondary">{c.intro}</p>
+        <div className="pt-[var(--spacing-2xl)]">
+          <HealthLink />
+        </div>
       </Screen>
 
       <AppleHealthSheet

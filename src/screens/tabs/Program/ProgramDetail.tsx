@@ -1,4 +1,4 @@
-import { Link, Navigate, useNavigate, useParams } from "react-router";
+import { Navigate, useNavigate, useParams } from "react-router";
 import { Screen } from "@/components/ui/Screen";
 import { Button } from "@/components/ui/Button";
 import { APP } from "@/copy/app";
@@ -8,8 +8,9 @@ import { useFollowedPrograms } from "@/lib/useFollowedPrograms";
 import { ChapterList } from "@/screens/tabs/Program/ChapterRow";
 
 /**
- * One program's chapter list, reached from the library. Same layout as the
- * tab, plus a follow control and a way back to the library.
+ * One of the library's other programs: description, chapter list, a follow
+ * control and a way back to the library. The core program never lands
+ * here; the tab is its page.
  */
 export function ProgramDetail() {
   const { slug } = useParams();
@@ -26,48 +27,46 @@ export function ProgramDetail() {
     return <Navigate to={`/app/program/${CORE_PROGRAM_SLUG}/${slug}`} replace />;
   }
 
-  const program = findProgram(slug);
+  // The core program has no page of its own: the tab is its page. This
+  // route only exists for the library's other programs, where the
+  // description and the Follow control live.
+  if (slug === CORE_PROGRAM_SLUG) {
+    return <Navigate to="/app/program" replace />;
+  }
 
-  const back = (
-    <Link to="/app/program/browse" className="eyebrow underline underline-offset-4">
-      {c.browseAll}
-    </Link>
-  );
+  const program = findProgram(slug);
 
   if (!program) {
     return (
-      <Screen action={back} title={APP.chapter.notFound}>
+      <Screen title={APP.chapter.notFound} withTabBar>
         <Button onClick={() => navigate("/app/program/browse")}>{c.browseAll}</Button>
       </Screen>
     );
   }
 
   const following = isFollowing(program.slug);
-  const core = program.slug === CORE_PROGRAM_SLUG;
   const read = readCount(progress, program);
 
   return (
     <Screen
       overline={ci.chapterCount(program.chapters.length, program.unitLabel)}
       title={program.title}
-      action={back}
+      withTabBar
       footer={
-        core ? undefined : (
-          <Button
-            variant={following ? "secondary" : "primary"}
-            onClick={() => {
-              if (following) {
-                unfollow(program.slug);
-              } else {
-                follow(program.slug);
-                setActive(program.slug);
-                navigate("/app/program");
-              }
-            }}
-          >
-            {following ? ci.following : ci.follow}
-          </Button>
-        )
+        <Button
+          variant={following ? "secondary" : "primary"}
+          onClick={() => {
+            if (following) {
+              unfollow(program.slug);
+            } else {
+              follow(program.slug);
+              setActive(program.slug);
+              navigate("/app/program");
+            }
+          }}
+        >
+          {following ? ci.following : ci.follow}
+        </Button>
       }
     >
       <p className="text-ink-secondary" style={{ fontSize: "var(--text-body-base)" }}>

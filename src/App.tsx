@@ -2,6 +2,7 @@ import { Navigate, Outlet, Route, Routes } from "react-router";
 import { TabBar } from "@/components/ui/TabBar";
 import { useJourney } from "@/lib/journey/state";
 import { Welcome } from "@/screens/journey/Onboarding/Welcome";
+import { Intro } from "@/screens/journey/Onboarding/Intro";
 import { Signup } from "@/screens/journey/Signup/Signup";
 import { Consent } from "@/screens/journey/Consent/Consent";
 import { Connect } from "@/screens/journey/HealthKitAuth/Connect";
@@ -19,6 +20,9 @@ import { Chapter } from "@/screens/tabs/Program/Chapter";
 import { ProgramBrowse } from "@/screens/tabs/Program/ProgramIndex";
 import { ProgramDetail } from "@/screens/tabs/Program/ProgramDetail";
 import { Settings } from "@/screens/settings/Settings";
+import { About } from "@/screens/settings/About";
+import { AppleHealth } from "@/screens/settings/AppleHealth";
+import { YourData } from "@/screens/settings/YourData";
 import { ValidatedCuffs } from "@/screens/settings/ValidatedCuffs";
 import { BehindTheScenes } from "@/screens/behind/BehindTheScenes";
 
@@ -54,6 +58,7 @@ export function App() {
 
       <Route element={<JourneyOnly />}>
         <Route path="/journey/welcome" element={<Welcome />} />
+        <Route path="/journey/intro" element={<Intro />} />
         <Route path="/journey/signup" element={<Signup />} />
         <Route path="/journey/consent" element={<Consent />} />
         <Route path="/journey/connect" element={<Connect />} />
@@ -64,18 +69,24 @@ export function App() {
       </Route>
 
       <Route element={<RequireJourneyComplete />}>
+        {/* Everything a tab leads to keeps the bar, with that tab lit: a
+            chapter, an article, the library are places, never dead ends. */}
         <Route element={<TabsLayout />}>
           <Route path="/app/record" element={<Record />} />
           <Route path="/app/program" element={<Program />} />
+          <Route path="/app/program/browse" element={<ProgramBrowse />} />
+          <Route path="/app/program/:slug" element={<ProgramDetail />} />
+          <Route path="/app/program/:slug/:week" element={<Chapter />} />
           <Route path="/app/education" element={<Education />} />
+          <Route path="/app/education/in-focus/:slug" element={<InFocusArticle />} />
         </Route>
+        {/* Tasks and overlays, not places: these close rather than go back. */}
         <Route path="/app/education/pulse/:slug" element={<PulseViewer />} />
-        <Route path="/app/education/in-focus/:slug" element={<InFocusArticle />} />
-        <Route path="/app/program/browse" element={<ProgramBrowse />} />
-        <Route path="/app/program/:slug" element={<ProgramDetail />} />
-        <Route path="/app/program/:slug/:week" element={<Chapter />} />
         <Route path="/app/add" element={<ManualEntry />} />
         <Route path="/app/settings" element={<Settings />} />
+        <Route path="/app/settings/apple-health" element={<AppleHealth />} />
+        <Route path="/app/settings/about" element={<About />} />
+        <Route path="/app/settings/data" element={<YourData />} />
         <Route path="/app/cuffs" element={<ValidatedCuffs />} />
         {/* Readings and Trend merged into Record; the shared web preview is
             bookmarked, so the old paths keep working. */}

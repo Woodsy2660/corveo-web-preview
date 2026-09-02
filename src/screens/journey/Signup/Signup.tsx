@@ -21,7 +21,7 @@ export function Signup() {
 
   return (
     <Screen
-      eyebrow={c.eyebrow}
+      overline={c.eyebrow}
       title={c.title}
       footer={
         <Button disabled={!canContinue} onClick={() => navigate("/journey/consent")}>
@@ -54,12 +54,6 @@ export function Signup() {
         </label>
       </div>
 
-      <p
-        className="pt-[var(--spacing-md)] text-ink-tertiary"
-        style={{ fontSize: "var(--text-body-sm)" }}
-      >
-        {c.note}
-      </p>
     </Screen>
   );
 }
