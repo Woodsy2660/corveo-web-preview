@@ -315,7 +315,7 @@ final class HealthModel {
         return "UPLOAD_FAILED"
     }
 
-    // MARK: Settings deep link (§12 P3c, "Open BP Reset Settings")
+    // MARK: Settings deep link (§12 P3c, "Open Corveo Settings")
 
     func openSystemSettings() {
         guard let url = URL(string: UIApplication.openSettingsURLString) else { return }

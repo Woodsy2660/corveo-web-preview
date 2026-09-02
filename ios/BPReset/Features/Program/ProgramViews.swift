@@ -171,23 +171,20 @@ struct ChapterView: View {
                 overline: "\(program.unitLabel) \(chapter.week)",
                 title: chapter.title,
                 withTabBar: true,
-                footer: AnyView(VStack(spacing: Spacing.xxs) {
-                    if done {
-                        CButton(title: nextOpen ? AppCopy.chapter.next : AppCopy.chapter.back) {
-                            if nextOpen, let next { router.path[router.path.count - 1] = .chapter(slug: program.slug, week: next.week) }
-                            else { router.pop() }
-                        }
-                    } else {
-                        CButton(title: marking ? AppCopy.common.busy : AppCopy.chapter.markRead, disabled: marking) {
-                            Task {
-                                marking = true
-                                defer { marking = false }
-                                await model.updateProgress(completedSteps: [Programs.stepKey(program.slug, week): true])
-                            }
-                        }
+                action: AnyView(HeaderBack { router.pop() }),
+                footer: AnyView(
+                    done
+                    ? CButton(title: nextOpen ? AppCopy.chapter.next : AppCopy.chapter.back) {
+                        if nextOpen, let next { router.path[router.path.count - 1] = .chapter(slug: program.slug, week: next.week) }
+                        else { router.pop() }
                     }
-                    CButton(title: AppCopy.common.back, variant: .ghost) { router.pop() }
-                })
+                    : CButton(title: marking ? AppCopy.common.busy : AppCopy.chapter.markRead, disabled: marking) {
+                        Task {
+                            marking = true
+                            defer { marking = false }
+                            await model.updateProgress(completedSteps: [Programs.stepKey(program.slug, week): true])
+                        }
+                    })
             ) {
                 if let deck = chapter.deck {
                     Text(deck).cText(TypeScale.bodyLg).lineSpacing(4).foregroundStyle(CColor.inkSecondary)
@@ -227,7 +224,7 @@ struct ChapterView: View {
                 .padding(.top, Spacing.md)
             }
         } else {
-            Screen(title: AppCopy.chapter.notFound, withTabBar: true) {
+            Screen(title: AppCopy.chapter.notFound, withTabBar: true, action: AnyView(HeaderBack { router.pop() })) {
                 CButton(title: AppCopy.chapter.back) { router.pop() }
             }
         }
@@ -266,7 +263,7 @@ struct ProgramBrowseView: View {
     @Environment(Router.self) private var router
     var body: some View {
         Screen(title: AppCopy.programIndex.title, withTabBar: true,
-               footer: AnyView(CButton(title: AppCopy.common.back, variant: .ghost) { router.pop() })) {
+               action: AnyView(HeaderBack { router.pop() })) {
             ProgramIndex(embedded: false)
         }
     }
@@ -357,22 +354,19 @@ struct ProgramDetailView: View {
                 overline: AppCopy.programIndex.chapterCount(program.chapters.count, program.unitLabel),
                 title: program.title,
                 withTabBar: true,
-                footer: AnyView(VStack(spacing: Spacing.xxs) {
-                    if !core {
-                        CButton(title: following ? AppCopy.programIndex.following : AppCopy.programIndex.follow,
-                                variant: following ? .secondary : .primary) {
-                            if following {
-                                follow.unfollow(program.slug)
-                            } else {
-                                follow.follow(program.slug)
-                                follow.setActive(program.slug)
-                                router.popToRoot()
-                                router.tab = .program
-                            }
+                action: AnyView(HeaderBack { router.pop() }),
+                footer: core ? nil : AnyView(
+                    CButton(title: following ? AppCopy.programIndex.following : AppCopy.programIndex.follow,
+                            variant: following ? .secondary : .primary) {
+                        if following {
+                            follow.unfollow(program.slug)
+                        } else {
+                            follow.follow(program.slug)
+                            follow.setActive(program.slug)
+                            router.popToRoot()
+                            router.tab = .program
                         }
-                    }
-                    CButton(title: AppCopy.common.back, variant: .ghost) { router.pop() }
-                })
+                    })
             ) {
                 Text(program.description).cText(TypeScale.bodyBase).foregroundStyle(CColor.inkSecondary)
                 Text(AppCopy.program.progress(read, program.chapters.count))
@@ -381,7 +375,7 @@ struct ProgramDetailView: View {
                 ChapterList(program: program, progress: model.progress)
             }
         } else {
-            Screen(title: AppCopy.chapter.notFound, withTabBar: true) {
+            Screen(title: AppCopy.chapter.notFound, withTabBar: true, action: AnyView(HeaderBack { router.pop() })) {
                 CButton(title: AppCopy.program.browseAll) { router.pop() }
             }
         }

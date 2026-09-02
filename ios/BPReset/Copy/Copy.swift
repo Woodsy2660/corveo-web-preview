@@ -201,7 +201,7 @@ enum AppCopy {
             static let notConnected = "Not connected. You can connect Apple Health at any time."
             static let connectCta = "Connect Apple Health"
             static let disconnectCta = "Disconnect Apple Health"
-            static let disconnectNote = "This stops BP Reset importing readings. It does not change Apple Health permissions."
+            static let disconnectNote = "This stops Corveo importing readings. It does not change Apple Health permissions."
         }
         enum yourData {
             static let title = "Your data"
@@ -255,7 +255,7 @@ enum HealthSyncCopy {
             static let aria = "Check Apple Health for new readings"
         }
     }
-    static let openSettings = "Open BP Reset Settings"
+    static let openSettings = "Open Corveo Settings"
 }
 
 enum JourneyCopy {
@@ -398,7 +398,7 @@ enum ConsentCopy {
 enum SafetyCopy {
     static let eyebrow = "About this app"
     static let title = "What Corveo does, and doesn't do."
-    static let doesTitle = "Corveo BP Reset:"
+    static let doesTitle = "Corveo:"
     static let does = [
         "Displays and organises the blood pressure readings you record with your own monitor",
         "Shows your readings and their history exactly as recorded",
@@ -415,7 +415,7 @@ enum SafetyCopy {
         "Replace advice from your own doctor",
     ]
     static let seekAdvice = "If you are worried about a reading or how you feel, speak with your GP or cardiologist. If you feel seriously unwell, call 000."
-    static let disclaimer = "Corveo BP Reset displays and plots your blood pressure readings and provides general education. It does not diagnose, treat, or replace advice from your doctor."
+    static let disclaimer = "Corveo displays and plots your blood pressure readings and provides general education. It does not diagnose, treat, or replace advice from your doctor."
     /// Shown at the foot of every education chapter.
     static let educationNote = "This is general education and is not a substitute for personalised advice from your own clinician."
 }
@@ -438,7 +438,7 @@ enum ValidatedCuffsCopy {
 enum ReminderCopy {
     /// The one notification. Identical every time; it carries no value and no verdict.
     static let title = "Time for a reading"
-    static let body = "A quiet moment for your blood pressure reading. Open BP Reset when you're ready."
+    static let body = "A quiet moment for your blood pressure reading. Open Corveo when you're ready."
 
     enum journey {
         static let toggle = "Remind me at these times"
@@ -453,7 +453,7 @@ enum ReminderCopy {
         static let dailyTimes = "Mornings at 8 am."
         static let fewWeeklyTimes = "Monday, Wednesday and Friday mornings at 8 am."
         static let noRhythm = "Choose a rhythm to set reminder times."
-        static let deniedNote = "Notifications for BP Reset are off in iOS Settings. Turn them on there to receive reminders."
+        static let deniedNote = "Notifications for Corveo are off in iOS Settings. Turn them on there to receive reminders."
         static let openSettings = "Open iOS Settings"
         static let testCta = "Send a test reminder (10 seconds)"
         static func short(_ c: CadenceChoice) -> String {
@@ -471,7 +471,7 @@ enum ReminderCopy {
 enum HealthProblemCopy {
     static let consentRequired = "Your consent is needed before readings can be saved. Review consent in Settings."
     static let signInRequired = "Sign in again to keep saving readings."
-    static let storeFault = "The reading store on this phone could not be opened. Readings in Apple Health are unaffected; reinstalling BP Reset may be needed."
+    static let storeFault = "The reading store on this phone could not be opened. Readings in Apple Health are unaffected; reinstalling Corveo may be needed."
     static let bindingHold = "Readings from a previous sign-in are waiting on this phone. They stay here until that account signs in again."
     static let rejectedAll = "The server could not accept the readings. They stay on this phone and will be retried."
     static let ackFailed = "Readings were sent but could not be marked as sent on this phone. They will be checked again."

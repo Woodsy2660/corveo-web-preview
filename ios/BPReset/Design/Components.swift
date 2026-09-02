@@ -392,6 +392,26 @@ struct FactRow: View {
     }
 }
 
+/// Back, in the header's trailing slot beside the wordmark: a chevron and the word, quiet.
+struct HeaderBack: View {
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: Spacing.xxxs) {
+                Image(systemName: "chevron.left").font(.system(size: 12, weight: .semibold))
+                Text(AppCopy.common.back).cText(TypeScale.label, weight: .medium).tracking(0.3)
+            }
+            .foregroundStyle(CColor.inkSecondary)
+            .frame(minHeight: 44)
+            .padding(.leading, Spacing.xs)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .padding(.vertical, -11)
+        .accessibilityLabel(AppCopy.common.back)
+    }
+}
+
 /// A small underlined text link in the header action slot.
 struct HeaderLink: View {
     let title: String

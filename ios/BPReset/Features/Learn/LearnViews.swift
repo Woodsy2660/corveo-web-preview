@@ -111,7 +111,7 @@ struct InFocusArticleView: View {
     var body: some View {
         if let article = inFocusArticles.first(where: { $0.slug == slug }) {
             Screen(overline: AppCopy.inFocus.overline, title: article.title, withTabBar: true,
-                   footer: AnyView(CButton(title: AppCopy.common.back, variant: .ghost) { router.pop() })) {
+                   action: AnyView(HeaderBack { router.pop() })) {
                 if let deck = article.deck {
                     Text(deck).cText(TypeScale.bodyLg).lineSpacing(4).foregroundStyle(CColor.inkSecondary)
                         .padding(.bottom, Spacing.sm)
@@ -132,8 +132,7 @@ struct InFocusArticleView: View {
                 ArticleBody(sections: article.sections ?? [])
             }
         } else {
-            Screen(title: AppCopy.inFocus.notFound, withTabBar: true,
-                   footer: AnyView(CButton(title: AppCopy.common.back, variant: .ghost) { router.pop() })) {
+            Screen(title: AppCopy.inFocus.notFound, withTabBar: true, action: AnyView(HeaderBack { router.pop() })) {
                 CButton(title: AppCopy.inFocus.back) { router.pop() }
             }
         }
@@ -170,21 +169,24 @@ struct PulseViewerView: View {
             .scrollIndicators(.hidden)
             .ignoresSafeArea()
 
+            // The bar with the close sits above the pages and takes the whole tap.
             HStack {
                 Text("\(AppCopy.education.pulseHeading) · \(AppCopy.pulse.counter(index + 1, pulseItems.count))")
                     .eyebrow().foregroundStyle(CColor.textSecondaryInverse)
                 Spacer()
                 Button { router.pop() } label: {
                     Image(systemName: CIcon.close)
-                        .font(.system(size: 18))
+                        .font(.system(size: 18, weight: .medium))
                         .foregroundStyle(CColor.actionInk)
                         .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(AppCopy.pulse.closeAria)
             }
             .padding(.horizontal, Spacing.md)
             .padding(.top, Spacing.sm)
+            .zIndex(2)
 
             if index < pulseItems.count - 1 {
                 VStack {
@@ -226,7 +228,7 @@ struct PulseSlide: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, Spacing.md)
         .padding(.top, 72)
-        .padding(.bottom, 64)
+        .padding(.bottom, 96)                                // clears the swipe hint
         .accessibilityElement(children: .combine)
     }
 }

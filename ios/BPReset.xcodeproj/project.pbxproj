@@ -233,8 +233,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Config/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "BP Reset";
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "BP Reset reads blood-pressure readings from Apple Health so you can view readings recorded by your cuff in My Heart Record.";
+				INFOPLIST_KEY_CFBundleDisplayName = "Corveo";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Corveo reads blood-pressure readings from Apple Health so you can view readings recorded by your cuff in My Heart Record.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
@@ -261,8 +261,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Config/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "BP Reset";
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "BP Reset reads blood-pressure readings from Apple Health so you can view readings recorded by your cuff in My Heart Record.";
+				INFOPLIST_KEY_CFBundleDisplayName = "Corveo";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Corveo reads blood-pressure readings from Apple Health so you can view readings recorded by your cuff in My Heart Record.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
