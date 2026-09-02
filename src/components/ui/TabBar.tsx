@@ -35,7 +35,7 @@ export function TabBar() {
         }}
       />
     <nav
-      className="fixed inset-x-0 z-10 flex justify-center"
+      className="fixed inset-x-0 z-20 flex justify-center"
       style={{ bottom: "calc(var(--spacing-sm) + var(--safe-bottom))" }}
       aria-label={APP.tabs.navAria}
     >

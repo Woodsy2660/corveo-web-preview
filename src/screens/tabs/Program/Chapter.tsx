@@ -43,18 +43,9 @@ export function Chapter() {
   const program = findProgram(slug);
   const chapter = program && Number.isInteger(week) ? findChapter(slug, week) : undefined;
 
-  const backLink = (
-    <Link
-      to={program ? `/app/program/${program.slug}` : "/app/program"}
-      className="eyebrow underline underline-offset-4"
-    >
-      {program ? program.title : c.back}
-    </Link>
-  );
-
   if (!program || !chapter || !isAvailable(progress, program, week)) {
     return (
-      <Screen action={backLink} title={c.notFound}>
+      <Screen title={c.notFound} withTabBar>
         <Button onClick={() => navigate("/app/program")}>{c.back}</Button>
       </Screen>
     );
@@ -68,8 +59,8 @@ export function Chapter() {
   return (
     <Screen
       overline={`${program.unitLabel} ${chapter.week}`}
-      action={backLink}
       title={chapter.title}
+      withTabBar
       footer={
         done ? (
           <Button

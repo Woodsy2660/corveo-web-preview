@@ -1,4 +1,4 @@
-import { Link, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { Screen } from "@/components/ui/Screen";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -32,22 +32,16 @@ export function InFocusArticle() {
   const c = APP.inFocus;
   const article = findInFocusArticle(slug);
 
-  const backLink = (
-    <Link to="/app/education" className="eyebrow underline underline-offset-4">
-      {c.back}
-    </Link>
-  );
-
   if (!article) {
     return (
-      <Screen action={backLink} title={c.notFound}>
+      <Screen title={c.notFound} withTabBar>
         <Button onClick={() => navigate("/app/education")}>{c.back}</Button>
       </Screen>
     );
   }
 
   return (
-    <Screen overline={c.overline} action={backLink} title={article.title}>
+    <Screen overline={c.overline} title={article.title} withTabBar>
       {article.deck ? (
         <p
           className="pb-[var(--spacing-sm)] text-ink-secondary"

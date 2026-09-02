@@ -9,14 +9,7 @@ import { useFollowedPrograms } from "@/lib/useFollowedPrograms";
 /** The library as its own screen, reached from the Program tab. */
 export function ProgramBrowse() {
   return (
-    <Screen
-      title={APP.programIndex.title}
-      action={
-        <Link to="/app/program" className="eyebrow underline underline-offset-4">
-          {APP.chapter.back}
-        </Link>
-      }
-    >
+    <Screen title={APP.programIndex.title} withTabBar>
       <ProgramIndex />
     </Screen>
   );

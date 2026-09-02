@@ -1,4 +1,4 @@
-import { Link, Navigate, useNavigate, useParams } from "react-router";
+import { Navigate, useNavigate, useParams } from "react-router";
 import { Screen } from "@/components/ui/Screen";
 import { Button } from "@/components/ui/Button";
 import { APP } from "@/copy/app";
@@ -36,15 +36,9 @@ export function ProgramDetail() {
 
   const program = findProgram(slug);
 
-  const back = (
-    <Link to="/app/program/browse" className="eyebrow underline underline-offset-4">
-      {c.browseAll}
-    </Link>
-  );
-
   if (!program) {
     return (
-      <Screen action={back} title={APP.chapter.notFound}>
+      <Screen title={APP.chapter.notFound} withTabBar>
         <Button onClick={() => navigate("/app/program/browse")}>{c.browseAll}</Button>
       </Screen>
     );
@@ -57,7 +51,7 @@ export function ProgramDetail() {
     <Screen
       overline={ci.chapterCount(program.chapters.length, program.unitLabel)}
       title={program.title}
-      action={back}
+      withTabBar
       footer={
         <Button
           variant={following ? "secondary" : "primary"}

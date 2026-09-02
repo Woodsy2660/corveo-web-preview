@@ -118,8 +118,12 @@ export function Screen({
 
       {footer ? (
         <footer
-          className="px-[var(--spacing-md)] pt-[var(--spacing-xs)]"
-          style={{ paddingBottom: "calc(var(--spacing-md) + var(--safe-bottom))" }}
+          className="relative z-[15] bg-page px-[var(--spacing-md)] pt-[var(--spacing-xs)]"
+          style={{
+            paddingBottom: withTabBar
+              ? "calc(96px + var(--safe-bottom))"
+              : "calc(var(--spacing-md) + var(--safe-bottom))",
+          }}
         >
           {footer}
         </footer>

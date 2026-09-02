@@ -66,16 +66,19 @@ export function App() {
       </Route>
 
       <Route element={<RequireJourneyComplete />}>
+        {/* Everything a tab leads to keeps the bar, with that tab lit: a
+            chapter, an article, the library are places, never dead ends. */}
         <Route element={<TabsLayout />}>
           <Route path="/app/record" element={<Record />} />
           <Route path="/app/program" element={<Program />} />
+          <Route path="/app/program/browse" element={<ProgramBrowse />} />
+          <Route path="/app/program/:slug" element={<ProgramDetail />} />
+          <Route path="/app/program/:slug/:week" element={<Chapter />} />
           <Route path="/app/education" element={<Education />} />
+          <Route path="/app/education/in-focus/:slug" element={<InFocusArticle />} />
         </Route>
+        {/* Tasks and overlays, not places: these close rather than go back. */}
         <Route path="/app/education/pulse/:slug" element={<PulseViewer />} />
-        <Route path="/app/education/in-focus/:slug" element={<InFocusArticle />} />
-        <Route path="/app/program/browse" element={<ProgramBrowse />} />
-        <Route path="/app/program/:slug" element={<ProgramDetail />} />
-        <Route path="/app/program/:slug/:week" element={<Chapter />} />
         <Route path="/app/add" element={<ManualEntry />} />
         <Route path="/app/settings" element={<Settings />} />
         <Route path="/app/cuffs" element={<ValidatedCuffs />} />
