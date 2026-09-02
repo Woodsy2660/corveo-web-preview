@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | **Test** | T6 in `docs/stage2-test-script.md` (guide v1.3 §14): still capturing on day 3; every deferred pass converges; zero duplicate rows. Evidences Stage 2 criterion (c). |
-| **Started** | Tuesday 2 September 2026, 10:39 AEST |
-| **Ends** | Thursday 4 September 2026, 10:39 AEST or later |
+| **Started** | Tuesday 2 September 2026, 10:39 AEST on build `0d4a0b4`. **Abandoned after C1** on Nick's direction so the finished build could go on the phone. **Restarted Thu 3 Sep 2026, 08:03 AEST on build `e50977e`** (code-review fixes, the 2 Sep front-end iteration, the new icon). The checkpoints below run again from C1 against the new build. |
+| **Ends** | 48 hours after the restart, Friday 5 September 2026, or later |
 | **Handset** | iPhone 17, `iPhone18,3`, iOS 26.6.1 build 23G83 |
-| **Build under test** | `dev.aiplease.bpreset` Debug, commit `0d4a0b4` on `integration/native-app`. **Not reinstalled, rebuilt or force-quit for the duration.** The free-team profile is valid until 9 September. |
+| **Build under test** | `dev.aiplease.bpreset` Debug, commit `e50977e` on `integration/native-app`. **Not reinstalled, rebuilt or force-quit for the duration.** The free-team profile is valid until 10 September. |
 | **Sources** | `dev.lucab.bpwriter` (synthetic, the only app with Health write permission; delayed saves of 10 to 90 s) and the loan Omron cuff through OMRON connect. |
 | **Backend** | Corveo dev project, v0.2 schema. |
 | **Operator** | Nick |
@@ -22,7 +22,7 @@
 
 | # | When | What to do | Expected | Result |
 |---|---|---|---|---|
-| C1 | Tue 2 Sep, at start | Baseline counts. Then writer: delay 30 s, Schedule save, lock the phone at once, wait 60 s, unlock, open BP Reset. | New Apple Health row present without tapping Sync. Pending 0 afterwards. | **PASS** |
+| C1 | At the restart | Baseline counts. Then writer: delay 30 s, Schedule save, lock the phone at once, wait 60 s, unlock, open BP Reset. | New Apple Health row present without tapping Sync. Pending 0 afterwards. | (first run PASS on 0d4a0b4; re-run on e50977e) |
 | C2 | Tue 2 Sep, evening | With BP Reset in the background (not opened for at least an hour), take an Omron reading, let OMRON connect transfer it, wait two minutes, then open BP Reset. | Row present with the OMRON connect chip; rejected count unchanged. | |
 | C3 | Wed 3 Sep, morning | Locked store. Writer: delay 90 s (its longest), Schedule save, lock the phone immediately and leave it locked for at least 10 minutes in total. Unlock, wait 30 s without opening anything, then open BP Reset. Whether iOS delivered the wake while locked (a deferred pass, protected data unavailable) or held it until unlock, the criterion is the same. | The reading arrives exactly once; pending 0 afterwards; no duplicate. | |
 | C4 | Wed 3 Sep, evening | Reboot. After the reboot, unlock the phone but do not open BP Reset. Take an Omron reading (or open the writer, Schedule save with a 90 s delay, and go back to the home screen), wait two minutes, then open BP Reset. | Row present. The observer survived the reboot and background delivery relaunched the app before it was opened. | |
@@ -54,7 +54,8 @@ Pass when `distinct_uuids = rows` on every line of the first query, and every `d
 
 | Checkpoint | Time | Apple Health rows before → after | Card before → after (pending / held / rejected / malformed) | Arrived without Sync | Notes |
 |---|---|---|---|---|---|
-| C1 | Tue 2 Sep 10:47 | 9 → 10 | pending 0 → 0 / held 0 / rejected 1 → 1 (pre-soak OBS-1) / malformed 0 | Yes | Writer, 30 s delay, phone locked for the save. PASS |
+| C1 (first run, build 0d4a0b4) | Tue 2 Sep 10:47 | 9 → 10 | pending 0 → 0 / held 0 / rejected 1 → 1 (pre-soak OBS-1) / malformed 0 | Yes | Writer, 30 s delay, phone locked for the save. PASS. Soak abandoned afterwards; restarted on e50977e |
+| C1 | | | | | |
 | C2 | | | | | |
 | C3 | | | | | |
 | C4 | | | | | |
