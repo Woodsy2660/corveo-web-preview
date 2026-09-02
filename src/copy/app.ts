@@ -115,6 +115,7 @@ export const APP = {
     rail: {
       heading: "More programs",
       sub: "Follow to add",
+      seeAll: "See all programs",
       followAria: (title: string) => `Follow ${title}`,
       unfollowAria: (title: string) => `Unfollow ${title}`,
       switchAria: (title: string) => `Switch to ${title}`,

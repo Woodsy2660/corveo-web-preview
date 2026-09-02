@@ -8,8 +8,9 @@ import { useFollowedPrograms } from "@/lib/useFollowedPrograms";
 import { ChapterList } from "@/screens/tabs/Program/ChapterRow";
 
 /**
- * One program's chapter list, reached from the library. Same layout as the
- * tab, plus a follow control and a way back to the library.
+ * One of the library's other programs: description, chapter list, a follow
+ * control and a way back to the library. The core program never lands
+ * here; the tab is its page.
  */
 export function ProgramDetail() {
   const { slug } = useParams();
@@ -24,6 +25,13 @@ export function ProgramDetail() {
   // bookmarked, so a bare number still resolves to the core program.
   if (slug && /^\d+$/.test(slug)) {
     return <Navigate to={`/app/program/${CORE_PROGRAM_SLUG}/${slug}`} replace />;
+  }
+
+  // The core program has no page of its own: the tab is its page. This
+  // route only exists for the library's other programs, where the
+  // description and the Follow control live.
+  if (slug === CORE_PROGRAM_SLUG) {
+    return <Navigate to="/app/program" replace />;
   }
 
   const program = findProgram(slug);
@@ -43,7 +51,6 @@ export function ProgramDetail() {
   }
 
   const following = isFollowing(program.slug);
-  const core = program.slug === CORE_PROGRAM_SLUG;
   const read = readCount(progress, program);
 
   return (
@@ -52,22 +59,20 @@ export function ProgramDetail() {
       title={program.title}
       action={back}
       footer={
-        core ? undefined : (
-          <Button
-            variant={following ? "secondary" : "primary"}
-            onClick={() => {
-              if (following) {
-                unfollow(program.slug);
-              } else {
-                follow(program.slug);
-                setActive(program.slug);
-                navigate("/app/program");
-              }
-            }}
-          >
-            {following ? ci.following : ci.follow}
-          </Button>
-        )
+        <Button
+          variant={following ? "secondary" : "primary"}
+          onClick={() => {
+            if (following) {
+              unfollow(program.slug);
+            } else {
+              follow(program.slug);
+              setActive(program.slug);
+              navigate("/app/program");
+            }
+          }}
+        >
+          {following ? ci.following : ci.follow}
+        </Button>
       }
     >
       <p className="text-ink-secondary" style={{ fontSize: "var(--text-body-base)" }}>

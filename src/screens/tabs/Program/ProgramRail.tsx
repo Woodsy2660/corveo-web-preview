@@ -1,8 +1,9 @@
 import { Link } from "react-router";
+import { Button } from "@/components/ui/Button";
 import { CheckIcon, PlusIcon } from "@/components/ui/icons";
 import { APP } from "@/copy/app";
 import { CORE_PROGRAM_SLUG, PROGRAMS } from "@/lib/programs";
-import { PROGRAM_ART } from "@/assets/program";
+import { PROGRAM_ART } from "@/assets/photos";
 
 /**
  * The other programs, as a rail at the foot of the Program tab.
@@ -109,6 +110,14 @@ export function ProgramRail({
           );
         })}
       </ul>
+
+      {/* The library page, where every program has its description and its
+          own Follow: reached from here, not from a page of the core program. */}
+      <Link to="/app/program/browse" className="block pt-[var(--spacing-md)]">
+        <Button variant="secondary" tabIndex={-1}>
+          {c.seeAll}
+        </Button>
+      </Link>
     </section>
   );
 }
