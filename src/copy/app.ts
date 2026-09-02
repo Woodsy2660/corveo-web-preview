@@ -157,7 +157,7 @@ export const APP = {
   },
 
   settings: {
-    title: "Your data, your record.",
+    title: "Profile and settings",
     /** The page opens on the patient: where they are, how readings arrive, the rhythm chosen. */
     profile: {
       title: "You",
@@ -175,6 +175,7 @@ export const APP = {
     /** The menu: each row is a page of its own. */
     menuAria: "Settings",
     menu: {
+      appleHealth: "Apple Health",
       about: "About this app",
       data: "Your data",
       monitors: "Arm monitors",
@@ -184,6 +185,15 @@ export const APP = {
       readsOnly: "Corveo reads blood pressure only. It never writes.",
       manageHint: "Manage access in Settings › Health › Data Access & Devices.",
       notConnected: "Not connected. You can connect Apple Health at any time.",
+      statusLabel: "Status",
+      connected: "Connected",
+      paused: "Paused",
+      lastLookedLabel: "Last checked",
+      connectCta: "Connect Apple Health",
+      pauseCta: "Pause syncing",
+      resumeCta: "Resume syncing",
+      pauseNote:
+        "Paused means Corveo stops looking for new readings. Nothing already in your record changes, and you can resume at any time.",
     },
     yourData: {
       title: "Your data",

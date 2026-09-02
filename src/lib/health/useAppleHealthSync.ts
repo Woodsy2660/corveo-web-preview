@@ -31,10 +31,15 @@ export function useAppleHealthSync() {
   const [arrived, setArrived] = useState(false);
   const openedCheck = useRef(false);
 
-  useEffect(() => {
-    void getHealthPlugin().getAuthorizationState().then(setAuth);
-    return subscribeDemoHealth(() => {});
+  /** Re-read the authorisation state, after connecting from Settings. */
+  const refresh = useCallback(async () => {
+    setAuth(await getHealthPlugin().getAuthorizationState());
   }, []);
+
+  useEffect(() => {
+    void refresh();
+    return subscribeDemoHealth(() => {});
+  }, [refresh]);
 
   /** The check itself: look, record when we looked, refresh the record if anything came. */
   const check = useCallback(async (): Promise<SyncResult> => {
@@ -82,5 +87,14 @@ export function useAppleHealthSync() {
 
   const label = phase === "busy" ? c.sync.busy : phase === "done" ? c.sync.done : c.sync.idle;
 
-  return { active, status, arrived, phase, label, sync };
+  return {
+    active,
+    status,
+    arrived,
+    phase,
+    label,
+    sync,
+    refresh,
+    samplesEverReceived: auth?.samplesEverReceived ?? true,
+  };
 }

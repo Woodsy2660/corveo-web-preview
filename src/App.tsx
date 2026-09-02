@@ -21,6 +21,7 @@ import { ProgramBrowse } from "@/screens/tabs/Program/ProgramIndex";
 import { ProgramDetail } from "@/screens/tabs/Program/ProgramDetail";
 import { Settings } from "@/screens/settings/Settings";
 import { About } from "@/screens/settings/About";
+import { AppleHealth } from "@/screens/settings/AppleHealth";
 import { YourData } from "@/screens/settings/YourData";
 import { ValidatedCuffs } from "@/screens/settings/ValidatedCuffs";
 import { BehindTheScenes } from "@/screens/behind/BehindTheScenes";
@@ -83,6 +84,7 @@ export function App() {
         <Route path="/app/education/pulse/:slug" element={<PulseViewer />} />
         <Route path="/app/add" element={<ManualEntry />} />
         <Route path="/app/settings" element={<Settings />} />
+        <Route path="/app/settings/apple-health" element={<AppleHealth />} />
         <Route path="/app/settings/about" element={<About />} />
         <Route path="/app/settings/data" element={<YourData />} />
         <Route path="/app/cuffs" element={<ValidatedCuffs />} />

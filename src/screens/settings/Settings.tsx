@@ -1,48 +1,27 @@
-import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { Screen, ProfileLink } from "@/components/ui/Screen";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { ChevronRightIcon } from "@/components/ui/icons";
 import { APP } from "@/copy/app";
 import { JOURNEY } from "@/copy/journey";
 import { HEALTH_SYNC } from "@/copy/health-sync";
-import { resetApi } from "@/lib/api";
 import { useProgramProgress } from "@/lib/api/hooks";
 import { CORE_PROGRAM_SLUG, findProgram, readCount } from "@/lib/programs";
-import { getHealthPlugin, resetHealthPlugin, type AuthorizationState } from "@/lib/health";
 import { useJourney } from "@/lib/journey/state";
-import { useQueryClient } from "@tanstack/react-query";
 
 /**
  * Settings, which is as much the patient's page as the app's: it opens on
  * who they are in the program (week, how readings arrive, the rhythm they
- * chose), then Apple Health status, then a short menu to the longer
- * reading: about this app (the safety surface, Deliverable 12), your data
- * (export, deletion, consent receipt) and the validated monitors
- * (Deliverable 8). The dev-only demo reset stays at the foot.
+ * chose), then a short menu, each row a page: Apple Health (status,
+ * refresh, pause), about this app (the safety surface, Deliverable 12),
+ * your data (export, deletion, consent receipt, and the dev-only demo
+ * reset) and the validated monitors (Deliverable 8).
  */
 export function Settings() {
   const navigate = useNavigate();
-  const qc = useQueryClient();
-  const { resetJourney, connectChoice, cadence } = useJourney();
+  const { connectChoice, cadence } = useJourney();
   const { data: progress } = useProgramProgress();
-  const [health, setHealth] = useState<AuthorizationState | null>(null);
   const c = APP.settings;
 
-  useEffect(() => {
-    void getHealthPlugin().getAuthorizationState().then(setHealth);
-  }, []);
-
-  const resetDemo = async () => {
-    resetApi();
-    resetHealthPlugin();
-    resetJourney();
-    qc.clear();
-    navigate("/journey/welcome", { replace: true });
-  };
-
-  const connected = health?.state === "requested";
   const program = findProgram(CORE_PROGRAM_SLUG);
   const profileRows: [string, string][] = [
     [
@@ -56,6 +35,7 @@ export function Settings() {
   ];
 
   const menu: [string, string][] = [
+    [c.menu.appleHealth, "/app/settings/apple-health"],
     [c.menu.about, "/app/settings/about"],
     [c.menu.data, "/app/settings/data"],
     [c.menu.monitors, "/app/cuffs"],
@@ -84,22 +64,6 @@ export function Settings() {
           </dl>
         </section>
 
-        <Card label={c.appleHealth.title}>
-          <p style={{ fontSize: "var(--text-body-sm)" }}>
-            {connected ? c.appleHealth.readsOnly : c.appleHealth.notConnected}
-          </p>
-          {connected && health && !health.samplesEverReceived ? (
-            // Neutral nudge, verbatim from docs/03 §4 — absence of data is
-            // indistinguishable from denial, and we never imply denial.
-            <p className="pt-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-body-sm)" }}>
-              {JOURNEY.healthAuth.noSamplesNudge}
-            </p>
-          ) : null}
-          <p className="pt-[var(--spacing-3xs)] text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)" }}>
-            {c.appleHealth.manageHint}
-          </p>
-        </Card>
-
         {/* — Menu — each row is a page of its own; the whole row is the tap. */}
         <nav aria-label={c.menuAria}>
           <ul className="m-0 flex list-none flex-col p-0">
@@ -119,17 +83,6 @@ export function Settings() {
             ))}
           </ul>
         </nav>
-
-        {import.meta.env.DEV || import.meta.env.VITE_DEMO === "true" ? (
-          <Card label={c.demo.title}>
-            <Button variant="secondary" onClick={resetDemo}>
-              {c.demo.resetCta}
-            </Button>
-            <p className="pt-[var(--spacing-2xs)] text-ink-tertiary" style={{ fontSize: "var(--text-label)" }}>
-              {c.demo.note}
-            </p>
-          </Card>
-        ) : null}
 
         {/*
          * Quiet entry to the presentation. Deliberately the last thing on the
