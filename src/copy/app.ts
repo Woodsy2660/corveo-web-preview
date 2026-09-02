@@ -37,8 +37,6 @@ export const APP = {
     openPulseAria: (title: string) => `Open short read: ${title}`,
     contentPendingNotice:
       "Education content is being prepared and clinically reviewed by the Corveo team. Placeholder content is shown during development.",
-    scopeNote:
-      "The Pulse and In Focus are the website's collections, shown here so the library can be reviewed. Publishing them in the app is a change request.",
   },
 
   pulse: {

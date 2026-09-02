@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import { Screen, ProfileLink } from "@/components/ui/Screen";
 import { ClockIcon } from "@/components/ui/icons";
 import { APP } from "@/copy/app";
-import { ARTICLE_ART } from "@/assets/photos";
+import { ARTICLE_ART, PULSE_ART } from "@/assets/photos";
 import {
   IN_FOCUS_ARTICLES,
   PULSE_ITEMS,
@@ -27,20 +27,27 @@ import {
  * updating with the move.
  */
 
-/** The three Userkind accent surfaces, cycled across the rail. Decorative only. */
-const RAIL_SURFACES = ["bg-accent-1", "bg-accent-3", "bg-accent-2"] as const;
-
-function PulseCard({ item, index }: { item: PulseItem; index: number }) {
+/**
+ * A Pulse card: a photograph with the title over it. One even scrim, no
+ * gradient, keeps the white serif legible on any picture.
+ */
+function PulseCard({ item }: { item: PulseItem }) {
   const c = APP.education;
   return (
     <Link
       to={`/app/education/pulse/${item.slug}`}
       aria-label={c.openPulseAria(item.title)}
-      className={`flex h-[152px] w-[112px] flex-none flex-col justify-end rounded-md p-[var(--spacing-xs)] ${
-        RAIL_SURFACES[index % RAIL_SURFACES.length]
-      }`}
+      className="relative flex h-[152px] w-[112px] flex-none flex-col justify-end overflow-hidden rounded-md p-[var(--spacing-xs)]"
     >
+      <img
+        src={PULSE_ART[item.slug]}
+        alt=""
+        aria-hidden
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      <span aria-hidden className="absolute inset-0" style={{ background: "rgba(0, 0, 0, 0.4)" }} />
       <span
+        className="relative"
         style={{
           fontFamily: "var(--font-display)",
           fontSize: "var(--text-body-base)",
@@ -124,8 +131,8 @@ export function Education() {
         </div>
         {/* Full-bleed rail: escapes the screen padding so cards run to the edge. */}
         <div className="no-scrollbar -mx-[var(--spacing-md)] flex gap-[var(--spacing-2xs)] overflow-x-auto px-[var(--spacing-md)] pb-[var(--spacing-md)]">
-          {PULSE_ITEMS.map((item, i) => (
-            <PulseCard key={item.slug} item={item} index={i} />
+          {PULSE_ITEMS.map((item) => (
+            <PulseCard key={item.slug} item={item} />
           ))}
         </div>
       </section>
@@ -142,12 +149,6 @@ export function Education() {
         </ul>
       </section>
 
-      <p
-        className="pt-[var(--spacing-md)] text-ink-tertiary"
-        style={{ fontSize: "var(--text-body-sm)" }}
-      >
-        {c.scopeNote}
-      </p>
     </Screen>
   );
 }

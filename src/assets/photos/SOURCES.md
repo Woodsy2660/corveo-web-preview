@@ -25,3 +25,8 @@ Source page for each: https://unsplash.com/photos/<id>
 | monitor-works.jpg | photo-1700832082200-af7deeb63d9b | In Focus, How a blood pressure monitor works |
 | clinician.jpg | photo-1758691461990-03b49d969495 | In Focus, What a clinician looks at in a record |
 | history.jpg | photo-1741597727884-1ecd051cadb4 | In Focus, A short history of measuring blood pressure |
+| alarm-clock.jpg | photo-1499933374294-4584851497cc | Pulse, Why readings vary through the day |
+| white-coat.jpg | photo-1625134673337-519d4d10b313 | Pulse, The white-coat effect |
+
+Pulse cards for mmHg, cuff fit, morning and evening, and clinic records reuse
+history.jpg, week-2.jpg, week-6.jpg and clinician.jpg.

@@ -13,6 +13,8 @@ import homeRecord from "./home-record.jpg";
 import monitorWorks from "./monitor-works.jpg";
 import clinician from "./clinician.jpg";
 import history from "./history.jpg";
+import alarmClock from "./alarm-clock.jpg";
+import whiteCoat from "./white-coat.jpg";
 
 /**
  * PLACEHOLDER photography for the preview: stock images under the Unsplash
@@ -46,4 +48,14 @@ export const ARTICLE_ART: Record<string, string> = {
   "how-a-monitor-works": monitorWorks,
   "what-a-clinician-looks-at": clinician,
   "a-short-history-of-measurement": history,
+};
+
+/** Pulse card backgrounds by slug. Some reuse a chapter or article photograph. */
+export const PULSE_ART: Record<string, string> = {
+  "why-readings-vary": alarmClock,
+  "what-mmhg-measures": history,
+  "the-white-coat-effect": whiteCoat,
+  "cuff-size-and-fit": week2,
+  "morning-and-evening": week6,
+  "home-records-in-clinic": clinician,
 };
