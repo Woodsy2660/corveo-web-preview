@@ -62,12 +62,11 @@ export function ChapterRow({
         alt=""
         aria-hidden
         className="h-full w-[66px] flex-none rounded-sm object-cover"
-        style={{ opacity: open ? 1 : 0.5 }}
       />
 
-      <div
-        className={`flex min-w-0 flex-1 flex-col justify-between ${open ? "" : "opacity-60"}`}
-      >
+      {/* Locked chapters say so in words; they are not dimmed, so the list
+          holds one weight top to bottom. */}
+      <div className="flex min-w-0 flex-1 flex-col justify-between">
         <div className="min-w-0">
           <h2
             className="line-clamp-1"

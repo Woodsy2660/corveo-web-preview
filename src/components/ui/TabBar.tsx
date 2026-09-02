@@ -30,8 +30,8 @@ export function TabBar() {
         aria-hidden
         className="pointer-events-none fixed inset-x-0 bottom-0 z-10"
         style={{
-          height: "calc(120px + var(--safe-bottom))",
-          background: "linear-gradient(to top, var(--app-page) 45%, transparent)",
+          height: "calc(96px + var(--safe-bottom))",
+          background: "linear-gradient(to top, var(--app-page) 55%, transparent)",
         }}
       />
     <nav
