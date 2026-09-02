@@ -3,12 +3,6 @@
   artwork (a client asset, not yet supplied) replaces this file verbatim.
 -->
 <svg viewBox="0 0 120 160" width="120" height="160" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#c9b4a5"/>
-      <stop offset="1" stop-color="#b2caff"/>
-    </linearGradient>
-  </defs>
-  <rect width="120" height="160" fill="url(#g)"/>
-  <path d="M30,40 A30,30 0 1,0 90,40 A30,30 0 1,0 30,40" fill="none" stroke="#3e4fb5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+  <rect width="120" height="160" fill="#3e4fb5"/>
+  <path d="M30,40 A30,30 0 1,0 90,40 A30,30 0 1,0 30,40" fill="none" stroke="#b2caff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
 </svg>

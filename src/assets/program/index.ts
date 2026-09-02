@@ -6,8 +6,8 @@ import week5 from "./week-5.svg";
 import week6 from "./week-6.svg";
 
 /**
- * Chapter tiles by week. Placeholders: abstract shapes in the brand's own
- * tints, so nothing reads as a medical image. Corveo's chapter artwork
+ * Chapter tiles by week. Placeholders: one flat tint from the brand palette
+ * and one abstract stroke each, so nothing reads as a medical image. Corveo's chapter artwork
  * (a client asset, not yet supplied) replaces these files verbatim.
  */
 export const CHAPTER_ART: Record<number, string> = {
