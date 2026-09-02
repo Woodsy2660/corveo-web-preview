@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { PROGRAM_ART } from "@/assets/program";
+import { PROGRAM_ART } from "@/assets/photos";
 import { Screen } from "@/components/ui/Screen";
 import { Card } from "@/components/ui/Card";
 import { APP } from "@/copy/app";

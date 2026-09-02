@@ -1,8 +1,0 @@
-<!--
-  PLACEHOLDER chapter art, week 1. Abstract on purpose; Corveo's chapter
-  artwork (a client asset, not yet supplied) replaces this file verbatim.
--->
-<svg viewBox="0 0 120 160" width="120" height="160" xmlns="http://www.w3.org/2000/svg">
-  <rect width="120" height="160" fill="#c9b4a5"/>
-  <path d="M0,110 C30,80 60,140 90,100 S120,90 120,110" fill="none" stroke="#3e4fb5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
-</svg>

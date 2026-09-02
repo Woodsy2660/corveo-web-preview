@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import { CheckIcon, ClockIcon } from "@/components/ui/icons";
 import { APP } from "@/copy/app";
-import { CHAPTER_ART } from "@/assets/program";
+import { CHAPTER_ART } from "@/assets/photos";
 import type { ProgramChapter } from "@/copy/program-placeholder";
 import type { ProgramProgressRow } from "@/lib/api/types";
 import { isAvailable, isRead, type ProgramSummary } from "@/lib/programs";
@@ -38,7 +38,7 @@ export function ChapterList({
  * tap target — no CTA pill inside it.
  *
  * Chapter artwork is a Corveo asset that has not been supplied; the tile
- * shows a placeholder from src/assets/program until it is.
+ * shows a placeholder photograph from src/assets/photos until it is.
  */
 export function ChapterRow({
   program,
