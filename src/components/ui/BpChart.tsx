@@ -245,24 +245,24 @@ export function BpChart({
         })}
       </svg>
 
+      {/* Readout for the day under the finger: one fixed line at the top
+          centre rather than a box chasing the point, so the chart stays
+          readable while the finger moves. Mean of that day, rounded. */}
       {activeRow ? (
         <div
-          className="pointer-events-none absolute rounded-sm bg-action px-[var(--spacing-2xs)] py-[var(--spacing-3xs)] text-action-ink"
+          className="pointer-events-none absolute inset-x-0 top-0 flex justify-center gap-[var(--spacing-2xs)] text-ink-secondary"
           style={{
-            left: `${Math.max(18, Math.min(82, (x(active as number) / width) * 100))}%`,
-            top: `${(Math.min(y(activeRow.mean_systolic), y(activeRow.mean_diastolic)) / height) * 100}%`,
-            transform: "translate(-50%, calc(-100% - 8px))",
-            fontSize: "var(--text-label)",
+            fontSize: "var(--text-body-sm)",
             lineHeight: "var(--leading-label)",
             whiteSpace: "nowrap",
+            transform: "translateY(-2px)",
           }}
         >
-          <span className="block" style={{ color: "var(--color-text-secondary-inverse)" }}>
-            {fmtDate(`${activeRow.day}T00:00:00`)}
+          <span className="text-ink-tertiary">{fmtDate(`${activeRow.day}T00:00:00`)}</span>
+          <span className="text-heading" style={{ fontWeight: 500 }}>
+            {Math.round(activeRow.mean_systolic)}/{Math.round(activeRow.mean_diastolic)}
           </span>
-          <span style={{ fontFamily: "var(--font-mono)" }}>
-            {activeRow.mean_systolic}/{activeRow.mean_diastolic} {APP.common.unitMmHg}
-          </span>
+          <span className="text-ink-tertiary">{APP.common.unitMmHg}</span>
         </div>
       ) : null}
     </div>
