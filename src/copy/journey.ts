@@ -50,6 +50,8 @@ export const JOURNEY = {
 
   connect: {
     eyebrow: "Your monitor",
+    /** Link to the validated-cuff list from the no-monitor option. */
+    cuffsLink: "Choosing a monitor",
     title: "How will readings arrive?",
     intro:
       "Corveo organises readings from a validated upper-arm cuff. Choose how yours will come in. You can change this later in Settings.",

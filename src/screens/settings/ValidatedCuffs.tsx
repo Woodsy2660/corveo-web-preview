@@ -15,7 +15,6 @@ export function ValidatedCuffs() {
 
   return (
     <Screen
-      eyebrow={c.eyebrow}
       title={c.title}
       footer={
         <Button variant="ghost" onClick={() => navigate(-1)}>

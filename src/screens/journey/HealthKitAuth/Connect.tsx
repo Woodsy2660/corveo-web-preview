@@ -57,7 +57,7 @@ export function Connect() {
       </div>
 
       {connectChoice === "none" ? (
-        <Card label={VALIDATED_CUFFS.eyebrow} className="mt-[var(--spacing-sm)]">
+        <Card label={c.cuffsLink} className="mt-[var(--spacing-sm)]">
           <p className="pb-[var(--spacing-xs)] text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
             {VALIDATED_CUFFS.intro}
           </p>

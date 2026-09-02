@@ -55,7 +55,6 @@ export const SAFETY = {
  * Stage 3 acceptance.
  */
 export const VALIDATED_CUFFS = {
-  eyebrow: "Choosing a monitor",
   title: "Validated upper-arm cuffs.",
   intro:
     "Corveo recommends clinically validated upper-arm monitors. These models appear on the STRIDE BP validated device register. Corveo doesn't sell monitors and has no affiliation with any manufacturer.",
