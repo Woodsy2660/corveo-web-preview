@@ -76,6 +76,10 @@ struct Diagnostics: Codable, Equatable {
     /// Rows the backend rejected structurally and the drain acknowledged (plan N-04).
     /// A count per source, never a value.
     var rejectedBySource: [String: Int] = [:]
+    /// The backend's reason codes for those rejections (VALUE_OUT_OF_BOUNDS, UNIT_MISMATCH, ...):
+    /// mechanism only, never the detail string, which can carry a value. Optional so states
+    /// written before this field decode unchanged.
+    var rejectionReasons: [String: Int]? = nil
 }
 
 struct EngineConfig: Equatable {

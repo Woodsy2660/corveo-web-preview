@@ -211,6 +211,14 @@ struct SettingsView: View {
             }
             Text(AppCopy.settings.demo.note).cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
                 .padding(.top, Spacing.xxs)
+            // Engine diagnostics: states, counts and reason codes only (guide §7.3).
+            let st = health.status
+            let reasons = st.rejectionReasons.sorted { $0.key < $1.key }
+                .map { "\($0.key) ×\($0.value)" }.joined(separator: ", ")
+            Text("Engine: \(st.state). Pending \(st.pendingCount), held \(st.heldCount), rejected by backend \(st.rejectedCount)\(reasons.isEmpty ? "" : " (\(reasons))"), malformed in HealthKit \(st.malformedCount).")
+                .cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
+                .padding(.top, Spacing.xxs)
+                .textSelection(.enabled)
         }
     }
 

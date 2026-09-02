@@ -56,6 +56,8 @@ final class HealthKitEngine: @unchecked Sendable {
         let bootstrapComplete: Bool
         let lastArm: ArmResult?
         let rejectedCount: Int
+        let rejectionReasons: [String: Int]
+        let malformedCount: Int
     }
 
     private let health = HKHealthStore()
@@ -147,7 +149,9 @@ final class HealthKitEngine: @unchecked Sendable {
                 held: s.held.map { ($0.enrolmentRef, $0.items.count) },
                 bootstrapComplete: s.bootstrapComplete,
                 lastArm: s.lastArm,
-                rejectedCount: s.diagnostics.rejectedBySource.values.reduce(0, +))
+                rejectedCount: s.diagnostics.rejectedBySource.values.reduce(0, +),
+                rejectionReasons: s.diagnostics.rejectionReasons ?? [:],
+                malformedCount: s.diagnostics.malformedBySource.values.reduce(0, +))
         }
     }
 
@@ -527,9 +531,12 @@ final class HealthKitEngine: @unchecked Sendable {
     }
 
     /// Counts-only record of rows the backend rejected and the drain acknowledged (N-04).
-    func recordRejected(bySource counts: [String: Int]) {
+    func recordRejected(bySource counts: [String: Int], reasons: [String: Int] = [:]) {
         try? mutate { st in
             for (source, n) in counts { st.diagnostics.rejectedBySource[source, default: 0] += n }
+            var r = st.diagnostics.rejectionReasons ?? [:]
+            for (code, n) in reasons { r[code, default: 0] += n }
+            st.diagnostics.rejectionReasons = r
         }
     }
 

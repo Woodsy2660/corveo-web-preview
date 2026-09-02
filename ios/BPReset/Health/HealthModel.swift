@@ -130,8 +130,10 @@ final class HealthModel {
         if !rejected.isEmpty {
             var counts: [String: Int] = [:]
             for r in rejected { counts[r.sourceBundleId, default: 0] += 1 }
-            engine.recordRejected(bySource: counts)
-            Log.event("drain.rejected", count: rejected.count)
+            var reasons: [String: Int] = [:]
+            for rj in response.rejected { reasons[rj.reason.rawValue, default: 0] += 1 }
+            engine.recordRejected(bySource: counts, reasons: reasons)
+            for (code, n) in reasons { Log.event("drain.rejected", count: n, code: code) }
         }
 
         // Landed (inserted or duplicate) and structurally rejected rows are both acknowledged:
