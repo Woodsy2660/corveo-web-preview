@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Link } from "react-router";
-import { Screen } from "@/components/ui/Screen";
+import { Screen, ProfileLink } from "@/components/ui/Screen";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { APP } from "@/copy/app";
@@ -70,8 +70,8 @@ export function Settings() {
 
   return (
     <Screen
-      eyebrow={c.eyebrow}
       title={c.title}
+      action={<ProfileLink />}
       footer={
         <Button variant="ghost" onClick={() => navigate(-1)}>
           {APP.common.back}

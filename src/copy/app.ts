@@ -156,7 +156,6 @@ export const APP = {
   },
 
   settings: {
-    eyebrow: "Settings",
     title: "Your data, your record.",
     aboutTitle: "About this app",
     cuffsTitle: "Validated monitors",
