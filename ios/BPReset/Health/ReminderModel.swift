@@ -60,6 +60,7 @@ final class ReminderModel {
             content.title = ReminderCopy.title
             content.body = ReminderCopy.body
             content.sound = .default
+            content.interruptionLevel = .active   // never time-sensitive or critical (rulebook §8)
             let request = UNNotificationRequest(
                 identifier: Self.idPrefix + slot.id,
                 content: content,
