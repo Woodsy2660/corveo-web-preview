@@ -215,7 +215,7 @@ private struct IngestParams: Encodable {
 
 /// PostgREST resolves an RPC by its named parameters, so every parameter must be present in
 /// the body: a nil display name is sent as an explicit JSON null, never omitted.
-private struct EnrolParams: Encodable {
+struct EnrolParams: Encodable {   // internal so the null-encoding regression test can see it
     let p_display_name: String?
     let p_adult_attested: Bool
 

@@ -116,9 +116,19 @@ Bundle ID `dev.aiplease.bpreset` (throwaway, sandbox team). Deployment target iO
   targets on the tab bar and header links; at accessibility Dynamic Type sizes the reading row
   and the segmented control stack instead of wrapping or clipping. Verified by screenshot on
   the simulator at the accessibility-medium size.
-- **Still open for Stage 3:** an XCTest target for the store self-test and the mapper; the
-  strict-concurrency pass; T14 on the product build; the 48-hour soak; Corveo's review of the
-  reminder copy; privacy policy and support URLs; App Store assets.
+- **Unit tests (2 Sep, afternoon).** `BPResetTests` is a host-app XCTest target: the spike's
+  §10 store self-test ported (fresh load, alternating generations, checksum idempotence, the
+  M17 fallback, tampered checksum, both-invalid → INTERNAL, backup exclusion), the mapper against
+  in-memory HealthKit samples (metadata-or-nil timezone, unit conversion, no range checks), the
+  ingest and enrolment wire shapes (including the explicit-null regression from the morning),
+  the manual-entry bounds, ULID ordering, and bright-line guards over the reading and reminder
+  copy. 35 tests, all passing on the simulator. Run with:
+  `xcodebuild test -project ios/BPReset.xcodeproj -scheme BPReset -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:BPResetTests SUPABASE_URL= SUPABASE_PUBLISHABLE_KEY=`
+  (the two blank overrides keep the host app on the mock). HealthKit validates correlations at
+  construction, so the mapper's missing-child and duplicate-child guards remain device-only.
+- **Still open for Stage 3:** the strict-concurrency pass; T14 on the product build; the
+  48-hour soak (running, `docs/soak-log.md`); Corveo's review of the reminder copy; privacy
+  policy and support URLs; App Store assets.
 
 ## 5. Phase 1 exit checks
 

@@ -105,7 +105,7 @@ final class ReminderModel {
 
     /// Fixed times for V1: 8 am, and 8 pm for the twice-daily rhythm; Monday, Wednesday and
     /// Friday mornings for a few times a week. Calendar rhythm only.
-    static func slots(for cadence: CadenceChoice) -> [Slot] {
+    nonisolated static func slots(for cadence: CadenceChoice) -> [Slot] {
         switch cadence {
         case .twiceDaily:
             return [Slot(id: "morning", hour: 8, weekday: nil), Slot(id: "evening", hour: 20, weekday: nil)]
@@ -117,7 +117,7 @@ final class ReminderModel {
     }
 
     /// The sentence Settings shows under the rhythm choice.
-    static func scheduleNote(for cadence: CadenceChoice?) -> String {
+    nonisolated static func scheduleNote(for cadence: CadenceChoice?) -> String {
         switch cadence {
         case .twiceDaily: return ReminderCopy.settings.twiceDailyTimes
         case .daily: return ReminderCopy.settings.dailyTimes
