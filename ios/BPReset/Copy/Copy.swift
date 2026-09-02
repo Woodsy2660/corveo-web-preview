@@ -75,6 +75,7 @@ enum AppCopy {
         /// History shows the latest few; the rest unfold on request.
         static let showAll = "See all readings"
         static let showFewer = "Show fewer"
+        static let sourceHint = "Tap to show where this reading came from"
         static let addCta = "Add a reading"
         static let sourceHealth = "Apple Health"
         static let sourceManual = "Manual"

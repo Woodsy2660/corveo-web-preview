@@ -242,39 +242,47 @@ struct RecordView: View {
 struct ReadingRow: View {
     let reading: BpReadingRow
     @Environment(\.dynamicTypeSize) private var typeSize
+    @State private var showsSource = false
 
-    /// Date, then provenance exactly as known: the source, the writing app's name for Apple
-    /// Health rows (rulebook §4.6), and the arm only when it is not the usual left.
-    private var meta: String {
-        var parts = [Format.dateTime(reading.effectiveTime)]
-        var source = reading.sourceType == .healthkit ? AppCopy.readings.sourceHealth : AppCopy.readings.sourceManual
-        if reading.sourceType == .healthkit, let name = reading.sourceName, !name.isEmpty { source += " (\(name))" }
-        if let site = reading.bodySiteDisplay, site != "Left arm" { source += ", \(site.lowercased())" }
-        parts.append(source)
-        return parts.joined(separator: " · ")
+    /// Provenance exactly as known: the source, the writing app's name for Apple Health rows
+    /// (rulebook §4.6), and the arm only when it is not the usual left. Shown on request.
+    private var source: String {
+        var text = reading.sourceType == .healthkit ? AppCopy.readings.sourceHealth : AppCopy.readings.sourceManual
+        if reading.sourceType == .healthkit, let name = reading.sourceName, !name.isEmpty { text += " (\(name))" }
+        if let site = reading.bodySiteDisplay, site != "Left arm" { text += ", \(site.lowercased())" }
+        return text
     }
 
     var body: some View {
-        Group {
-            if typeSize.isAccessibilitySize {
-                VStack(alignment: .leading, spacing: Spacing.xxxs) {
+        Button {
+            withAnimation(Motion.brand) { showsSource.toggle() }
+        } label: {
+            VStack(alignment: .leading, spacing: Spacing.xxxs) {
+                if typeSize.isAccessibilitySize {
                     valueBlock
-                    Text(meta).cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
+                    Text(Format.dateTime(reading.effectiveTime)).cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
+                } else {
+                    HStack(alignment: .firstTextBaseline, spacing: Spacing.sm) {
+                        valueBlock
+                        Spacer(minLength: Spacing.sm)
+                        Text(Format.dateTime(reading.effectiveTime)).cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
+                            .multilineTextAlignment(.trailing)
+                    }
                 }
-            } else {
-                HStack(alignment: .firstTextBaseline, spacing: Spacing.sm) {
-                    valueBlock
-                    Spacer(minLength: Spacing.sm)
-                    Text(meta).cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
-                        .multilineTextAlignment(.trailing)
+                if showsSource {
+                    Text(source).cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
+                        .transition(.opacity)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, Spacing.xs)
+            .contentShape(Rectangle())
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.vertical, Spacing.xs)
+        .buttonStyle(.plain)
         .overlay(alignment: .bottom) { Hairline() }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityText)
+        .accessibilityHint(AppCopy.readings.sourceHint)
     }
 
     private var valueBlock: some View {
