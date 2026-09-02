@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { Screen, ProfileLink } from "@/components/ui/Screen";
 import { ClockIcon } from "@/components/ui/icons";
 import { APP } from "@/copy/app";
+import { ARTICLE_ART } from "@/assets/photos";
 import {
   IN_FOCUS_ARTICLES,
   PULSE_ITEMS,
@@ -55,30 +56,45 @@ function PulseCard({ item, index }: { item: PulseItem; index: number }) {
 }
 
 /**
- * One long read, on the Program-tab row idiom: the whole row is the tap
- * target. Article artwork is a Corveo asset that has not been supplied, so
- * the tile is a placeholder that spans the row's height.
+ * One long read, on the chapter-row pattern: every row the same height,
+ * photograph left, title and excerpt at the top, the read time as a quiet
+ * line at the bottom. The whole row is the tap target. Article artwork is
+ * a Corveo asset that has not been supplied; a placeholder photograph
+ * stands in.
  */
 function InFocusRow({ article }: { article: InFocusArticle }) {
   return (
     <li className="border-b border-hairline last:border-b-0">
       <Link
         to={`/app/education/in-focus/${article.slug}`}
-        className="flex gap-[var(--spacing-xs)] py-[var(--spacing-sm)]"
+        className="flex h-[112px] gap-[var(--spacing-xs)] py-[var(--spacing-xs)]"
       >
-        <div
+        <img
+          src={ARTICLE_ART[article.slug]}
+          alt=""
           aria-hidden
-          className="w-[96px] flex-none self-stretch rounded-sm"
-          style={{ background: "var(--color-surface-neutral-lighter)" }}
+          className="h-full w-[66px] flex-none rounded-sm object-cover"
         />
-        <div className="flex min-w-0 flex-1 flex-col gap-[var(--spacing-3xs)]">
-          <h2 style={{ fontSize: "var(--text-heading-xl)" }}>{article.title}</h2>
-          <p className="text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
-            {article.excerpt}
-          </p>
+        <div className="flex min-w-0 flex-1 flex-col justify-between">
+          <div className="min-w-0">
+            {/* Article titles run longer than chapter titles: two lines for
+                the title, one for the excerpt, same row height. */}
+            <h2
+              className="line-clamp-2"
+              style={{ fontSize: "var(--text-body-lg)", lineHeight: "var(--leading-heading)" }}
+            >
+              {article.title}
+            </h2>
+            <p
+              className="line-clamp-1 text-ink-secondary"
+              style={{ fontSize: "var(--text-body-sm)" }}
+            >
+              {article.excerpt}
+            </p>
+          </div>
           <span
             className="flex items-center gap-[var(--spacing-3xs)] text-ink-tertiary"
-            style={{ fontSize: "var(--text-body-sm)" }}
+            style={{ fontSize: "var(--text-label)", lineHeight: "var(--leading-label)" }}
           >
             <ClockIcon />
             {APP.program.duration(article.readMinutes, "read")}
