@@ -45,7 +45,7 @@ function periodAverage(rows: BpTrendRow[]): { systolic: number; diastolic: numbe
  */
 export function Record() {
   const navigate = useNavigate();
-  const [range, setRange] = useState<Range>("6w");
+  const [range, setRange] = useState<Range>("1w");
   const [showAll, setShowAll] = useState(false);
   const days = RANGE_DAYS[range];
   const since = days ? dayNDaysAgo(days) : undefined;
@@ -89,9 +89,8 @@ export function Record() {
         </div>
       ) : null}
 
-      {/* — Period, above the chart, quiet: the selected pill is the only ink.
-          Pulled left by its own padding so "1W" lines up with the number. — */}
-      <div className="-ml-[var(--spacing-sm)] pb-[var(--spacing-xs)]">
+      {/* — Period, above the chart: outlined pills, flush with the number. — */}
+      <div className="pb-[var(--spacing-xs)]">
         <Segmented
           ariaLabel={t.rangeAria}
           value={range}
