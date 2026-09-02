@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Phase 1 delivered and Phase 3 (backend wiring) built, 2 September 2026. Supersedes the Capacitor-shell assumptions in `06-native-app-build-plan.md` wherever the two differ; the decisions, backend contract, test map and asks in 06 still stand. |
+| **Status** | Phase 1 delivered; Phase 3 (backend wiring) built and verified live on device; Stage 2 evidence re-taken on the 26.x baseline; Stage 3 features built, all 2 September 2026. Supersedes the Capacitor-shell assumptions in `06-native-app-build-plan.md` wherever the two differ; the decisions, backend contract, test map and asks in 06 still stand. |
 | **Owner** | Nick (integration), with Luca (native), Michael (front end), Ben (platform) |
 | **Direction** | Rebuild the React front end as a native SwiftUI app. No Capacitor, no WebView, no JavaScript bridge. The HealthKit engine proven by the spike becomes the app's own module and the app calls it directly. |
 
@@ -97,6 +97,28 @@ Bundle ID `dev.aiplease.bpreset` (throwaway, sandbox team). Deployment target iO
   That is the T4 and T5a shape of Stage 2 criterion (c) on a physical device, synthetic data
   only. Still owed for acceptance: the loan Omron cuff on this handset (criteria (b) and (d)),
   the 48-hour soak (T6), the client non-production environment (T15/T16), and the written script.
+
+## 4b. Stage 3 features (built 2 Sep, simulator-verified at accessibility type sizes)
+
+- **Reminders.** `ReminderModel` schedules repeating local notifications from the cadence
+  choice only: 8 am and 8 pm for twice daily, 8 am daily, Monday/Wednesday/Friday 8 am for a
+  few times a week. Fixed copy, no value, no count, nothing derived from a reading (SOW A.3.3;
+  rulebook value-blind notifications). The cadence step explains first and offers "Remind me at
+  these times"; the one system prompt follows on Continue. Settings has a Reminders card to
+  change the rhythm or turn reminders off, with a note when iOS has notifications off. Sign
+  out, deletion and the development reset clear the schedule.
+- **Release flag for change-request scope (N-12).** `CR_SCOPE_ENABLED` in `Signing.xcconfig`
+  is YES for Debug and NO for Release, reaches the app through `Config/Info.plist`, and hides
+  the Learn tab and the programs rail until the CR is signed.
+- **Chart.** Series identity is carried by marker shape (circle, square) and line dash as well
+  as colour, so the trend reads without colour.
+- **Accessibility pass (rulebook §8.3).** Reduce Motion turns the brand curve off; 44pt hit
+  targets on the tab bar and header links; at accessibility Dynamic Type sizes the reading row
+  and the segmented control stack instead of wrapping or clipping. Verified by screenshot on
+  the simulator at the accessibility-medium size.
+- **Still open for Stage 3:** an XCTest target for the store self-test and the mapper; the
+  strict-concurrency pass; T14 on the product build; the 48-hour soak; Corveo's review of the
+  reminder copy; privacy policy and support URLs; App Store assets.
 
 ## 5. Phase 1 exit checks
 
