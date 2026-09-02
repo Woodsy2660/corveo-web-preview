@@ -9,7 +9,13 @@
  */
 
 export const JOURNEY = {
+  /** Landing screen: the brand, a greeting, one action. Nothing to read yet. */
   welcome: {
+    title: "Welcome.",
+    cta: "Get started",
+  },
+
+  intro: {
     eyebrow: "Six-week program",
     title: "Understand your blood pressure.",
     intro:

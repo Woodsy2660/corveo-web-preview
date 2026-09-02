@@ -2,6 +2,7 @@ import { Navigate, Outlet, Route, Routes } from "react-router";
 import { TabBar } from "@/components/ui/TabBar";
 import { useJourney } from "@/lib/journey/state";
 import { Welcome } from "@/screens/journey/Onboarding/Welcome";
+import { Intro } from "@/screens/journey/Onboarding/Intro";
 import { Signup } from "@/screens/journey/Signup/Signup";
 import { Consent } from "@/screens/journey/Consent/Consent";
 import { Connect } from "@/screens/journey/HealthKitAuth/Connect";
@@ -54,6 +55,7 @@ export function App() {
 
       <Route element={<JourneyOnly />}>
         <Route path="/journey/welcome" element={<Welcome />} />
+        <Route path="/journey/intro" element={<Intro />} />
         <Route path="/journey/signup" element={<Signup />} />
         <Route path="/journey/consent" element={<Consent />} />
         <Route path="/journey/connect" element={<Connect />} />
