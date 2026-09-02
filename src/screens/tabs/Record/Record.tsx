@@ -17,9 +17,11 @@ import type { BpTrendRow } from "@/lib/api/types";
 type Range = "1w" | "6w" | "all";
 
 const RANGE_DAYS: Record<Range, number | null> = { "1w": 7, "6w": 42, all: null };
+/** Days before the period that show faded at the chart's edge, so the line arrives rather than starts. */
+const LEAD_DAYS: Record<Range, number> = { "1w": 2, "6w": 7, all: 0 };
 
-/** Screen width less the right page padding: the chart bleeds to the left edge. */
-const CHART_WIDTH = 393 - 24;
+/** Full screen width: the chart bleeds past the page padding on both sides. */
+const CHART_WIDTH = 393;
 
 /** Mean of the readings behind the daily rows, weighted by how many each day holds. */
 function periodAverage(rows: BpTrendRow[]): { systolic: number; diastolic: number } | null {
@@ -47,8 +49,13 @@ export function Record() {
   const [showAll, setShowAll] = useState(false);
   const days = RANGE_DAYS[range];
   const since = days ? dayNDaysAgo(days) : undefined;
+  const fetchSince = days ? dayNDaysAgo(days + LEAD_DAYS[range]) : undefined;
 
-  const { data: rows, isLoading: trendLoading } = useTrend(since);
+  const { data: fetched, isLoading: trendLoading } = useTrend(fetchSince);
+  // Daily rows arrive oldest first; the lead is whatever falls before the period.
+  const rows = fetched ?? [];
+  const periodRows = since ? rows.filter((row) => row.day >= since) : rows;
+  const leadCount = rows.length - periodRows.length;
   const { data: readings, isLoading: readingsLoading } = useReadings(30);
   const health = useAppleHealthSync();
 
@@ -56,8 +63,8 @@ export function Record() {
   const r = APP.readings;
   const t = APP.trend;
 
-  const average = rows ? periodAverage(rows) : null;
-  const chartEmpty = !rows || rows.length === 0;
+  const average = periodAverage(periodRows);
+  const chartEmpty = periodRows.length === 0;
 
   return (
     <Screen title={c.title} withTabBar action={<ProfileLink />}>
@@ -97,10 +104,10 @@ export function Record() {
         />
       </div>
 
-      {/* — Chart — no card: it bleeds past the page padding to the left
-          edge, and the scale sits in a gutter on the right by the newest
-          point. The line enters from the edge on 1W and 6W, where earlier
-          readings exist off screen; on All it starts inset. */}
+      {/* — Chart — no card: it bleeds past the page padding on both sides,
+          the scale in a gutter on the right by the newest point. The days
+          before the period sit faded at the left edge, so the unfaded plot
+          is exactly the period chosen; on All nothing comes before. */}
       {trendLoading ? null : chartEmpty ? (
         <Card>
           <p className="text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
@@ -108,13 +115,13 @@ export function Record() {
           </p>
         </Card>
       ) : (
-        <div className="-ml-[var(--spacing-md)]">
+        <div className="-mx-[var(--spacing-md)]">
           <BpChart
-            rows={rows ?? []}
+            rows={rows}
+            leadCount={leadCount}
             ariaLabel={t.chartAria}
             width={CHART_WIDTH}
             height={250}
-            leadIn={range !== "all"}
           />
         </div>
       )}

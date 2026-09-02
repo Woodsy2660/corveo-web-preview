@@ -16,28 +16,33 @@ import { fmtDate } from "@/lib/format";
  * tooltip show daily mean systolic and diastolic exactly as recorded.
  *
  * Drawn edge to edge: the plot runs from the screen's left edge to a
- * gutter on the right that holds the scale, next to the newest point. With
- * `leadIn` the line enters from the edge, which is only honest when there
- * are earlier readings off screen; without it the line starts inset.
+ * gutter on the right that holds the scale, next to the newest point. The
+ * first `leadCount` rows are the days before the chosen period: they sit in
+ * a narrow strip at the left edge, faded, so the line arrives out of the
+ * edge and the unfaded plot is exactly the period picked. With no lead
+ * rows (All) the line starts inset, because nothing comes before it. The
+ * fade masks the series only; scale, gridlines and dates stay legible.
  */
 export function BpChart({
   rows,
+  leadCount = 0,
   ariaLabel,
   width = 340,
   height = 220,
-  leadIn = false,
 }: {
   rows: BpTrendRow[];
+  leadCount?: number;
   ariaLabel: string;
   width?: number;
   height?: number;
-  leadIn?: boolean;
 }) {
   const gradientId = useId();
   const svgRef = useRef<SVGSVGElement>(null);
   const [active, setActive] = useState<number | null>(null);
 
-  const pad = { top: 16, right: 40, bottom: 28, left: leadIn ? 0 : 24 };
+  const leadIn = leadCount > 0 && leadCount < rows.length;
+  const leadW = 56;
+  const pad = { top: 16, right: 36, bottom: 28, left: leadIn ? leadW : 24 };
 
   if (rows.length === 0) return null;
 
@@ -45,6 +50,8 @@ export function BpChart({
   const innerH = height - pad.top - pad.bottom;
   const baseline = pad.top + innerH;
   const plotRight = width - pad.right;
+  const first = leadIn ? leadCount : 0;
+  const periodN = rows.length - first;
 
   const values = rows.flatMap((r) => [r.mean_systolic, r.mean_diastolic]);
   const rawMin = Math.min(...values);
@@ -53,8 +60,11 @@ export function BpChart({
   const yMin = Math.floor((rawMin - span * 0.15) / 10) * 10;
   const yMax = Math.ceil((rawMax + span * 0.15) / 10) * 10;
 
+  // Lead rows share the strip at the edge; period rows share the plot.
   const x = (i: number) =>
-    pad.left + (rows.length === 1 ? innerW / 2 : (i / (rows.length - 1)) * innerW);
+    i < first
+      ? (i / first) * leadW
+      : pad.left + (periodN === 1 ? innerW / 2 : ((i - first) / (periodN - 1)) * innerW);
   const y = (v: number) => pad.top + innerH - ((v - yMin) / (yMax - yMin)) * innerH;
 
   /* Catmull-Rom through the points, emitted as cubic beziers — the same
@@ -83,8 +93,9 @@ export function BpChart({
   ];
 
   const yTicks = [yMin, Math.round((yMin + yMax) / 2), yMax];
+  const lastI = rows.length - 1;
   const xLabelIdx =
-    rows.length >= 3 ? [0, Math.floor((rows.length - 1) / 2), rows.length - 1] : [0, rows.length - 1];
+    periodN >= 3 ? [first, first + Math.floor((periodN - 1) / 2), lastI] : [first, lastI];
   const sparse = rows.length <= 2;
   const last = rows.length - 1;
   const lastRow = rows[last]!;
@@ -93,8 +104,8 @@ export function BpChart({
     const rect = svgRef.current?.getBoundingClientRect();
     if (!rect) return null;
     const mx = ((e.clientX - rect.left) / rect.width) * width;
-    const i = Math.round(((mx - pad.left) / innerW) * (rows.length - 1));
-    return Math.max(0, Math.min(rows.length - 1, i));
+    const i = first + Math.round(((mx - pad.left) / innerW) * (periodN - 1));
+    return Math.max(first, Math.min(lastI, i));
   };
 
   const activeRow = active === null ? null : (rows[active] ?? null);
@@ -119,6 +130,18 @@ export function BpChart({
               <stop offset="95%" stopColor={s.color} stopOpacity="0.04" />
             </linearGradient>
           ))}
+          {leadIn ? (
+            <>
+              <linearGradient id={`${gradientId}-lead`} gradientUnits="userSpaceOnUse" x1="0" y1="0" x2={leadW} y2="0">
+                <stop offset="0" stopColor="#fff" stopOpacity="0" />
+                <stop offset="1" stopColor="#fff" stopOpacity="1" />
+              </linearGradient>
+              <mask id={`${gradientId}-mask`} maskUnits="userSpaceOnUse" x="0" y="0" width={width} height={height}>
+                <rect x="0" y="0" width={leadW} height={height} fill={`url(#${gradientId}-lead)`} />
+                <rect x={leadW} y="0" width={width - leadW} height={height} fill="#fff" />
+              </mask>
+            </>
+          ) : null}
         </defs>
 
         {yTicks.map((t) => (
@@ -144,6 +167,7 @@ export function BpChart({
           </g>
         ))}
 
+        <g mask={leadIn ? `url(#${gradientId}-mask)` : undefined}>
         {series.map((s) =>
           sparse ? (
             <g key={s.key}>
@@ -176,6 +200,7 @@ export function BpChart({
             </g>
           ),
         )}
+        </g>
 
         {active !== null && activeRow ? (
           <g>
@@ -207,7 +232,7 @@ export function BpChart({
           return (
             <text
               key={row.day}
-              x={n === 0 ? Math.max(x(i), 8) : x(i)}
+              x={x(i)}
               y={height - 8}
               textAnchor={n === 0 ? "start" : n === xLabelIdx.length - 1 ? "end" : "middle"}
               fontSize="10"
