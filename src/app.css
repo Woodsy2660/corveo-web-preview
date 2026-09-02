@@ -224,9 +224,31 @@
   animation: spin 0.9s linear infinite;
 }
 
+/*
+ * Settings opens from the profile icon, so it arrives from that corner:
+ * a short scale and fade anchored top right. Entrance only; the route
+ * unmounts on close.
+ */
+@keyframes emerge-top-right {
+  from {
+    opacity: 0;
+    transform: translate(12px, -12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.emerge-top-right {
+  transform-origin: top right;
+  animation: emerge-top-right var(--duration-base) var(--ease-brand) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .fade-up,
-  .spin {
+  .spin,
+  .emerge-top-right {
     animation: none;
   }
 }

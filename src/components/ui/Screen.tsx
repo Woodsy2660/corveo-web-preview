@@ -16,7 +16,11 @@ import logoUrl from "@/assets/brand/logo.svg";
  */
 export function ProfileLink() {
   const navigate = useNavigate();
-  const onSettings = useLocation().pathname === "/app/settings";
+  const location = useLocation();
+  const onSettings = location.pathname === "/app/settings";
+  // Where Settings was opened from, carried on the history entry so a trip
+  // into a sub-page and back does not change where "close" lands.
+  const openedFrom = (location.state as { from?: string } | null)?.from ?? "/app/record";
   const className = `-my-[11px] -mr-[11px] flex size-[44px] items-center justify-center ${
     onSettings ? "text-heading" : "text-ink-tertiary"
   }`;
@@ -26,7 +30,7 @@ export function ProfileLink() {
   // optically on the header edge rather than inset by the padding.
   return onSettings ? (
     <button
-      onClick={() => navigate(-1)}
+      onClick={() => navigate(openedFrom)}
       aria-label={APP.common.profileCloseAria}
       title={APP.common.profileCloseAria}
       aria-pressed
@@ -38,6 +42,7 @@ export function ProfileLink() {
   ) : (
     <Link
       to="/app/settings"
+      state={{ from: location.pathname }}
       aria-label={APP.common.profileAria}
       title={APP.common.profileAria}
       className={className}
@@ -61,6 +66,7 @@ export function Screen({
   action,
   scrollKey,
   withTabBar = false,
+  className = "",
 }: {
   eyebrow?: string;
   /**
@@ -80,6 +86,8 @@ export function Screen({
    */
   scrollKey?: string;
   withTabBar?: boolean;
+  /** Extra classes on the shell, e.g. an entrance animation. */
+  className?: string;
 }) {
   const main = useRef<HTMLElement>(null);
 
@@ -88,7 +96,7 @@ export function Screen({
   }, [scrollKey]);
 
   return (
-    <div className="screen-shell" style={{ paddingTop: "var(--safe-top)" }}>
+    <div className={`screen-shell ${className}`} style={{ paddingTop: "var(--safe-top)" }}>
       <header className="flex items-center justify-between px-[var(--spacing-md)] pt-[var(--spacing-md)] pb-[var(--spacing-sm)]">
         {/* Brand logotype served from the shipped Corveo web app (brand/logo.svg) */}
         <img src={logoUrl} alt={CORVEO_WORDMARK} style={{ height: "18px", width: "auto" }} />

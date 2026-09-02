@@ -63,7 +63,7 @@ export function Settings() {
   ];
 
   return (
-    <Screen title={c.title} action={<ProfileLink />}>
+    <Screen title={c.title} action={<ProfileLink />} className="emerge-top-right">
       <div className="flex flex-col gap-[var(--spacing-sm)]">
         {/* — You — the facts the patient set on the way in, as a quiet list. */}
         <section aria-label={c.profile.title} className="pb-[var(--spacing-2xs)]">
