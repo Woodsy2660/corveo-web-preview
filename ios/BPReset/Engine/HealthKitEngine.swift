@@ -69,6 +69,8 @@ final class HealthKitEngine: @unchecked Sendable {
     private var observers: [HKObserverQuery] = []
     private var catchUpInFlight = false
     private var resetting = false
+    /// A background wake that arrived while a catch-up was in flight. Re-run once after it.
+    private var wakeMissed = false
     private(set) var catchUpPending = false
     private var unlockRetryObserver: NSObjectProtocol?
     private(set) var loadFault: BPError?
@@ -177,6 +179,9 @@ final class HealthKitEngine: @unchecked Sendable {
         }
     }
 
+    /// The enrolment the engine is bound to, or nil when unconfigured.
+    var configuredEnrolmentRef: String? { read { $0.enrolmentRef } }
+
     static func stateName(_ s: EngineState) -> String {
         guard s.enrolmentRef != nil else { return "unconfigured" }
         guard s.desiredObservationEnabled else { return "configuredDisabled" }
@@ -203,7 +208,8 @@ final class HealthKitEngine: @unchecked Sendable {
     }
 
     /// The only exit from a configured tuple (§6.3). Runs behind a barrier on the
-    /// executor: in-flight catch-up cannot land a commit after this resolves.
+    /// executor and waits for an in-flight catch-up first, so no commit from the old
+    /// tuple can land after this resolves; the catch-up commit also re-checks the tuple.
     func disconnectAndReset(_ policy: PendingPolicy) async throws {
         onExecutor { resetting = true }
         defer { onExecutor { resetting = false } }
@@ -211,8 +217,15 @@ final class HealthKitEngine: @unchecked Sendable {
             for q in observers { health.stop(q) }
             observers.removeAll()
         }
-        try? await disableDelivery(BPTypes.systolic)
-        try? await disableDelivery(BPTypes.diastolic)
+        var waited = 0
+        while onExecutor({ catchUpInFlight }), waited < 200 {          // up to ~10 s
+            try? await Task.sleep(nanoseconds: 50_000_000)
+            waited += 1
+        }
+        // Delivery must actually be off before the tuple goes (B4); a failure is surfaced,
+        // the state stays configured, and the caller can retry.
+        try await disableDelivery(BPTypes.systolic)
+        try await disableDelivery(BPTypes.diastolic)
         try mutate { st in
             switch policy {
             case .holdForReauth:
@@ -291,12 +304,14 @@ final class HealthKitEngine: @unchecked Sendable {
     }
 
     private func verifyBackgroundDelivery() async {
+        guard onExecutor({ !resetting && store.current.config != nil }) else { return }
         do {
             try await enableDelivery(BPTypes.systolic)
             try await enableDelivery(BPTypes.diastolic)
-            try? mutate { $0.lastArm = .ok(Date()) }         // updates lastArm only
+            try? mutate { st in if !resetting, st.config != nil { st.lastArm = .ok(Date()) } }
         } catch {
-            try? mutate { $0.lastArm = .failed(Date(), code: Self.errorCode(error)) }
+            let code = Self.errorCode(error)
+            try? mutate { st in if !resetting, st.config != nil { st.lastArm = .failed(Date(), code: code) } }
         }
     }
 
@@ -358,9 +373,28 @@ final class HealthKitEngine: @unchecked Sendable {
             let s = read { $0 }
             if s.config == nil { throw BPError.configMissing }
             if !s.desiredObservationEnabled { return CatchUpResult() }
+            // A wake during an in-flight pass is acknowledged to HealthKit by the caller;
+            // remember it so the finishing pass runs once more and nothing waits for the
+            // next foreground activation.
+            if trigger == .backgroundWake { onExecutor { wakeMissed = true } }
             throw BPError.queryFailed("CATCHUP_IN_FLIGHT")
         }
-        defer { onExecutor { catchUpInFlight = false } }
+        defer {
+            let rerun: Bool = onExecutor {
+                catchUpInFlight = false
+                let r = wakeMissed
+                wakeMissed = false
+                return r
+            }
+            if rerun {
+                Log.event("catchUp.rerunAfterMissedWake")
+                Task {
+                    if let out = try? await self.runCatchUp(trigger: .retry), out.queued > 0 {
+                        self.onReadingsAvailable?(self.status().pendingCount)
+                    }
+                }
+            }
+        }
 
         if read({ $0.promptRequestedAt }) == nil { throw BPError.promptPending }
 
@@ -371,7 +405,7 @@ final class HealthKitEngine: @unchecked Sendable {
         do {
             delta = try await fetchDelta(anchor: entry.anchor, since: entry.config.importStart)
         } catch let e as BPError where e.code == "HK_TEMP_UNAVAILABLE" {
-            catchUpPending = true                            // anchor untouched; retried [R18]
+            onExecutor { catchUpPending = true }             // anchor untouched; retried [R18]
             try? mutate { $0.diagnostics.lastErrorCode = e.code }
             Log.event("hkLocked.retryPending")
             out.deferred = true
@@ -385,7 +419,9 @@ final class HealthKitEngine: @unchecked Sendable {
         out.malformed = delta.malformedBySource.values.reduce(0, +)
 
         let queued: Int = try mutate { st in
-            guard !resetting else { return 0 }               // barrier: no post-reset commit
+            // Barrier: no commit after a reset, and none onto a different tuple than the
+            // one this pass was fetched for (a reset + reconfigure may have run meanwhile).
+            guard !resetting, st.config == entry.config else { return 0 }
             let fresh = delta.readings.filter { !st.recentUuids.contains($0.hkUuid) }
             st.enqueue(fresh, enrolmentRef: entry.config.enrolmentRef)
             st.mergeMalformedCounts(delta.malformedBySource)
@@ -402,7 +438,7 @@ final class HealthKitEngine: @unchecked Sendable {
             return fresh.count
         }
 
-        catchUpPending = false
+        onExecutor { catchUpPending = false }
         out.queued = queued
         Log.event("catchUp.committed", count: out.queued, code: trigger.rawValue)
         if out.malformed > 0 { Log.event("catchUp.malformed", count: out.malformed) }
@@ -437,6 +473,7 @@ final class HealthKitEngine: @unchecked Sendable {
         guard let cfg = read({ $0.config }) else { throw BPError.configMissing }
         _ = try await fetchDelta(anchor: nil, since: cfg.importStart)   // probe must succeed
         try mutate { st in
+            guard !resetting, st.config == cfg else { return }       // never onto a reset or new tuple
             st.anchorData = nil
             st.bootstrapComplete = false
             st.anchorResetReason = reason

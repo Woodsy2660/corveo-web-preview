@@ -15,7 +15,11 @@ struct SettingsView: View {
     @State private var confirmingDisconnect = false
     @State private var exporting = false
     @State private var exportItems: [URL] = []
+    @State private var exportDir: URL? = nil
     @State private var showShare = false
+    @State private var deleteError: String? = nil
+    @State private var confirmingDiscardHeld = false
+    @State private var consentBusy = false
 
     var body: some View {
         Screen(
@@ -40,8 +44,8 @@ struct SettingsView: View {
             health.refresh()
             await reminders.refresh()
         }
-        .sheet(isPresented: $showShare) {
-            ShareSheet(items: exportItems)
+        .sheet(isPresented: $showShare, onDismiss: { cleanUpExport() }) {
+            ShareSheet(items: exportItems, onFinish: { cleanUpExport() })
         }
     }
 
@@ -58,10 +62,31 @@ struct SettingsView: View {
                     .cText(TypeScale.bodySm).foregroundStyle(CColor.ink)
                     .padding(.top, Spacing.xxs)
             }
+            if let problem = health.problemText {
+                Text(problem).cText(TypeScale.bodySm).foregroundStyle(CColor.ink)
+                    .padding(.top, Spacing.xxs)
+            }
             if health.status.heldCount > 0 {
-                Text(HealthSyncCopy.card.pending(health.status.heldCount))
+                Text(HealthSyncCopy.card.held(health.status.heldCount))
                     .cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary)
                     .padding(.top, Spacing.xxs)
+            }
+            if !health.foreignHeld.isEmpty {
+                Text(HealthSyncCopy.card.heldNote).cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
+                    .padding(.top, Spacing.xxxs)
+                if confirmingDiscardHeld {
+                    HStack(spacing: Spacing.xxs) {
+                        CButton(title: HealthSyncCopy.card.discardHeldCta) {
+                            health.discardForeignHeld()
+                            confirmingDiscardHeld = false
+                        }
+                        CButton(title: AppCopy.common.cancel, variant: .secondary) { confirmingDiscardHeld = false }
+                    }
+                    .padding(.top, Spacing.xxs)
+                } else {
+                    CButton(title: HealthSyncCopy.card.discardHeldCta, variant: .ghost) { confirmingDiscardHeld = true }
+                        .padding(.top, Spacing.xxxs)
+                }
             }
             Text(AppCopy.settings.appleHealth.manageHint)
                 .cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
@@ -128,6 +153,25 @@ struct SettingsView: View {
                 } else {
                     CButton(title: AppCopy.settings.yourData.deleteCta, variant: .secondary) { confirmingDelete = true }
                 }
+                if let deleteError {
+                    Text(deleteError).cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+            if let consent = model.consent, !consent.hasActiveConsent {
+                // The route back to consent when it was never recorded (a failed journey step)
+                // or was withdrawn: without it every save fails with no way forward.
+                Text(AppCopy.settings.yourData.consentMissing).cText(TypeScale.bodySm).foregroundStyle(CColor.ink)
+                    .padding(.top, Spacing.sm)
+                CButton(title: consentBusy ? AppCopy.common.busy : AppCopy.settings.yourData.giveConsentCta, variant: .secondary, disabled: consentBusy) {
+                    Task {
+                        consentBusy = true
+                        defer { consentBusy = false }
+                        try? await model.recordConsent()
+                        await model.loadConsent()
+                    }
+                }
+                .padding(.top, Spacing.xxs)
             }
             if let consent = model.consent, consent.hasActiveConsent, let version = consent.version, let at = consent.lastEventAt {
                 Text(AppCopy.settings.yourData.consentReceipt(version, Format.fullDate(at)))
@@ -146,13 +190,7 @@ struct SettingsView: View {
                     .padding(.bottom, Spacing.sm)
             }
             CButton(title: AppCopy.settings.account.signOutCta, variant: .secondary) {
-                Task {
-                    // Logout attempts one final drain first (§6.3); engine state persists.
-                    await health.drain(trigger: .manual)
-                    await session.signOut()
-                    reminders.disable()                         // a different person may sign in next
-                    router.popToRoot()
-                }
+                Task { await tearDown(.signOut) }
             }
             Text(AppCopy.settings.account.signOutNote).cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
                 .padding(.top, Spacing.xxs)
@@ -247,11 +285,7 @@ struct SettingsView: View {
             CButton(title: AppCopy.settings.demo.resetCta, variant: .secondary) {
                 Task {
                     await model.resetSynthetic()
-                    await health.disconnect(.confirmedDiscard)
-                    reminders.disable()
-                    follow.reset()
-                    appState.resetJourney()
-                    router.popToRoot()
+                    await tearDown(.developmentReset)
                 }
             }
             Text(AppCopy.settings.demo.note).cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
@@ -274,45 +308,81 @@ struct SettingsView: View {
 
     // MARK: Actions
 
-    /// Export: files go to the iOS share sheet from the cache directory, and are removed
-    /// afterwards. The CSV and FHIR JSON are the server's output verbatim.
+    /// Export: the server's CSV and FHIR JSON, verbatim, written file-protected into a fresh
+    /// temporary directory for the share sheet, and removed on every exit: a failed write, the
+    /// sheet finishing, or the sheet being dismissed.
     private func exportRecord() async {
         exporting = true
         defer { exporting = false }
         guard let result = try? await model.export() else { return }
-        let dir = FileManager.default.temporaryDirectory.appendingPathComponent("export", isDirectory: true)
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        cleanUpExport()
+        let dir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("export-\(UUID().uuidString)", isDirectory: true)
         let csv = dir.appendingPathComponent("corveo-my-heart-record.csv")
         let json = dir.appendingPathComponent("corveo-my-heart-record.fhir.json")
         do {
-            try result.csv.write(to: csv, atomically: true, encoding: .utf8)
-            try result.fhirBundleJSON.write(to: json, atomically: true, encoding: .utf8)
+            try FileManager.default.createDirectory(
+                at: dir, withIntermediateDirectories: true,
+                attributes: [.protectionKey: FileProtectionType.complete])
+            try Data(result.csv.utf8).write(to: csv, options: [.atomic, .completeFileProtection])
+            try Data(result.fhirBundleJSON.utf8).write(to: json, options: [.atomic, .completeFileProtection])
+            exportDir = dir
             exportItems = [csv, json]
             showShare = true
         } catch {
+            try? FileManager.default.removeItem(at: dir)
             exportItems = []
         }
     }
 
+    private func cleanUpExport() {
+        if let dir = exportDir { try? FileManager.default.removeItem(at: dir) }
+        exportDir = nil
+        exportItems = []
+    }
+
+    /// Deletion is the server's act. Nothing local is touched until it has succeeded.
     private func requestDeletion() async {
-        try? await model.requestAccountDeletion()
-        await health.disconnect(.confirmedDiscard)
+        deleteError = nil
+        do {
+            try await model.requestAccountDeletion()
+        } catch {
+            deleteError = AppCopy.settings.yourData.deleteFailed
+            return
+        }
+        confirmingDelete = false
+        await tearDown(.deletion)
+    }
+
+    // MARK: Teardown (one definition for the three exits)
+
+    private enum TearDown { case signOut, deletion, developmentReset }
+
+    /// Sign-out drains first and keeps the engine running for the next sign-in of the same
+    /// person (§6.3): readings stay on the phone, the binding leaves with the account. Deletion
+    /// and the development reset discard the queue and restart the journey.
+    private func tearDown(_ mode: TearDown) async {
+        switch mode {
+        case .signOut:
+            await health.drain(trigger: .manual)
+        case .deletion, .developmentReset:
+            await health.disconnect(.confirmedDiscard)
+        }
         await session.signOut()
-        reminders.disable()
+        reminders.disable()                                 // a different person may sign in next
         follow.reset()
-        appState.resetJourney()
+        if mode != .signOut { appState.resetJourney() }
         router.popToRoot()
     }
 }
 
-/// UIActivityViewController wrapper. Cleans the exported files up when the sheet closes.
+/// UIActivityViewController wrapper. Reports completion so the caller can remove the files.
 struct ShareSheet: UIViewControllerRepresentable {
     let items: [URL]
+    var onFinish: () -> Void = {}
     func makeUIViewController(context: Context) -> UIActivityViewController {
         let vc = UIActivityViewController(activityItems: items, applicationActivities: nil)
-        vc.completionWithItemsHandler = { _, _, _, _ in
-            for url in items { try? FileManager.default.removeItem(at: url) }
-        }
+        vc.completionWithItemsHandler = { _, _, _, _ in onFinish() }
         return vc
     }
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}

@@ -55,8 +55,29 @@ enum SupabaseFactory {
         return SupabaseClient(
             supabaseURL: url,
             supabaseKey: AppConfig.supabasePublishableKey,
-            options: SupabaseClientOptions(auth: .init(storage: KeychainSessionStorage())))
+            options: SupabaseClientOptions(
+                db: .init(encoder: paramEncoder),
+                auth: .init(storage: KeychainSessionStorage())))
     }
+
+    /// Every Date the app sends carries an explicit UTC designator. The SDK's default encoder
+    /// writes a zone-less timestamp, which `::timestamptz` would read in the database session's
+    /// zone; the instant must not depend on a server setting.
+    static let paramEncoder: JSONEncoder = {
+        let e = JSONEncoder()
+        e.dateEncodingStrategy = .custom { date, encoder in
+            var c = encoder.singleValueContainer()
+            try c.encode(SupabaseFactory.isoUTC.string(from: date))
+        }
+        return e
+    }()
+
+    static let isoUTC: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        f.timeZone = TimeZone(identifier: "UTC")
+        return f
+    }()
 }
 
 // MARK: - CorveoAPI over the deployed v0.2 schema
@@ -240,9 +261,5 @@ private struct ExportRPCResponse: Decodable {
 }
 
 private extension Date {
-    var iso8601String: String {
-        let f = ISO8601DateFormatter()
-        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return f.string(from: self)
-    }
+    var iso8601String: String { SupabaseFactory.isoUTC.string(from: self) }
 }

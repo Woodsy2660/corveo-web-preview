@@ -71,6 +71,7 @@ enum AppCopy {
     enum readings {
         static let empty = "No readings yet. Your record begins with the first reading you add or share."
         static let sparse = "Your picture is building. Only a few readings so far."
+        static let loadMore = "Show earlier readings"
         static let addCta = "Add a reading"
         static let sourceHealth = "Apple Health"
         static let sourceManual = "Manual"
@@ -141,6 +142,7 @@ enum AppCopy {
         static let timeNote = "Recorded readings keep the time you set here."
         static let cta = "Save reading"
         static let saveFailed = "The reading couldn't be saved. Please try again."
+        static let consentRequired = "Your consent is needed before readings can be saved. Review consent in Settings."
     }
 
     enum settings {
@@ -167,6 +169,9 @@ enum AppCopy {
             static let deleteConfirmBody = "Your account and readings will be deleted. Health-records law sets a minimum retention period, and deletion is carried out and logged against it. This cannot be undone from the app."
             static let deleteConfirmCta = "Request deletion"
             static let deleteCancelCta = "Keep my record"
+            static let deleteFailed = "Deletion could not be requested. Check your connection and try again. Nothing on this phone has been removed."
+            static let consentMissing = "Your consent is not on record. Readings cannot be saved until it is."
+            static let giveConsentCta = "Give consent"
             static func consentReceipt(_ version: String, _ date: String) -> String {
                 "You gave express consent (v\(version)) on \(date)."
             }
@@ -196,6 +201,9 @@ enum HealthSyncCopy {
         static func arrived(_ n: Int) -> String { n == 1 ? "1 new reading from Apple Health" : "\(n) new readings from Apple Health" }
         static func pending(_ n: Int) -> String { n == 1 ? "1 reading waiting to upload" : "\(n) readings waiting to upload" }
         static func rejected(_ n: Int) -> String { n == 1 ? "1 reading could not be imported" : "\(n) readings could not be imported" }
+        static func held(_ n: Int) -> String { n == 1 ? "1 reading is held from a previous sign-in" : "\(n) readings are held from a previous sign-in" }
+        static let heldNote = "Held readings stay on this phone until that account signs in again. Discarding removes them from this phone only; Apple Health is unaffected."
+        static let discardHeldCta = "Discard held readings"
         enum sync {
             static let idle = "Sync"
             static let busy = "Syncing"
@@ -267,6 +275,7 @@ enum JourneyCopy {
     }
 
     enum firstCapture {
+        static let skip = "Skip for now"
         static let eyebrow = "First reading"
         static let title = "A starting point."
         static let intro = "Enter your most recent reading. One reading is just a starting point. The picture builds over the coming weeks."
@@ -322,6 +331,7 @@ enum ConsentCopy {
     ]
     static let checkboxLabel = "I have read and understood the above, and I expressly consent to Corveo collecting and storing my blood pressure readings as described."
     static let cta = "I consent"
+    static let failed = "Your consent could not be recorded. Check your connection and try again."
 
     /// The exact text shown, joined the same way the web build joins it, so the hash matches
     /// across platforms for the same consent version.
@@ -401,4 +411,17 @@ enum ReminderCopy {
             }
         }
     }
+}
+
+// MARK: - Problems the capture pipeline can report (mechanism only, never a value)
+
+enum HealthProblemCopy {
+    static let consentRequired = "Your consent is needed before readings can be saved. Review consent in Settings."
+    static let signInRequired = "Sign in again to keep saving readings."
+    static let storeFault = "The reading store on this phone could not be opened. Readings in Apple Health are unaffected; reinstalling BP Reset may be needed."
+    static let bindingHold = "Readings from a previous sign-in are waiting on this phone. They stay here until that account signs in again."
+    static let rejectedAll = "The server could not accept the readings. They stay on this phone and will be retried."
+    static let ackFailed = "Readings were sent but could not be marked as sent on this phone. They will be checked again."
+    static let uploadFailed = "Readings could not be sent. They stay on this phone until the next check."
+    static let notEnrolled = "Finish setting up your account before connecting Apple Health."
 }

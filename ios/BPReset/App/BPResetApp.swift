@@ -77,6 +77,9 @@ final class AppState {
     private(set) var programStartedAt: Date? { didSet { save() } }
     /// Stand-in for `app_user.id` until P3. Opaque, persisted, no health content.
     private(set) var enrolmentRef: String { didSet { save() } }
+    /// True once the tuple came from the server (or the mock's enrolment). The engine is only
+    /// ever configured from a bound tuple, and sign-out clears it (§6.2).
+    private(set) var enrolmentBound: Bool { didSet { save() } }
 
     init() {
         let d = UserDefaults.standard
@@ -91,6 +94,8 @@ final class AppState {
             enrolmentRef = fresh
             d.set(fresh, forKey: Self.key + ".enrolmentRef")
         }
+        // States written before the flag existed: a start date meant a bound enrolment.
+        enrolmentBound = (d.object(forKey: Self.key + ".bound") as? Bool) ?? (d.object(forKey: Self.key + ".startedAt") != nil)
     }
 
     private func save() {
@@ -100,11 +105,22 @@ final class AppState {
         d.set(cadence?.rawValue, forKey: Self.key + ".cadence")
         d.set(programStartedAt, forKey: Self.key + ".startedAt")
         d.set(enrolmentRef, forKey: Self.key + ".enrolmentRef")
+        d.set(enrolmentBound, forKey: Self.key + ".bound")
     }
 
     /// Mock mode only: the enrolment moment without a server.
     func markEnrolled() {
         if programStartedAt == nil { programStartedAt = Date() }
+        enrolmentBound = true
+    }
+
+    /// Sign-out: the tuple no longer describes who is signed in. A fresh, unbound reference
+    /// means any reading still stamped with the old one fails the drain's binding check and
+    /// is held rather than uploaded under the next account.
+    func clearEnrolment() {
+        enrolmentBound = false
+        programStartedAt = nil
+        enrolmentRef = UUID().uuidString.lowercased()
     }
 
     /// Backend mode: the tuple from the `app_user` row. The server clock wins, and the pair is
@@ -112,6 +128,7 @@ final class AppState {
     func setEnrolment(ref: String, start: Date) {
         if enrolmentRef != ref { enrolmentRef = ref }
         if programStartedAt != start { programStartedAt = start }
+        if !enrolmentBound { enrolmentBound = true }
     }
 
     func completeJourney() { journeyComplete = true }
@@ -120,8 +137,7 @@ final class AppState {
         journeyComplete = false
         connectChoice = nil
         cadence = nil
-        programStartedAt = nil
-        enrolmentRef = UUID().uuidString.lowercased()
+        clearEnrolment()
     }
 }
 

@@ -71,6 +71,7 @@ struct ConsentView: View {
     @Environment(AppModel.self) private var model
     @State private var agreed = false
     @State private var busy = false
+    @State private var failed = false
 
     var body: some View {
         Screen(
@@ -80,8 +81,15 @@ struct ConsentView: View {
                 Task {
                     busy = true
                     defer { busy = false }
-                    try? await model.recordConsent()
-                    path.append(.connect)
+                    // Consent is a server record, and every later write depends on it: the
+                    // journey does not move on until it is recorded.
+                    do {
+                        try await model.recordConsent()
+                        failed = false
+                        path.append(.connect)
+                    } catch {
+                        failed = true
+                    }
                 }
             })
         ) {
@@ -101,6 +109,10 @@ struct ConsentView: View {
 
             CheckRow(checked: $agreed, label: ConsentCopy.checkboxLabel)
                 .padding(.top, Spacing.md)
+            if failed {
+                Text(ConsentCopy.failed).cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary)
+                    .padding(.top, Spacing.xs)
+            }
         }
     }
 }
@@ -205,7 +217,11 @@ struct FirstCaptureView: View {
     @Environment(AppState.self) private var appState
 
     var body: some View {
-        Screen(eyebrow: JourneyCopy.firstCapture.eyebrow, title: JourneyCopy.firstCapture.title) {
+        // A visible way past this step: a reading is never required to finish onboarding, so
+        // nobody without a monitor has to invent one (rulebook 5.1.1; the record holds only
+        // what was measured).
+        Screen(eyebrow: JourneyCopy.firstCapture.eyebrow, title: JourneyCopy.firstCapture.title,
+               footer: AnyView(CButton(title: JourneyCopy.firstCapture.skip, variant: .ghost) { path.append(.cadence) })) {
             StepDots(total: 5, current: 4)
             Text(JourneyCopy.firstCapture.intro)
                 .cText(TypeScale.bodyBase).foregroundStyle(CColor.inkSecondary)
@@ -298,7 +314,9 @@ struct CadenceView: View {
                     defer { busy = false }
                     // The system prompt appears once, here, after the explanation on screen.
                     if remind { await reminders.enable(cadence: appState.cadence) }
-                    await model.updateProgress(currentWeek: 1, completedSteps: ["journey": true])
+                    // Marks the journey done without touching the week: a returning patient
+                    // who re-runs onboarding keeps their place in the program.
+                    await model.updateProgress(completedSteps: ["journey": true])
                     appState.completeJourney()
                 }
             })

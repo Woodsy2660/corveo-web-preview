@@ -27,13 +27,14 @@ enum Mapper {
         let d = dia.quantity.doubleValue(for: BPTypes.mmHg)
         guard s.isFinite, d.isFinite else { return nil }
         let tz = timeZoneFromMetadata(corr)
+        let tzIdentifier = tz.flatMap(Self.ianaIdentifier)
         return MappedReading(
             hkUuid: corr.uuid.uuidString,
             systolicUuid: sys.uuid.uuidString,
             diastolicUuid: dia.uuid.uuidString,
             systolic: s, diastolic: d,
             takenAt: corr.startDate,
-            tzIdentifier: tz?.identifier,                               // nil when absent [R17]
+            tzIdentifier: tzIdentifier,                                 // nil when absent [R17]
             tzOffsetMinutes: tz.map { $0.secondsFromGMT(for: corr.startDate) / 60 },
             sourceBundleId: corr.sourceRevision.source.bundleIdentifier,
             sourceName: corr.sourceRevision.source.name,
@@ -44,6 +45,13 @@ enum Mapper {
     static func timeZoneFromMetadata(_ c: HKCorrelation) -> TimeZone? {
         guard let id = c.metadata?[HKMetadataKeyTimeZone] as? String else { return nil }
         return TimeZone(identifier: id)
+    }
+
+    /// Only an IANA name is sent as `effective_tz`. Foundation also accepts fixed-offset
+    /// strings ("GMT+10:00" becomes "GMT+1000") that Postgres rejects, and one such row would
+    /// make the whole trend view fail. The offset is still carried from the zone object.
+    static func ianaIdentifier(_ tz: TimeZone) -> String? {
+        TimeZone.knownTimeZoneIdentifiers.contains(tz.identifier) ? tz.identifier : nil
     }
 
     /// The identifier a rejected sample is counted against (§7.3 `malformedBySource`).

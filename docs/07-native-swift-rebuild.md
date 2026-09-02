@@ -147,6 +147,53 @@ Bundle ID `dev.aiplease.bpreset` (throwaway, sandbox team). Deployment target iO
   48-hour soak (running, `docs/soak-log.md`); Corveo's review of the reminder copy; privacy
   policy and support URLs; App Store assets.
 
+## 4c. Code-review fixes (3 Sep)
+
+A review of the native tree (nine angles, every finding independently verified) produced
+fifteen fixes, all in the repo and simulator-verified with the unit suite (45 tests). The
+soak build on the phone was not touched. In severity order:
+
+1. **Cross-account upload closed.** `signIn` binds the enrolment before the app is told it is
+   signed in, and sign-out clears the app-level tuple (`AppState.clearEnrolment`), so readings
+   stamped with a previous account fail the binding check and are held, never uploaded.
+2. **Onboarding no longer forces a reading.** The first-capture step has a visible skip.
+3. **The engine follows the binding.** `HealthModel` rebinds (hold the old queue, configure the
+   new tuple, re-arm) whenever the signed-in tuple differs from the engine's, on every drain
+   and on connect. `connect()` refuses an unbound tuple (`NOT_ENROLLED`) instead of inventing
+   one; `markEnrolled` is mock-only again.
+4. **Held buckets drain and can be released.** The drain uploads the held bucket for the
+   signed-in enrolment before the active queue (B1); Settings shows held counts as held, and
+   buckets from other sign-ins can be discarded after confirmation.
+5. **Reset barrier hardened.** `disconnectAndReset` waits for an in-flight catch-up, the
+   catch-up and probe commits re-check the tuple they were fetched for, delivery-disable
+   failures propagate, the launch verify is guarded, and a wake that arrives during a catch-up
+   re-runs once afterwards. `catchUpPending` is executor-owned.
+6. **Reconciliation before acknowledgement.** `DrainReconciliation` keeps the rows when the
+   response does not account for every row sent, or when nothing landed and every rejection is
+   environmental (unknown code, unit, timestamp). Per-row structural rejections are still
+   acknowledged (N-04).
+7. **Deletion is server-first.** Nothing local is discarded unless `delete_account` succeeded;
+   a failure is shown.
+8. **Consent cannot be skipped.** The consent step stays put on failure; the mock enforces the
+   consent gate like the RPC; a missing consent shows a "Give consent" route in Settings, the
+   manual form names it, and the capture card carries a one-line problem statement for
+   consent, sign-in, store faults, binding holds, environment rejections and failed uploads.
+9. **Engine faults surface.** A store fault is reported, `connect()` returns false when it
+   could not configure or ask for authorisation, and a failed acknowledgement is reported
+   rather than counted as a successful drain.
+10. **Journey completion keeps the week.** Only the journey step is marked complete.
+11. **Session restore is offline-safe.** Presence is a Keychain read; a failed enrolment
+    lookup keeps the previous binding and surfaces the error; a failed sign-up clears the
+    pending-confirmation state first.
+12. **Dates and zones on the wire.** RPC bodies use an explicit UTC encoder; only IANA zone
+    names are sent as `effective_tz` (fixed-offset strings keep their offset only). The
+    server-side default of Australia/Sydney for a missing zone remains Q7, backend-owned.
+13. **Export files are protected and always removed.** Fresh directory per export, complete
+    file protection, cleanup on failure, on completion and on dismissal.
+14. **History pages.** Thirty at a time with "Show earlier readings".
+15. **One teardown.** Sign-out, deletion and the development reset share one routine; the
+    development reset now signs out as well.
+
 ## 5. Phase 1 exit checks
 
 | Check | Result |

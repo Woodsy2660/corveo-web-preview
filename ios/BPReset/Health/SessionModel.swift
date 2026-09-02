@@ -43,10 +43,12 @@ final class SessionModel {
     func restore() async {
         guard let client else { restored = true; return }
         defer { restored = true }
-        if let session = try? await client.auth.session {
+        // Presence is a Keychain read; `auth.session` would refresh over the network and
+        // throw offline, which is not "signed out". The SDK refreshes lazily on first use.
+        if let session = client.auth.currentSession {
             isSignedIn = true
             email = session.user.email
-            await loadEnrolment()
+            await loadEnrolment()                              // keeps the persisted binding on failure
         } else {
             isSignedIn = false
         }
@@ -60,6 +62,7 @@ final class SessionModel {
     func signUp(email: String, password: String) async -> Bool {
         guard let client else { return true }
         lastError = nil
+        pendingConfirmation = false
         do {
             switch try await client.auth.signUp(email: email, password: password) {
             case .session(let session):
@@ -83,10 +86,12 @@ final class SessionModel {
         lastError = nil
         do {
             let session = try await client.auth.signIn(email: email, password: password)
-            isSignedIn = true
             pendingConfirmation = false
             self.email = session.user.email
+            // Bind before the app is told it is signed in: no drain can run against the
+            // previous account's tuple in between (§6.2).
             await loadEnrolment()
+            isSignedIn = true
             return true
         } catch {
             lastError = Self.describe(error)
@@ -96,6 +101,7 @@ final class SessionModel {
 
     func signOut() async {
         if let client { try? await client.auth.signOut() }
+        if hasBackend { appState.clearEnrolment() }             // the tuple leaves with the account
         isSignedIn = hasBackend ? false : true
         enrolled = hasBackend ? false : enrolled
         email = nil
@@ -123,13 +129,19 @@ final class SessionModel {
         }
     }
 
+    /// A missing row means not enrolled; a failed request means unknown, so the previous
+    /// binding and `enrolled` are kept and the error is surfaced.
     func loadEnrolment() async {
         guard let api else { return }
-        if let me = try? await api.currentAppUser() {
-            appState.setEnrolment(ref: me.id, start: me.createdAt)
-            enrolled = true
-        } else {
-            enrolled = false
+        do {
+            if let me = try await api.currentAppUser() {
+                appState.setEnrolment(ref: me.id, start: me.createdAt)
+                enrolled = true
+            } else {
+                enrolled = false
+            }
+        } catch {
+            lastError = Self.describe(error)
         }
     }
 

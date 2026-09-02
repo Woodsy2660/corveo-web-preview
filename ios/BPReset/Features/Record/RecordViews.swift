@@ -93,6 +93,13 @@ struct RecordView: View {
                         ReadingRow(reading: reading)
                     }
                 }
+                if model.canLoadMoreReadings {
+                    CButton(title: model.loadingMore ? AppCopy.common.busy : AppCopy.readings.loadMore,
+                            variant: .ghost, disabled: model.loadingMore) {
+                        Task { await model.loadMoreReadings() }
+                    }
+                    .padding(.top, Spacing.xs)
+                }
             }
         }
         .task { await model.loadReadings() }
@@ -355,6 +362,11 @@ struct AppleHealthCard: View {
                 }
                 .padding(.top, Spacing.xs)
 
+                if let problem = health.problemText {
+                    Text(problem)
+                        .cText(TypeScale.bodySm).foregroundStyle(CColor.ink)
+                        .padding(.top, Spacing.xxs)
+                }
                 if health.status.rejectedCount > 0 {
                     Text(HealthSyncCopy.card.rejected(health.status.rejectedCount))
                         .cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
@@ -461,6 +473,10 @@ struct ManualEntryForm: View {
         let result: IngestResponse
         do {
             result = try await model.ingest(payload)
+        } catch let e as APIError {
+            if case .consentRequired = e { formError = AppCopy.manualEntry.consentRequired }
+            else { formError = AppCopy.manualEntry.saveFailed }
+            return
         } catch {
             formError = AppCopy.manualEntry.saveFailed
             return

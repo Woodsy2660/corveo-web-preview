@@ -85,6 +85,9 @@ actor MockAPI: CorveoAPI {
 
     func ingestObservations(_ payload: IngestPayload) async throws -> IngestResponse {
         await delay()
+        // The deployed RPC refuses the whole call without active consent; the mock must too,
+        // or the journey's consent step can fail unnoticed in development.
+        guard consent.hasActiveConsent else { throw APIError.consentRequired }
         var inserted = 0, duplicates = 0
         var rejected: [IngestRejection] = []
         for obs in payload.observations {

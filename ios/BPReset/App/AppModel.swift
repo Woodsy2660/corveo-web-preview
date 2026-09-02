@@ -17,6 +17,10 @@ final class AppModel {
 
     private(set) var readingsLoading = false
     private(set) var trendLoading = false
+    /// True when the last page was full, so earlier readings may exist.
+    private(set) var canLoadMoreReadings = false
+    private(set) var loadingMore = false
+    static let readingsPageSize = 30
 
     init(api: CorveoAPI) {
         self.api = api
@@ -24,10 +28,24 @@ final class AppModel {
 
     // MARK: Readings and trend
 
-    func loadReadings(limit: Int = 30) async {
+    func loadReadings(limit: Int = AppModel.readingsPageSize) async {
         readingsLoading = readings.isEmpty
         defer { readingsLoading = false }
-        if let rows = try? await api.listReadings(limit: limit, before: nil) { readings = rows }
+        if let rows = try? await api.listReadings(limit: limit, before: nil) {
+            readings = rows
+            canLoadMoreReadings = rows.count >= limit
+        }
+    }
+
+    /// The next page, older than the last row shown (keyset on effective_time).
+    func loadMoreReadings() async {
+        guard canLoadMoreReadings, !loadingMore, let last = readings.last else { return }
+        loadingMore = true
+        defer { loadingMore = false }
+        if let rows = try? await api.listReadings(limit: Self.readingsPageSize, before: last.effectiveTime) {
+            readings += rows
+            canLoadMoreReadings = rows.count >= Self.readingsPageSize
+        }
     }
 
     func loadTrend(sinceDay: String?) async {
