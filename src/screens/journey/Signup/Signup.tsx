@@ -21,7 +21,7 @@ export function Signup() {
 
   return (
     <Screen
-      eyebrow={c.eyebrow}
+      overline={c.eyebrow}
       title={c.title}
       footer={
         <Button disabled={!canContinue} onClick={() => navigate("/journey/consent")}>

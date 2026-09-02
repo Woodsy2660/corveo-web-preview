@@ -13,7 +13,7 @@ export function FirstCapture() {
   const c = JOURNEY.firstCapture;
 
   return (
-    <Screen eyebrow={c.eyebrow} title={c.title}>
+    <Screen overline={c.eyebrow} title={c.title}>
       <StepDots total={5} current={4} />
       <p className="pb-[var(--spacing-md)] text-ink-secondary">{c.intro}</p>
 

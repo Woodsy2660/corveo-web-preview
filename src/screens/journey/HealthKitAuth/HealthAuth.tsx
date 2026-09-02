@@ -47,7 +47,7 @@ export function HealthAuth() {
   return (
     <>
       <Screen
-        eyebrow={c.eyebrow}
+        overline={c.eyebrow}
         title={c.title}
         footer={
           <div className="flex flex-col gap-[var(--spacing-xs)]">

@@ -27,7 +27,7 @@ export function Cadence() {
 
   return (
     <Screen
-      eyebrow={c.eyebrow}
+      overline={c.eyebrow}
       title={c.title}
       footer={
         <Button disabled={!cadence || updateProgress.isPending} onClick={finish}>

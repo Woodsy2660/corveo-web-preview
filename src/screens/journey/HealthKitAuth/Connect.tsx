@@ -20,7 +20,7 @@ export function Connect() {
 
   return (
     <Screen
-      eyebrow={c.eyebrow}
+      overline={c.eyebrow}
       title={c.title}
       footer={
         <Button disabled={!connectChoice} onClick={next}>

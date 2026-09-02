@@ -26,7 +26,7 @@ export function Result() {
 
   return (
     <Screen
-      eyebrow={c.eyebrow}
+      overline={c.eyebrow}
       title={c.title}
       footer={<Button onClick={() => navigate("/journey/cadence")}>{c.cta}</Button>}
     >

@@ -33,7 +33,7 @@ export function Consent() {
 
   return (
     <Screen
-      eyebrow={CONSENT.eyebrow}
+      overline={CONSENT.eyebrow}
       title={CONSENT.title}
       footer={
         <Button disabled={!agreed || recordConsent.isPending} onClick={onConsent}>
