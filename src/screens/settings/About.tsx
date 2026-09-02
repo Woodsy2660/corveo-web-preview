@@ -1,4 +1,6 @@
+import { useNavigate } from "react-router";
 import { Screen, ProfileLink } from "@/components/ui/Screen";
+import { Button } from "@/components/ui/Button";
 import { APP } from "@/copy/app";
 import { SAFETY } from "@/copy/safety";
 
@@ -8,10 +10,20 @@ import { SAFETY } from "@/copy/safety";
  * Settings menu; the profile icon in the header returns to Settings.
  */
 export function About() {
+  const navigate = useNavigate();
   const c = APP.settings;
 
   return (
-    <Screen overline={c.menu.about} title={SAFETY.title} action={<ProfileLink />}>
+    <Screen
+      overline={c.menu.about}
+      title={SAFETY.title}
+      action={<ProfileLink />}
+      footer={
+        <Button variant="ghost" onClick={() => navigate(-1)}>
+          {APP.common.back}
+        </Button>
+      }
+    >
       <p className="eyebrow pb-[var(--spacing-3xs)]">{SAFETY.does.title}</p>
       <ul
         className="list-disc pb-[var(--spacing-sm)] pl-[var(--spacing-sm)] text-ink-secondary"

@@ -58,7 +58,15 @@ export function YourData() {
   };
 
   return (
-    <Screen title={c.title} action={<ProfileLink />}>
+    <Screen
+      title={c.title}
+      action={<ProfileLink />}
+      footer={
+        <Button variant="ghost" onClick={() => navigate(-1)}>
+          {APP.common.back}
+        </Button>
+      }
+    >
       <p className="pb-[var(--spacing-md)] text-ink-secondary">{c.body}</p>
 
       <div className="flex flex-col gap-[var(--spacing-2xs)]">

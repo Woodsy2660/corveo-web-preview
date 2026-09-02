@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { Screen, ProfileLink } from "@/components/ui/Screen";
 import { Button } from "@/components/ui/Button";
 import { AppleHealthSheet } from "@/components/ui/AppleHealthSheet";
@@ -21,6 +22,7 @@ import { useAppleHealthSync } from "@/lib/health/useAppleHealthSync";
  * Settings, which is where the page points.
  */
 export function AppleHealth() {
+  const navigate = useNavigate();
   const c = APP.settings.appleHealth;
   const health = useAppleHealthSync();
   const [observing, setObserving] = useState<boolean | null>(null);
@@ -68,7 +70,15 @@ export function AppleHealth() {
 
   return (
     <>
-      <Screen title={c.title} action={<ProfileLink />}>
+      <Screen
+        title={c.title}
+        action={<ProfileLink />}
+        footer={
+          <Button variant="ghost" onClick={() => navigate(-1)}>
+            {APP.common.back}
+          </Button>
+        }
+      >
         {health.active ? (
           <>
             <dl className="m-0 flex flex-col pb-[var(--spacing-md)]">
