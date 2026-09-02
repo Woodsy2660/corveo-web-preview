@@ -69,6 +69,8 @@ struct RecordView: View {
                 }
                 .cDisplay(TypeScale.specialLg)
                 .foregroundStyle(CColor.heading)
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
             }
             .opacity(average == nil ? 0 : 1)
             .accessibilityHidden(average == nil)

@@ -125,7 +125,7 @@ struct ChapterRow: View {
                     .cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
                     .lineLimit(1)
                 }
-                .frame(height: 96)
+                .frame(minHeight: 96)
                 Spacer(minLength: 0)
             }
             .padding(.vertical, Spacing.xs)
@@ -428,6 +428,7 @@ struct ProgramRail: View {
                                 VStack(alignment: .leading, spacing: Spacing.xxxs) {
                                     Text(program.title).cText(TypeScale.bodyBase).foregroundStyle(CColor.heading)
                                         .multilineTextAlignment(.leading)
+                                        .lineLimit(2)
                                     Text(followed ? AppCopy.programIndex.following : AppCopy.programIndex.chapterCount(program.chapters.count, program.unitLabel)).eyebrow()
                                 }
                                 .frame(width: 150, alignment: .leading)

@@ -369,11 +369,22 @@ struct MenuRow: View {
 struct FactRow: View {
     let label: String
     let value: String
+    @Environment(\.dynamicTypeSize) private var typeSize
     var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: Spacing.sm) {
-            Text(label).cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
-            Spacer(minLength: Spacing.sm)
-            Text(value).cText(TypeScale.bodySm).foregroundStyle(CColor.ink).multilineTextAlignment(.trailing)
+        Group {
+            if typeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(label).cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
+                    Text(value).cText(TypeScale.bodySm).foregroundStyle(CColor.ink)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                HStack(alignment: .firstTextBaseline, spacing: Spacing.sm) {
+                    Text(label).cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary).lineLimit(1)
+                    Spacer(minLength: Spacing.sm)
+                    Text(value).cText(TypeScale.bodySm).foregroundStyle(CColor.ink).multilineTextAlignment(.trailing)
+                }
+            }
         }
         .padding(.vertical, Spacing.xxs)
         .overlay(alignment: .bottom) { Hairline() }

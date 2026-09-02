@@ -35,6 +35,8 @@ struct LearnView: View {
                                     .cDisplay(TypeScale.bodyBase)
                                     .foregroundStyle(CColor.textHeadingInverse)
                                     .multilineTextAlignment(.leading)
+                                    .lineLimit(4)
+                                    .minimumScaleFactor(0.8)
                                     .padding(Spacing.xs)
                             }
                             .frame(width: 112, height: 152)
@@ -81,7 +83,7 @@ struct LearnView: View {
                                 }
                                 .cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
                             }
-                            .frame(height: 96)
+                            .frame(minHeight: 96)
                             Spacer(minLength: 0)
                         }
                         .padding(.vertical, Spacing.xs)

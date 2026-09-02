@@ -106,6 +106,30 @@ enum TypeScale {
     static let labelButton: CGFloat = 16
     static let specialLg: CGFloat = 40
     static let specialSm: CGFloat = 28
+
+    /// How the brand scale follows the reader's text-size setting. The token size is the
+    /// size at the default setting, exactly as the web reference renders it. Through the
+    /// standard range the scale follows at a dampened rate, so a phone set one or two steps
+    /// larger still reads as the designed screen; from the first accessibility size on it
+    /// follows the system's own rate, so accessibility users get genuinely larger text and
+    /// the layouts that stack for them (rulebook §8.3) do so.
+    static func multiplier(for size: DynamicTypeSize) -> CGFloat {
+        switch size {
+        case .xSmall: return 0.90
+        case .small: return 0.94
+        case .medium: return 0.97
+        case .large: return 1.00
+        case .xLarge: return 1.05
+        case .xxLarge: return 1.10
+        case .xxxLarge: return 1.16
+        case .accessibility1: return 1.35
+        case .accessibility2: return 1.60
+        case .accessibility3: return 1.90
+        case .accessibility4: return 2.20
+        case .accessibility5: return 2.50
+        @unknown default: return 1.00
+        }
+    }
 }
 
 enum Motion {
@@ -125,17 +149,22 @@ enum CFontDesign {
 }
 
 /// Dynamic Type aware font: the token size is the size at the default content size and
-/// scales from there (rulebook §8.3 requires the largest accessibility sizes to work).
+/// follows the reader's setting per `TypeScale.multiplier` (rulebook §8.3 requires the
+/// largest accessibility sizes to work; the brand scale requires the default to match the
+/// reference).
 private struct ScaledFont: ViewModifier {
-    @ScaledMetric private var size: CGFloat
+    @Environment(\.dynamicTypeSize) private var typeSize
+    private let base: CGFloat
     private let design: CFontDesign
     private let weight: Font.Weight
 
     init(size: CGFloat, design: CFontDesign, weight: Font.Weight) {
-        _size = ScaledMetric(wrappedValue: size)
+        self.base = size
         self.design = design
         self.weight = weight
     }
+
+    private var size: CGFloat { base * TypeScale.multiplier(for: typeSize) }
 
     func body(content: Content) -> some View {
         switch design {
