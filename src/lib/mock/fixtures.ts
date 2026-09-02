@@ -70,7 +70,9 @@ export function buildSeedReadings(opts: FixtureOptions = {}): BpReadingRow[] {
         diastolic: Math.round(baseDia + (rand() - 0.5) * 8),
         source_type: fromHealth ? "healthkit" : "manual",
         source_name: fromHealth ? "OMRON connect" : null,
-        body_site_display: rand() < 0.9 ? "Left arm" : "Right arm",
+        // HealthKit has no field for the cuff arm (docs/02 §body_site): only
+        // hand-entered readings carry one.
+        body_site_display: fromHealth ? null : rand() < 0.9 ? "Left arm" : "Right arm",
       });
     }
   }
