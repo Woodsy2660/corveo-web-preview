@@ -246,3 +246,35 @@ deleted objects. [R19] `HKDeletedObject.uuid`. [R23] iOS 26.5 Blood Pressure
 authorisation-sheet regression, fixed in 26.6. [R24] `requestAuthorization(toShare:read:)` —
 **contradicted by S2 for correlation types**. [R26] `isExcludedFromBackup` is a filesystem
 resource value.
+
+## Addendum, 2 September 2026: re-take on the frozen 26.x baseline
+
+Run by the integration lane on **iPhone 17 (`iPhone18,3`), iOS 26.6.1, build `23G83`**, a public
+release on the 26.x generation §3.5 froze. The binaries classified the host **`EVIDENTIAL`** in
+every environment block. The four scripts ran verbatim (`spk1.sh`, `spk2.sh`, `spk4.sh`,
+`spkclose.sh`) with reader Q on the quantity-only set and the writer beside it. Results, counts
+and 8-character prefixes only:
+
+| Script | Outcome on 23G83 |
+|---|---|
+| SPK-1 | Step 4 `returned=1 queued=1` (seed). Step 6 `returned=2 queued=2`, backdated prefix `A6DC7E33`, both new. Step 7 `returned=0 queued=0 anchorCommitted=true`. Store slots alternated `state.a.json` / `state.b.json` across relaunches, `genFallbacks=0`. |
+| SPK-2 | Step 3 `queued=1` (`6EBF1CFC`). Step 5 `deletedReported=1 deletedUuid=6EBF1CFC` (the deleted set carries the correlation UUID, D-002 shape). Step 6 `deletedReported=0`. |
+| SPK-4 | Injected corrupt `anchorData`; next strict load `anchorResets=1 anchorResetReason=UNARCHIVE_FAILED`; bounded re-import converged in foreground with `queued=0` (recent-UUID ring absorbed the replay). |
+| SPK-close | Bootstrap `returned=10 queued=10 deletedReported=1`; after one current, one backdated and one deletion: `returned=1 queued=1 deletedReported=1` naming `286FBD1D`; then `returned=0 queued=0 deletedReported=0`. |
+
+Consequences for this ADR:
+
+1. **Path A is confirmed on the baseline.** The 26 August result no longer rests on a seed build.
+   D-003 is closed in `docs/native/deviations.md`.
+2. **Known gap 1 (the Omron chain) is closed on this handset.** The loan Omron cuff, paired to
+   this phone through OMRON connect with Apple Health sharing on, produced a reading that the
+   product build imported through the engine and the deployed `ingest_observations` RPC and
+   showed on the Record tab with the source name as HealthKit reported it. One earlier Omron
+   row was rejected by the backend before the reason code was recorded; see OBS-1 in
+   `docs/stage2-test-script.md`.
+3. **Known gap 2 (the 26.5 sheet check) is partly recorded.** On 26.6.1 the Blood Pressure
+   read sheet was presented for the product build and was actionable; the operator allowed both
+   types. Which controls it listed was still not captured on screen.
+4. **Known gap 3 (background delivery) now has a first product-level observation.** With the
+   product backgrounded and the phone locked, a delayed writer save was in the record on
+   reopening without a manual sync. The soak (T6) remains the measurement.

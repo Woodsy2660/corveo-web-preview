@@ -37,7 +37,7 @@ third query is empty, and the anchor survives through the two-generation store. 
 SPK-4, SPK-close and SPK-extra all have acceptance-device results; the §10 store passes 12/12
 there; D-002's fix is confirmed on the device.
 
-**With one caveat that is logged as D-003 and is not closed.** The handset runs **iOS 27.0,
+**With one caveat that was logged as D-003, closed 2 September by a re-take on a 26.x public build (see the entry).** The handset runs **iOS 27.0,
 build `24A5424a`** — a different OS generation from the 26.x the baseline was validated
 against, and a build with the shape of an Apple seed. It is the only iPhone available to the
 lane and the run proceeded on the lane owner's direction. Every artefact from it is stamped
@@ -278,6 +278,20 @@ cadence makes (c) more urgent, not less: P2 now arrives within a day.
 Each entry, once there is one:
 
 ```
+- **Closure, 2 September 2026 (Nick, integration lane):** the full scripted sequence was
+  re-taken on a public 26.x release: **iPhone 17 (`iPhone18,3`), iOS 26.6.1, build `23G83`**,
+  paired and in Developer Mode, reader Q (`dev.lucab.bpspike`) and the writer installed beside
+  the product build. The binaries stamped every environment block **`EVIDENTIAL`** (generation
+  matches baseline: yes; seed shape: no). Outcomes, counts and prefixes only: SPK-1 seed queued
+  once, current plus 7-day-backdated pair returned exactly twice with new prefixes, empty delta
+  with `anchorCommitted=true`, slots alternating a/b across relaunches. SPK-2 the deleted
+  correlation's prefix reported once in the deleted set on the next catch-up, never again.
+  SPK-4 `anchorResets=1 anchorResetReason=UNARCHIVE_FAILED`, replay absorbed by the recent-UUID
+  ring, converged in foreground. SPK-close bootstrap of ten with one prior deletion reported,
+  the new pair handled exactly once, nothing repeats. Logs retained in the integration session
+  (`spike-26x/*.log`). The residual risk above is discharged: Stage 2 evidence now exists on the
+  frozen baseline, and the walkthrough can run on this handset. ADR-0006 carries the addendum.
+
 ### D-00n — <one-line title>
 - **Date:** 
 - **Guide section(s) affected:** 
