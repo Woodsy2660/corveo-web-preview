@@ -43,9 +43,6 @@ export function Record() {
 
   return (
     <Screen title={c.title} withTabBar action={<ProfileLink />}>
-      {/* Apple Health status — renders only once authorisation was requested. */}
-      <AppleHealthCard />
-
       {/* — Pattern — the screen title heads this section directly; a second
           heading stacked under it read as a double header. */}
       <p
@@ -182,6 +179,11 @@ export function Record() {
           </ul>
         </>
       )}
+
+      {/* Apple Health status — after the record, not before it: the readings
+          are the point, the mechanism is the footnote. Renders only once
+          authorisation was requested. */}
+      <AppleHealthCard />
     </Screen>
   );
 }
