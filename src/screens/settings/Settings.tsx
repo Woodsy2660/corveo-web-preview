@@ -1,9 +1,9 @@
 import { Link, useNavigate } from "react-router";
-import { Screen, ProfileLink } from "@/components/ui/Screen";
+import { Screen } from "@/components/ui/Screen";
+import { Button } from "@/components/ui/Button";
 import { ChevronRightIcon } from "@/components/ui/icons";
 import { APP } from "@/copy/app";
 import { JOURNEY } from "@/copy/journey";
-import { HEALTH_SYNC } from "@/copy/health-sync";
 import { useConsentStatus, useProgramProgress, useReadings } from "@/lib/api/hooks";
 import { CORE_PROGRAM_SLUG, findProgram } from "@/lib/programs";
 import { useFollowedPrograms } from "@/lib/useFollowedPrograms";
@@ -63,7 +63,14 @@ export function Settings() {
   ];
 
   return (
-    <Screen title={c.title} action={<ProfileLink />} className="emerge-top-right">
+    <Screen
+      title={c.title}
+      footer={
+        <Button variant="ghost" onClick={() => navigate("/app/record")}>
+          {APP.common.back}
+        </Button>
+      }
+    >
       <div className="flex flex-col gap-[var(--spacing-sm)]">
         {/* — You — the facts the patient set on the way in, as a quiet list. */}
         <section aria-label={c.profile.title} className="pb-[var(--spacing-2xs)]">
@@ -104,19 +111,6 @@ export function Settings() {
             ))}
           </ul>
         </nav>
-
-        {/*
-         * Quiet entry to the presentation. Deliberately the last thing on the
-         * last screen: a patient never needs it, and anyone being walked
-         * through the build will be shown where it is.
-         */}
-        <button
-          onClick={() => navigate("/behind")}
-          className="pt-[var(--spacing-2xs)] pb-[var(--spacing-md)] text-center text-ink-tertiary underline underline-offset-4"
-          style={{ fontSize: "var(--text-label)" }}
-        >
-          {HEALTH_SYNC.behindLink}
-        </button>
       </div>
     </Screen>
   );

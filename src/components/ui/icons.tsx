@@ -135,6 +135,15 @@ export function ChevronRightIcon({ className = "" }: IconProps) {
   );
 }
 
+/** Navigate back to the previous screen. */
+export function ChevronLeftIcon({ className = "" }: IconProps) {
+  return (
+    <svg {...base} className={className} width="1em" height="1em">
+      <path d="m15 6-6 6 6 6" />
+    </svg>
+  );
+}
+
 /** Add a reading. */
 export function PlusIcon({ className = "" }: IconProps) {
   return (

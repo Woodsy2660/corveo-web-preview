@@ -16,12 +16,12 @@ import type { BpTrendRow } from "@/lib/api/types";
 type Range = "1w" | "6w" | "all";
 
 const RANGE_DAYS: Record<Range, number | null> = { "1w": 7, "6w": 42, all: null };
-/** Days before the period that show faded at the chart's edge, so the line arrives rather than starts. */
-const LEAD_DAYS: Record<Range, number> = { "1w": 2, "6w": 7, all: 0 };
+/** Lead-in disabled for consistent date positioning across all ranges. */
+const LEAD_DAYS: Record<Range, number> = { "1w": 0, "6w": 0, all: 0 };
 
-/** Full screen width: the chart bleeds past the page padding on both sides. */
-const CHART_WIDTH = 393;
-const CHART_HEIGHT = 250;
+/** Chart dimensions — fits within content margins, not edge-to-edge. */
+const CHART_WIDTH = 358;
+const CHART_HEIGHT = 220;
 
 /** Mean of the readings behind the daily rows, weighted by how many each day holds. */
 function periodAverage(rows: BpTrendRow[]): { systolic: number; diastolic: number } | null {
@@ -106,8 +106,7 @@ export function Record() {
         />
       </div>
 
-      {/* — Chart — no card: it bleeds past the page padding on both sides,
-          the scale in a gutter on the right by the newest point. The days
+      {/* — Chart — scale in a gutter on the right by the newest point. The days
           before the period sit faded at the left edge, so the unfaded plot
           is exactly the period chosen; on All nothing comes before. */}
       {trendLoading ? (
@@ -119,15 +118,13 @@ export function Record() {
           </p>
         </Card>
       ) : (
-        <div className="-mx-[var(--spacing-md)]">
-          <BpChart
-            rows={rows}
-            leadCount={leadCount}
-            ariaLabel={t.chartAria}
-            width={CHART_WIDTH}
-            height={CHART_HEIGHT}
-          />
-        </div>
+        <BpChart
+          rows={rows}
+          leadCount={leadCount}
+          ariaLabel={t.chartAria}
+          width={CHART_WIDTH}
+          height={CHART_HEIGHT}
+        />
       )}
 
       {/* — Legend, under the chart, left, quiet — */}

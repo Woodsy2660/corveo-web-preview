@@ -15,13 +15,11 @@ import { fmtDate } from "@/lib/format";
  * contractual line (SOW A.3.3), not a style choice. The chart and its
  * tooltip show daily mean systolic and diastolic exactly as recorded.
  *
- * Drawn edge to edge: the plot runs from the screen's left edge to a
- * gutter on the right that holds the scale, next to the newest point. The
+ * The scale sits in a gutter on the right, next to the newest point. The
  * first `leadCount` rows are the days before the chosen period: they sit in
- * a narrow strip at the left edge, faded, so the line arrives out of the
- * edge and the unfaded plot is exactly the period picked. With no lead
- * rows (All) the line starts inset, because nothing comes before it. The
- * fade masks the series only; scale, gridlines and dates stay legible.
+ * a narrow strip at the left, faded, so the line arrives smoothly and the
+ * unfaded plot is exactly the period picked. With no lead rows (All) the
+ * line starts at the left margin.
  */
 export function BpChart({
   rows,
@@ -41,8 +39,9 @@ export function BpChart({
   const [active, setActive] = useState<number | null>(null);
 
   const leadIn = leadCount > 0 && leadCount < rows.length;
-  const leadW = 56;
-  const pad = { top: 16, right: 36, bottom: 28, left: leadIn ? leadW : 24 };
+  const leftInset = 16; // Left margin so chart doesn't touch edge
+  const plotLeft = 24; // Fixed left edge of plot area - consistent across all ranges
+  const pad = { top: 16, right: 36, bottom: 28, left: plotLeft };
 
   if (rows.length === 0) return null;
 
@@ -60,11 +59,11 @@ export function BpChart({
   const yMin = Math.floor((rawMin - span * 0.15) / 10) * 10;
   const yMax = Math.ceil((rawMax + span * 0.15) / 10) * 10;
 
-  // Lead rows share the strip at the edge; period rows share the plot.
+  // All data points share the same plot area for consistent positioning across ranges.
+  // Lead-in rows (if any) are included in the data but drawn with a fade mask.
+  const totalPoints = rows.length;
   const x = (i: number) =>
-    i < first
-      ? (i / first) * leadW
-      : pad.left + (periodN === 1 ? innerW / 2 : ((i - first) / (periodN - 1)) * innerW);
+    pad.left + (totalPoints === 1 ? innerW / 2 : (i / (totalPoints - 1)) * innerW);
   const y = (v: number) => pad.top + innerH - ((v - yMin) / (yMax - yMin)) * innerH;
 
   /* Catmull-Rom through the points, emitted as cubic beziers — the same
@@ -94,8 +93,33 @@ export function BpChart({
 
   const yTicks = [yMin, Math.round((yMin + yMax) / 2), yMax];
   const lastI = rows.length - 1;
-  const xLabelIdx =
-    periodN >= 3 ? [first, first + Math.floor((periodN - 1) / 2), lastI] : [first, lastI];
+
+  // Calculate which date labels to show. Avoid overlap by checking pixel
+  // distance between labels — date text is roughly 45px wide at font-size 10.
+  const firstX = x(0);
+  const lastX = x(lastI);
+  const labelWidth = 50; // Approximate width of a date label
+  const minGap = labelWidth + 8; // Minimum pixels between label centers
+
+  // Only show distinct labels — if there's only one point, show one label.
+  // If the gap between first and last is too small, only show last (newest).
+  // Otherwise show first and last; add middle only if there's room for all three.
+  let xLabelIdx: number[];
+  if (totalPoints <= 1) {
+    // Single data point: show just one label
+    xLabelIdx = [lastI];
+  } else if (lastX - firstX < minGap) {
+    // Not enough room for two labels: show just the most recent
+    xLabelIdx = [lastI];
+  } else {
+    // Room for at least two labels; check if we can fit a middle one
+    const midIdx = Math.floor(lastI / 2);
+    const midX = x(midIdx);
+    const showMiddle = totalPoints >= 3 && midIdx !== 0 && midIdx !== lastI &&
+      (midX - firstX) >= minGap && (lastX - midX) >= minGap;
+    xLabelIdx = showMiddle ? [0, midIdx, lastI] : [0, lastI];
+  }
+
   const sparse = rows.length <= 2;
   const last = rows.length - 1;
   const lastRow = rows[last]!;
@@ -104,8 +128,8 @@ export function BpChart({
     const rect = svgRef.current?.getBoundingClientRect();
     if (!rect) return null;
     const mx = ((e.clientX - rect.left) / rect.width) * width;
-    const i = first + Math.round(((mx - pad.left) / innerW) * (periodN - 1));
-    return Math.max(first, Math.min(lastI, i));
+    const i = Math.round(((mx - pad.left) / innerW) * (totalPoints - 1));
+    return Math.max(0, Math.min(lastI, i));
   };
 
   const activeRow = active === null ? null : (rows[active] ?? null);
@@ -130,24 +154,28 @@ export function BpChart({
               <stop offset="95%" stopColor={s.color} stopOpacity="0.04" />
             </linearGradient>
           ))}
-          {leadIn ? (
-            <>
-              <linearGradient id={`${gradientId}-lead`} gradientUnits="userSpaceOnUse" x1="0" y1="0" x2={leadW} y2="0">
-                <stop offset="0" stopColor="#fff" stopOpacity="0" />
-                <stop offset="1" stopColor="#fff" stopOpacity="1" />
-              </linearGradient>
-              <mask id={`${gradientId}-mask`} maskUnits="userSpaceOnUse" x="0" y="0" width={width} height={height}>
-                <rect x="0" y="0" width={leadW} height={height} fill={`url(#${gradientId}-lead)`} />
-                <rect x={leadW} y="0" width={width - leadW} height={height} fill="#fff" />
-              </mask>
-            </>
-          ) : null}
+          {leadIn ? (() => {
+            // Fade mask covers from plot start to the first period point
+            const fadeEnd = x(first);
+            return (
+              <>
+                <linearGradient id={`${gradientId}-lead`} gradientUnits="userSpaceOnUse" x1={pad.left} y1="0" x2={fadeEnd} y2="0">
+                  <stop offset="0" stopColor="#fff" stopOpacity="0.2" />
+                  <stop offset="1" stopColor="#fff" stopOpacity="1" />
+                </linearGradient>
+                <mask id={`${gradientId}-mask`} maskUnits="userSpaceOnUse" x="0" y="0" width={width} height={height}>
+                  <rect x={pad.left} y="0" width={fadeEnd - pad.left} height={height} fill={`url(#${gradientId}-lead)`} />
+                  <rect x={fadeEnd} y="0" width={width - fadeEnd} height={height} fill="#fff" />
+                </mask>
+              </>
+            );
+          })() : null}
         </defs>
 
         {yTicks.map((t) => (
           <g key={t}>
             <line
-              x1={0}
+              x1={leftInset}
               x2={plotRight}
               y1={y(t)}
               y2={y(t)}

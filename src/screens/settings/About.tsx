@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { Screen, ProfileLink } from "@/components/ui/Screen";
+import { Screen } from "@/components/ui/Screen";
 import { Button } from "@/components/ui/Button";
 import { APP } from "@/copy/app";
 import { SAFETY } from "@/copy/safety";
@@ -7,7 +7,7 @@ import { SAFETY } from "@/copy/safety";
 /**
  * About this app: the safety surface (Deliverable 12), what Corveo does
  * and does not do, on its own page under Settings. Reached from the
- * Settings menu; the profile icon in the header returns to Settings.
+ * Settings menu; the back button returns to Settings.
  */
 export function About() {
   const navigate = useNavigate();
@@ -17,7 +17,6 @@ export function About() {
     <Screen
       overline={c.menu.about}
       title={SAFETY.title}
-      action={<ProfileLink />}
       footer={
         <Button variant="ghost" onClick={() => navigate(-1)}>
           {APP.common.back}

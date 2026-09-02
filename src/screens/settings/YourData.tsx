@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Screen, ProfileLink } from "@/components/ui/Screen";
+import { Screen } from "@/components/ui/Screen";
 import { Button } from "@/components/ui/Button";
 import { APP } from "@/copy/app";
 import { getApi, resetApi } from "@/lib/api";
@@ -60,7 +60,6 @@ export function YourData() {
   return (
     <Screen
       title={c.title}
-      action={<ProfileLink />}
       footer={
         <Button variant="ghost" onClick={() => navigate(-1)}>
           {APP.common.back}
