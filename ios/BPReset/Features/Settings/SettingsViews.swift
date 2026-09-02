@@ -241,6 +241,7 @@ struct SettingsView: View {
 
     // MARK: Development
 
+    #if DEBUG
     private var developmentCard: some View {
         Card(label: AppCopy.settings.demo.title) {
             CButton(title: AppCopy.settings.demo.resetCta, variant: .secondary) {
@@ -269,6 +270,7 @@ struct SettingsView: View {
                 .textSelection(.enabled)
         }
     }
+    #endif
 
     // MARK: Actions
 
