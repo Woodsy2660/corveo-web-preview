@@ -8,8 +8,6 @@ import SwiftUI
 struct LearnView: View {
     @Environment(Router.self) private var router
 
-    private let railSurfaces: [Color] = [CColor.surfaceColor1, CColor.surfaceColor3, CColor.surfaceColor2]
-
     var body: some View {
         Screen(title: AppCopy.education.title, withTabBar: true,
                action: AnyView(ProfileLink { router.push(.settings) })) {
@@ -25,19 +23,22 @@ struct LearnView: View {
 
             ScrollView(.horizontal) {
                 HStack(spacing: Spacing.xxs) {
-                    ForEach(Array(pulseItems.enumerated()), id: \.element.id) { i, item in
+                    ForEach(pulseItems) { item in
+                        // A photograph with the title over it. One even scrim, no gradient,
+                        // keeps the white serif legible on any picture.
                         Button { router.push(.pulse(slug: item.slug)) } label: {
-                            VStack {
-                                Spacer()
+                            ZStack(alignment: .bottomLeading) {
+                                Image(Art.pulse(item.slug)).resizable().scaledToFill()
+                                    .frame(width: 112, height: 152)
+                                Color.black.opacity(0.4)
                                 Text(item.title)
                                     .cDisplay(TypeScale.bodyBase)
                                     .foregroundStyle(CColor.textHeadingInverse)
                                     .multilineTextAlignment(.leading)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(Spacing.xs)
                             }
-                            .padding(Spacing.xs)
                             .frame(width: 112, height: 152)
-                            .background(railSurfaces[i % railSurfaces.count], in: RoundedRectangle(cornerRadius: Radius.md, style: .continuous))
+                            .clipShape(RoundedRectangle(cornerRadius: Radius.md, style: .continuous))
                         }
                         .buttonStyle(.plain)
                         .accessibilityLabel(AppCopy.education.openPulseAria(item.title))
@@ -56,22 +57,34 @@ struct LearnView: View {
 
             VStack(spacing: 0) {
                 ForEach(inFocusArticles) { article in
+                    // On the chapter-row pattern: every row the same height, photograph left,
+                    // title and excerpt at the top, the read time as a quiet line at the bottom.
                     Button { router.push(.inFocus(slug: article.slug)) } label: {
-                        HStack(alignment: .center, spacing: Spacing.xs) {
-                            VStack(alignment: .leading, spacing: Spacing.xxxs) {
-                                SectionHeading(text: article.title)
+                        HStack(alignment: .top, spacing: Spacing.xs) {
+                            Image(Art.article(article.slug)).resizable().scaledToFill()
+                                .frame(width: 66, height: 96)
+                                .clipShape(RoundedRectangle(cornerRadius: Radius.sm, style: .continuous))
+                                .accessibilityHidden(true)
+                            VStack(alignment: .leading, spacing: 0) {
+                                Text(article.title)
+                                    .cText(TypeScale.bodyLg, weight: .medium).foregroundStyle(CColor.heading)
+                                    .multilineTextAlignment(.leading)
+                                    .lineLimit(2)
                                 Text(article.excerpt).cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary)
                                     .multilineTextAlignment(.leading)
+                                    .lineLimit(1)
+                                    .padding(.top, 2)
+                                Spacer(minLength: Spacing.xxxs)
                                 HStack(spacing: Spacing.xxxs) {
-                                    Image(systemName: CIcon.clock).font(.system(size: 12))
+                                    Image(systemName: CIcon.clock).font(.system(size: 11))
                                     Text(AppCopy.program.duration(article.readMinutes, .read))
                                 }
-                                .cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
+                                .cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
                             }
-                            Spacer()
-                            Image(systemName: CIcon.arrowRight).foregroundStyle(CColor.inkTertiary)
+                            .frame(height: 96)
+                            Spacer(minLength: 0)
                         }
-                        .padding(.vertical, Spacing.sm)
+                        .padding(.vertical, Spacing.xs)
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
@@ -79,9 +92,6 @@ struct LearnView: View {
                 }
             }
 
-            Text(AppCopy.education.scopeNote)
-                .cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
-                .padding(.top, Spacing.md)
         }
     }
 }
@@ -94,8 +104,7 @@ struct InFocusArticleView: View {
 
     var body: some View {
         if let article = inFocusArticles.first(where: { $0.slug == slug }) {
-            Screen(overline: AppCopy.inFocus.overline, title: article.title,
-                   action: AnyView(HeaderLink(title: AppCopy.inFocus.back) { router.pop() })) {
+            Screen(overline: AppCopy.inFocus.overline, title: article.title, withTabBar: true) {
                 if let deck = article.deck {
                     Text(deck).cText(TypeScale.bodyLg).lineSpacing(4).foregroundStyle(CColor.inkSecondary)
                         .padding(.bottom, Spacing.sm)
@@ -116,7 +125,7 @@ struct InFocusArticleView: View {
                 ArticleBody(sections: article.sections ?? [])
             }
         } else {
-            Screen(title: AppCopy.inFocus.notFound, action: AnyView(HeaderLink(title: AppCopy.inFocus.back) { router.pop() })) {
+            Screen(title: AppCopy.inFocus.notFound, withTabBar: true) {
                 CButton(title: AppCopy.inFocus.back) { router.pop() }
             }
         }

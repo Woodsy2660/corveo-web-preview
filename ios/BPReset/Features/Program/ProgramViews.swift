@@ -81,53 +81,54 @@ struct ChapterRow: View {
         Button {
             if open { router.push(.chapter(slug: program.slug, week: chapter.week)) }
         } label: {
+            // Every row the same height, so the list reads as a rhythm: photograph left,
+            // title and excerpt at the top, the unit and duration as one quiet line at the
+            // bottom. Locked chapters say so in words; they are not dimmed.
             HStack(alignment: .top, spacing: Spacing.xs) {
-                Text("\(chapter.week)")
-                    .cDisplay(TypeScale.headingXL)
-                    .foregroundStyle(CColor.textHeadingInverse)
-                    .frame(width: 72, height: 72)
-                    .background(CColor.neutralLighter, in: RoundedRectangle(cornerRadius: Radius.sm, style: .continuous))
-                    .opacity(open ? 1 : 0.5)
+                Image(Art.chapter(chapter.week))
+                    .resizable().scaledToFill()
+                    .frame(width: 66, height: 96)
+                    .clipShape(RoundedRectangle(cornerRadius: Radius.sm, style: .continuous))
+                    .accessibilityHidden(true)
 
-                VStack(alignment: .leading, spacing: Spacing.xxs) {
-                    HStack(spacing: Spacing.xxs) {
-                        Chip(text: "\(program.unitLabel) \(chapter.week)")
-                        if open {
-                            HStack(spacing: Spacing.xxxs) {
-                                Image(systemName: CIcon.clock).font(.system(size: 12))
-                                Text(AppCopy.program.duration(chapter.readMinutes, chapter.medium))
-                            }
-                            .cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
-                        }
-                        if done {
-                            HStack(spacing: Spacing.xxxs) {
-                                Image(systemName: CIcon.check).font(.system(size: 12))
-                                Text(AppCopy.program.readLabel)
-                            }
-                            .cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
-                        }
-                    }
-                    SectionHeading(text: chapter.title)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(chapter.title)
+                        .cText(TypeScale.bodyLg, weight: .medium).foregroundStyle(CColor.heading)
+                        .lineLimit(1)
                     Text(open ? chapter.excerpt : AppCopy.program.lockedNote)
                         .cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary)
                         .multilineTextAlignment(.leading)
-                    if open {
-                        HStack(spacing: Spacing.xxs) {
-                            Text(pending ? AppCopy.program.contentPending : ctaLabel)
-                            if !pending { Image(systemName: CIcon.arrowRight).font(.system(size: 12, weight: .medium)) }
+                        .lineLimit(2)
+                        .padding(.top, 2)
+                    Spacer(minLength: Spacing.xxxs)
+                    HStack(spacing: Spacing.xxs) {
+                        Text("\(program.unitLabel) \(chapter.week)")
+                        if open {
+                            Text("·")
+                            HStack(spacing: Spacing.xxxs) {
+                                Image(systemName: CIcon.clock).font(.system(size: 11))
+                                Text(AppCopy.program.duration(chapter.readMinutes, chapter.medium))
+                            }
                         }
-                        .cText(TypeScale.bodySm, weight: .medium)
-                        .foregroundStyle(pending ? CColor.inkTertiary : CColor.heading)
-                        .padding(.horizontal, Spacing.sm)
-                        .padding(.vertical, Spacing.xxs)
-                        .overlay(Capsule().stroke(CColor.hairline, lineWidth: 1))
-                        .padding(.top, Spacing.xxxs)
+                        if done {
+                            Text("·")
+                            HStack(spacing: Spacing.xxxs) {
+                                Image(systemName: CIcon.check).font(.system(size: 11))
+                                Text(AppCopy.program.readLabel)
+                            }
+                        }
+                        if open && pending {
+                            Text("·")
+                            Text(AppCopy.program.contentPending).cText(TypeScale.label, weight: .medium)
+                        }
                     }
+                    .cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
+                    .lineLimit(1)
                 }
-                .opacity(open ? 1 : 0.6)
+                .frame(height: 96)
                 Spacer(minLength: 0)
             }
-            .padding(.vertical, Spacing.sm)
+            .padding(.vertical, Spacing.xs)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -168,7 +169,7 @@ struct ChapterView: View {
             Screen(
                 overline: "\(program.unitLabel) \(chapter.week)",
                 title: chapter.title,
-                action: AnyView(HeaderLink(title: program.title) { router.pop() }),
+                withTabBar: true,
                 footer: AnyView(
                     done
                     ? CButton(title: nextOpen ? AppCopy.chapter.next : AppCopy.chapter.back) {
@@ -221,7 +222,7 @@ struct ChapterView: View {
                 .padding(.top, Spacing.md)
             }
         } else {
-            Screen(title: AppCopy.chapter.notFound, action: AnyView(HeaderLink(title: AppCopy.chapter.back) { router.pop() })) {
+            Screen(title: AppCopy.chapter.notFound, withTabBar: true) {
                 CButton(title: AppCopy.chapter.back) { router.pop() }
             }
         }
@@ -259,8 +260,7 @@ struct ArticleBody: View {
 struct ProgramBrowseView: View {
     @Environment(Router.self) private var router
     var body: some View {
-        Screen(title: AppCopy.programIndex.title,
-               action: AnyView(HeaderLink(title: AppCopy.chapter.back) { router.pop() })) {
+        Screen(title: AppCopy.programIndex.title, withTabBar: true) {
             ProgramIndex(embedded: false)
         }
     }
@@ -283,12 +283,21 @@ struct ProgramIndex: View {
                 let following = follow.isFollowing(program.slug)
                 let core = program.slug == coreProgramSlug
                 Card {
-                    Button { router.push(.programDetail(slug: program.slug)) } label: {
-                        VStack(alignment: .leading, spacing: Spacing.xxxs) {
-                            Text(AppCopy.programIndex.chapterCount(program.chapters.count, program.unitLabel)).eyebrow()
-                            SectionHeading(text: program.title)
-                            Text(program.description).cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary)
-                                .multilineTextAlignment(.leading)
+                    Button {
+                        if core { router.popToRoot(); router.tab = .program } else { router.push(.programDetail(slug: program.slug)) }
+                    } label: {
+                        HStack(alignment: .top, spacing: Spacing.xs) {
+                            Image(Art.program(program.slug))
+                                .resizable().scaledToFill()
+                                .frame(width: 96, height: 96)
+                                .clipShape(RoundedRectangle(cornerRadius: Radius.sm, style: .continuous))
+                                .accessibilityHidden(true)
+                            VStack(alignment: .leading, spacing: Spacing.xxxs) {
+                                Text(AppCopy.programIndex.chapterCount(program.chapters.count, program.unitLabel)).eyebrow()
+                                SectionHeading(text: program.title)
+                                Text(program.description).cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary)
+                                    .multilineTextAlignment(.leading)
+                            }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .contentShape(Rectangle())
@@ -341,7 +350,7 @@ struct ProgramDetailView: View {
             Screen(
                 overline: AppCopy.programIndex.chapterCount(program.chapters.count, program.unitLabel),
                 title: program.title,
-                action: AnyView(HeaderLink(title: AppCopy.program.browseAll) { router.pop() }),
+                withTabBar: true,
                 footer: core ? nil : AnyView(
                     CButton(title: following ? AppCopy.programIndex.following : AppCopy.programIndex.follow,
                             variant: following ? .secondary : .primary) {
@@ -362,7 +371,7 @@ struct ProgramDetailView: View {
                 ChapterList(program: program, progress: model.progress)
             }
         } else {
-            Screen(title: AppCopy.chapter.notFound, action: AnyView(HeaderLink(title: AppCopy.program.browseAll) { router.pop() })) {
+            Screen(title: AppCopy.chapter.notFound, withTabBar: true) {
                 CButton(title: AppCopy.program.browseAll) { router.pop() }
             }
         }
@@ -394,9 +403,11 @@ struct ProgramRail: View {
                         let core = program.slug == coreProgramSlug
                         VStack(alignment: .leading, spacing: 0) {
                             ZStack(alignment: .bottomTrailing) {
-                                RoundedRectangle(cornerRadius: Radius.sm, style: .continuous)
-                                    .fill(CColor.neutralLighter)
+                                Image(Art.program(program.slug))
+                                    .resizable().scaledToFill()
                                     .frame(width: 150, height: 96)
+                                    .clipShape(RoundedRectangle(cornerRadius: Radius.sm, style: .continuous))
+                                    .accessibilityHidden(true)
                                 if !core {
                                     Button { onToggleFollow(program.slug) } label: {
                                         Image(systemName: followed ? CIcon.check : CIcon.plus)
@@ -431,6 +442,10 @@ struct ProgramRail: View {
             }
             .scrollIndicators(.hidden)
             .padding(.horizontal, -Spacing.md)
+
+            // The library page, where every program has its description and its own Follow.
+            CButton(title: AppCopy.program.rail.seeAll, variant: .secondary) { router.push(.programBrowse) }
+                .padding(.top, Spacing.md)
         }
         .padding(.top, Spacing.lg)
     }

@@ -8,8 +8,8 @@ struct MainTabsView: View {
 
     var body: some View {
         @Bindable var router = router
-        NavigationStack(path: $router.path) {
-            ZStack(alignment: .bottom) {
+        ZStack(alignment: .bottom) {
+            NavigationStack(path: $router.path) {
                 Group {
                     switch router.tab {
                     case .program: ProgramView()
@@ -17,20 +17,29 @@ struct MainTabsView: View {
                     case .education: LearnView()
                     }
                 }
-                FloatingTabBar(selection: $router.tab)
-            }
-            .navigationDestination(for: AppRoute.self) { route in
-                switch route {
-                case .settings: SettingsView()
-                case .cuffs: ValidatedCuffsView()
+                .navigationDestination(for: AppRoute.self) { route in
+                    switch route {
+                    case .settings: SettingsView()
+                    case .settingsAppleHealth: AppleHealthSettingsView()
+                    case .settingsAbout: AboutView()
+                    case .settingsData: YourDataView()
+                    case .settingsReminders: RemindersView()
+                    case .settingsAccount: AccountView()
+                    case .cuffs: ValidatedCuffsView()
                 case .addReading: ManualEntryView()
                 case .chapter(let slug, let week): ChapterView(slug: slug, week: week)
                 case .programBrowse: ProgramBrowseView()
                 case .programDetail(let slug): ProgramDetailView(slug: slug)
-                case .inFocus(let slug): InFocusArticleView(slug: slug)
-                case .pulse(let slug): PulseViewerView(slug: slug)
+                    case .inFocus(let slug): InFocusArticleView(slug: slug)
+                    case .pulse(let slug): PulseViewerView(slug: slug)
+                    }
                 }
             }
+            if router.showsTabBar {
+                TabBarFade()
+                FloatingTabBar(selection: $router.tab)
+            }
         }
+        .animation(Motion.brand, value: router.showsTabBar)
     }
 }

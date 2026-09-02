@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - Flow
 
 enum JourneyStep: Hashable {
-    case signup, consent, connect, healthAuth, capture
+    case intro, signup, consent, connect, healthAuth, capture
     case result(SubmittedReading)
     case cadence
 }
@@ -18,6 +18,7 @@ struct JourneyFlow: View {
             WelcomeView(path: $path)
                 .navigationDestination(for: JourneyStep.self) { step in
                     switch step {
+                    case .intro: IntroView(path: $path)
                     case .signup: SignupView(path: $path)
                     case .consent: ConsentView(path: $path)
                     case .connect: ConnectView(path: $path)
@@ -31,24 +32,53 @@ struct JourneyFlow: View {
     }
 }
 
-// MARK: - Step 1: educate
+// MARK: - Landing, then step 1: educate
 
+/// The first thing the app shows. Deliberately empty: the logotype at full size, a greeting,
+/// one button. The reading starts on the next screen, so this one carries no eyebrow, no
+/// step dots and no copy to scroll, and it is not a `Screen` (no small header mark).
 struct WelcomeView: View {
     @Binding var path: [JourneyStep]
 
     var body: some View {
+        VStack(spacing: 0) {
+            Spacer()
+            Image("Logo").resizable().scaledToFit().frame(width: 176)
+                .accessibilityLabel(ProductCopy.corveoWordmark)
+            Text(JourneyCopy.welcome.title)
+                .cDisplay(TypeScale.heading4XL)
+                .foregroundStyle(CColor.heading)
+                .multilineTextAlignment(.center)
+                .padding(.top, Spacing.lg)
+                .accessibilityAddTraits(.isHeader)
+            Spacer()
+            CButton(title: JourneyCopy.welcome.cta) { path.append(.intro) }
+                .padding(.top, Spacing.xs)
+                .padding(.bottom, Spacing.md)
+        }
+        .padding(.horizontal, Spacing.md)
+        .background(CColor.page.ignoresSafeArea())
+        .toolbar(.hidden, for: .navigationBar)
+    }
+}
+
+/// Journey step 1, educate. Reached from the landing screen.
+struct IntroView: View {
+    @Binding var path: [JourneyStep]
+
+    var body: some View {
         Screen(
-            eyebrow: JourneyCopy.welcome.eyebrow,
-            title: JourneyCopy.welcome.title,
-            footer: AnyView(CButton(title: JourneyCopy.welcome.cta) { path.append(.signup) })
+            overline: JourneyCopy.intro.eyebrow,
+            title: JourneyCopy.intro.title,
+            footer: AnyView(CButton(title: JourneyCopy.intro.cta) { path.append(.signup) })
         ) {
             StepDots(total: 5, current: 1)
-            Text(JourneyCopy.welcome.intro)
+            Text(JourneyCopy.intro.intro)
                 .cText(TypeScale.bodyBase).foregroundStyle(CColor.inkSecondary)
                 .padding(.bottom, Spacing.md)
 
             VStack(spacing: Spacing.xs) {
-                ForEach(JourneyCopy.welcome.cards, id: \.title) { card in
+                ForEach(JourneyCopy.intro.cards, id: \.title) { card in
                     Card {
                         SectionHeading(text: card.title)
                             .padding(.bottom, Spacing.xxxs)
@@ -75,7 +105,7 @@ struct ConsentView: View {
 
     var body: some View {
         Screen(
-            eyebrow: ConsentCopy.eyebrow,
+            overline: ConsentCopy.eyebrow,
             title: ConsentCopy.title,
             footer: AnyView(CButton(title: busy ? AppCopy.common.busy : ConsentCopy.cta, disabled: !agreed || busy) {
                 Task {
@@ -134,7 +164,7 @@ struct ConnectView: View {
 
     var body: some View {
         Screen(
-            eyebrow: JourneyCopy.connect.eyebrow,
+            overline: JourneyCopy.connect.eyebrow,
             title: JourneyCopy.connect.title,
             footer: AnyView(CButton(title: JourneyCopy.connect.cta, disabled: appState.connectChoice == nil) {
                 path.append(appState.connectChoice == .healthkit ? .healthAuth : .capture)
@@ -156,7 +186,7 @@ struct ConnectView: View {
             }
 
             if appState.connectChoice == .none {
-                Card(label: ValidatedCuffsCopy.eyebrow) {
+                Card(label: JourneyCopy.connect.cuffsLink) {
                     Text(ValidatedCuffsCopy.intro)
                         .cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary)
                         .padding(.bottom, Spacing.xs)
@@ -189,7 +219,7 @@ struct HealthAuthView: View {
 
     var body: some View {
         Screen(
-            eyebrow: JourneyCopy.healthAuth.eyebrow,
+            overline: JourneyCopy.healthAuth.eyebrow,
             title: JourneyCopy.healthAuth.title,
             footer: AnyView(VStack(spacing: Spacing.xs) {
                 CButton(title: requesting ? AppCopy.common.busy : JourneyCopy.healthAuth.cta, disabled: requesting) {
@@ -206,6 +236,9 @@ struct HealthAuthView: View {
             StepDots(total: 5, current: 3)
             Text(health.isAvailable ? JourneyCopy.healthAuth.intro : JourneyCopy.healthAuth.unavailable)
                 .cText(TypeScale.bodyBase).foregroundStyle(CColor.inkSecondary)
+            if health.isAvailable {
+                HealthLinkFigure().padding(.top, Spacing.xl)
+            }
         }
     }
 }
@@ -220,8 +253,9 @@ struct FirstCaptureView: View {
         // A visible way past this step: a reading is never required to finish onboarding, so
         // nobody without a monitor has to invent one (rulebook 5.1.1; the record holds only
         // what was measured).
-        Screen(eyebrow: JourneyCopy.firstCapture.eyebrow, title: JourneyCopy.firstCapture.title,
-               footer: AnyView(CButton(title: JourneyCopy.firstCapture.skip, variant: .ghost) { path.append(.cadence) })) {
+        Screen(overline: JourneyCopy.firstCapture.eyebrow, title: JourneyCopy.firstCapture.title,
+               footer: AnyView(CButton(title: appState.connectChoice == .healthkit ? JourneyCopy.firstCapture.skipHealth : JourneyCopy.firstCapture.skip,
+                                       variant: .ghost) { path.append(.cadence) })) {
             StepDots(total: 5, current: 4)
             Text(JourneyCopy.firstCapture.intro)
                 .cText(TypeScale.bodyBase).foregroundStyle(CColor.inkSecondary)
@@ -252,7 +286,7 @@ struct ResultView: View {
 
     var body: some View {
         Screen(
-            eyebrow: JourneyCopy.result.eyebrow,
+            overline: JourneyCopy.result.eyebrow,
             title: JourneyCopy.result.title,
             footer: AnyView(CButton(title: JourneyCopy.result.cta) { path.append(.cadence) })
         ) {
@@ -306,7 +340,7 @@ struct CadenceView: View {
 
     var body: some View {
         Screen(
-            eyebrow: JourneyCopy.cadence.eyebrow,
+            overline: JourneyCopy.cadence.eyebrow,
             title: JourneyCopy.cadence.title,
             footer: AnyView(CButton(title: JourneyCopy.cadence.cta, disabled: appState.cadence == nil || busy) {
                 Task {

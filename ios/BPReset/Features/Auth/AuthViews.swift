@@ -37,7 +37,7 @@ struct SignupView: View {
 
     var body: some View {
         Screen(
-            eyebrow: JourneyCopy.signup.eyebrow,
+            overline: JourneyCopy.signup.eyebrow,
             title: mode == .signIn ? JourneyCopy.signup.signInTitle : JourneyCopy.signup.title,
             footer: AnyView(VStack(spacing: Spacing.xs) {
                 CButton(title: busy ? AppCopy.common.busy : cta, disabled: !canContinue || busy) { Task { await proceed() } }
@@ -69,11 +69,6 @@ struct SignupView: View {
                 }
             }
 
-            if !session.hasBackend {
-                Text(JourneyCopy.signup.note)
-                    .cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
-                    .padding(.top, Spacing.md)
-            }
         }
         .task {
             // A returning, already signed-in patient who has not finished the journey.
@@ -128,7 +123,7 @@ struct SignInView: View {
 
     var body: some View {
         Screen(
-            eyebrow: JourneyCopy.signup.eyebrow,
+            overline: JourneyCopy.signup.eyebrow,
             title: JourneyCopy.signup.signInTitle,
             footer: AnyView(CButton(title: busy ? AppCopy.common.busy : JourneyCopy.signup.signInCta,
                                     disabled: busy || !email.contains("@") || password.count < 6) {

@@ -40,7 +40,6 @@ struct CButton: View {
                 .foregroundStyle(foreground)
                 .background(background, in: Capsule())
                 .overlay(Capsule().stroke(border, lineWidth: variant == .secondary ? 1 : 0))
-                .underline(variant == .ghost)
         }
         .buttonStyle(.plain)
         .disabled(disabled)
@@ -150,13 +149,11 @@ struct Segmented<T: Hashable>: View {
     var body: some View {
         // A row while the labels fit; a stack at accessibility type sizes (rulebook §8.3).
         ViewThatFits(in: .horizontal) {
-            HStack(spacing: 0) { segments(fullWidth: false) }
+            HStack(spacing: 2) { segments(fullWidth: false) }
                 .padding(2)
-                .background(CColor.card, in: Capsule())
                 .overlay(Capsule().stroke(CColor.hairline, lineWidth: 1))
-            VStack(spacing: 0) { segments(fullWidth: true) }
+            VStack(spacing: 2) { segments(fullWidth: true) }
                 .padding(2)
-                .background(CColor.card, in: RoundedRectangle(cornerRadius: Radius.lg, style: .continuous))
                 .overlay(RoundedRectangle(cornerRadius: Radius.lg, style: .continuous).stroke(CColor.hairline, lineWidth: 1))
         }
         .accessibilityElement(children: .contain)
@@ -264,7 +261,7 @@ struct Screen<Content: View>: View {
                         }
                         if let title {
                             Text(title)
-                                .cDisplay(TypeScale.heading3XL)
+                                .cDisplay(TypeScale.heading2XL)
                                 .foregroundStyle(CColor.heading)
                                 .lineSpacing(2)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -285,7 +282,8 @@ struct Screen<Content: View>: View {
                 footer
                     .padding(.horizontal, Spacing.md)
                     .padding(.top, Spacing.xs)
-                    .padding(.bottom, Spacing.md)
+                    .padding(.bottom, withTabBar ? 96 : Spacing.md)
+                    .background(CColor.page)
             }
         }
         .background(CColor.page.ignoresSafeArea())
@@ -293,20 +291,93 @@ struct Screen<Content: View>: View {
     }
 }
 
-/// Header affordance for the tab screens: profile and settings behind one icon.
+/// Header affordance: profile and settings behind one icon. It toggles: on any page it opens
+/// Settings; on Settings it is drawn pressed and closes it, so the same spot in the header
+/// opens and closes the one drawer the app has.
 struct ProfileLink: View {
+    var pressed = false
     let action: () -> Void
     var body: some View {
         Button(action: action) {
             Image(systemName: CIcon.profile)
                 .font(.system(size: 22, weight: .regular))
-                .foregroundStyle(CColor.inkTertiary)
+                .foregroundStyle(pressed ? CColor.heading : CColor.inkTertiary)
                 .frame(width: 44, height: 44)
         }
         .buttonStyle(.plain)
         .padding(.vertical, -11)
         .padding(.trailing, -11)
-        .accessibilityLabel(AppCopy.common.profileAria)
+        .accessibilityLabel(pressed ? AppCopy.common.profileCloseAria : AppCopy.common.profileAria)
+        .accessibilityAddTraits(pressed ? [.isSelected] : [])
+    }
+}
+
+/// Beneath the tab bar the page fades to its own ground, so a long list dissolves under
+/// the bar instead of being cut by it.
+struct TabBarFade: View {
+    var body: some View {
+        LinearGradient(colors: [CColor.page.opacity(0), CColor.page, CColor.page],
+                       startPoint: .top, endPoint: .bottom)
+            .frame(height: 120)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+    }
+}
+
+/// The Health-to-Corveo link, drawn: the Health app icon, one arrow, the Corveo mark. The
+/// arrow points one way because the data only ever goes one way. Decorative; the copy above
+/// it carries the meaning.
+struct HealthLinkFigure: View {
+    var body: some View {
+        HStack(spacing: Spacing.sm) {
+            Image("AppleHealthIcon").resizable().scaledToFit().frame(width: 88, height: 88)
+            Image(systemName: CIcon.arrowRight)
+                .font(.system(size: 22, weight: .regular))
+                .foregroundStyle(CColor.inkTertiary)
+            ZStack {
+                RoundedRectangle(cornerRadius: Radius.lg, style: .continuous).fill(CColor.card)
+                RoundedRectangle(cornerRadius: Radius.lg, style: .continuous).stroke(CColor.hairline, lineWidth: 1)
+                Image("Logo").resizable().scaledToFit().frame(width: 64)
+            }
+            .frame(width: 88, height: 88)
+        }
+        .frame(maxWidth: .infinity)
+        .accessibilityHidden(true)
+    }
+}
+
+/// A row that leads to a page of its own: label, chevron, hairline beneath.
+struct MenuRow: View {
+    let title: String
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            HStack {
+                Text(title).cText(TypeScale.bodyBase, weight: .medium).foregroundStyle(CColor.heading)
+                Spacer()
+                Image(systemName: "chevron.right").font(.system(size: 15, weight: .regular)).foregroundStyle(CColor.inkTertiary)
+            }
+            .padding(.vertical, Spacing.sm)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .overlay(alignment: .bottom) { Hairline() }
+    }
+}
+
+/// A quiet label / value line with a hairline beneath, for facts.
+struct FactRow: View {
+    let label: String
+    let value: String
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: Spacing.sm) {
+            Text(label).cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
+            Spacer(minLength: Spacing.sm)
+            Text(value).cText(TypeScale.bodySm).foregroundStyle(CColor.ink).multilineTextAlignment(.trailing)
+        }
+        .padding(.vertical, Spacing.xxs)
+        .overlay(alignment: .bottom) { Hairline() }
+        .accessibilityElement(children: .combine)
     }
 }
 

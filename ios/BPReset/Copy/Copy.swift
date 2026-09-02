@@ -25,6 +25,7 @@ enum AppCopy {
         static let unitMmHg = "mmHg"
         static let settingsLink = "Settings"
         static let profileAria = "Profile and settings"
+        static let profileCloseAria = "Close settings"
         static let cancel = "Cancel"
         static let back = "Back"
         static let busy = "…"
@@ -46,7 +47,6 @@ enum AppCopy {
         static let inFocusSub = "Long reads"
         static func openPulseAria(_ title: String) -> String { "Open short read: \(title)" }
         static let contentPendingNotice = "Education content is being prepared and clinically reviewed by the Corveo team. Placeholder content is shown during development."
-        static let scopeNote = "The Pulse and In Focus are the website's collections, shown here so the library can be reviewed. Publishing them in the app is a change request."
     }
 
     enum pulse {
@@ -72,6 +72,9 @@ enum AppCopy {
         static let empty = "No readings yet. Your record begins with the first reading you add or share."
         static let sparse = "Your picture is building. Only a few readings so far."
         static let loadMore = "Show earlier readings"
+        /// History shows the latest few; the rest unfold on request.
+        static let showAll = "See all readings"
+        static let showFewer = "Show fewer"
         static let addCta = "Add a reading"
         static let sourceHealth = "Apple Health"
         static let sourceManual = "Manual"
@@ -79,10 +82,14 @@ enum AppCopy {
 
     enum trend {
         static let intro = "Each point is a daily summary of your readings, shown exactly as recorded. The pattern across weeks is what's worth discussing with your doctor."
-        static let twoWeeks = "2W"
+        static let oneWeek = "1W"
         static let sixWeeks = "6W"
         static let all = "All"
         static let rangeAria = "Trend range"
+        /// The mean of the readings on screen. A summary, never a threshold or a target.
+        static let averageWeek = "Average of this week"
+        static let averageSixWeeks = "Average of these 6 weeks"
+        static let averageAll = "Average of all your readings"
         static let chartAria = "Blood pressure readings over time, shown as recorded"
         static let legendSystolic = "Systolic"
         static let legendDiastolic = "Diastolic"
@@ -105,6 +112,7 @@ enum AppCopy {
         enum rail {
             static let heading = "More programs"
             static let sub = "Follow to add"
+            static let seeAll = "See all programs"
             static func followAria(_ t: String) -> String { "Follow \(t)" }
             static func unfollowAria(_ t: String) -> String { "Unfollow \(t)" }
             static func switchAria(_ t: String) -> String { "Switch to \(t)" }
@@ -146,14 +154,50 @@ enum AppCopy {
     }
 
     enum settings {
-        static let eyebrow = "Settings"
-        static let title = "Your data, your record."
+        static let title = "Profile and settings"
+        /// The page opens on the patient: where they are, how readings arrive, the rhythm chosen.
+        enum profile {
+            static let title = "You"
+            static let programLabel = "Program"
+            static func program(_ week: Int, _ total: Int) -> String { "Week \(week) of \(total)" }
+            static let followingLabel = "Following"
+            static let followingNone = "The six-week program only"
+            static let readingsLabel = "Readings"
+            static let readingsHealth = "Apple Health"
+            static let readingsManual = "Entered by hand"
+            static let readingsNone = "No monitor yet"
+            static func readingCount(_ n: Int) -> String { n == 1 ? "1 reading" : "\(n) readings" }
+            static let beganLabel = "Record began"
+            static let beganNone = "With your first reading"
+            static let rhythmLabel = "Rhythm"
+            static let rhythmUnset = "Not chosen yet"
+            static let consentLabel = "Consent"
+            static func consentGiven(_ date: String, _ version: String) -> String { "Given \(date) (v\(version))" }
+            static let consentNone = "Not recorded"
+        }
+        /// The menu: each row is a page of its own.
+        static let menuAria = "Settings"
+        enum menu {
+            static let appleHealth = "Apple Health"
+            static let about = "About this app"
+            static let data = "Your data"
+            static let monitors = "Arm monitors"
+            static let reminders = "Reminders"
+            static let account = "Account"
+        }
         static let aboutTitle = "About this app"
         static let cuffsTitle = "Validated monitors"
         enum appleHealth {
             static let title = "Apple Health"
             static let readsOnly = "Corveo reads blood pressure only. It never writes."
             static let manageHint = "Manage access in Settings › Health › Data Access & Devices."
+            static let statusLabel = "Status"
+            static let connected = "Connected"
+            static let paused = "Paused"
+            static let lastLookedLabel = "Last checked"
+            static let pauseCta = "Pause syncing"
+            static let resumeCta = "Resume syncing"
+            static let pauseNote = "Paused means Corveo stops looking for new readings. Nothing already in your record changes, and you can resume at any time."
             static let notConnected = "Not connected. You can connect Apple Health at any time."
             static let connectCta = "Connect Apple Health"
             static let disconnectCta = "Disconnect Apple Health"
@@ -215,7 +259,13 @@ enum HealthSyncCopy {
 }
 
 enum JourneyCopy {
+    /// Landing screen: the brand, a greeting, one action. Nothing to read yet.
     enum welcome {
+        static let title = "Welcome."
+        static let cta = "Get started"
+    }
+
+    enum intro {
         static let eyebrow = "Six-week program"
         static let title = "Understand your blood pressure."
         static let intro = "A calm, structured way to track your readings and learn about blood pressure, alongside the care of your own doctor."
@@ -247,11 +297,12 @@ enum JourneyCopy {
         static func confirmIntro(_ email: String) -> String {
             "We've sent a confirmation link to \(email). Open it, then come back and sign in."
         }
-        static let note = "Prototype note: sign-in is simulated. Account creation is wired at integration."
     }
 
     enum connect {
         static let eyebrow = "Your monitor"
+        /// Link to the validated-cuff list from the no-monitor option.
+        static let cuffsLink = "Choosing a monitor"
         static let title = "How will readings arrive?"
         static let intro = "Corveo organises readings from a validated upper-arm cuff. Choose how yours will come in. You can change this later in Settings."
         static let healthkitTitle = "My monitor's app connects to Apple Health"
@@ -276,6 +327,8 @@ enum JourneyCopy {
 
     enum firstCapture {
         static let skip = "Skip for now"
+        /// Health users: the record begins when the sync does.
+        static let skipHealth = "My readings come from Apple Health"
         static let eyebrow = "First reading"
         static let title = "A starting point."
         static let intro = "Enter your most recent reading. One reading is just a starting point. The picture builds over the coming weeks."

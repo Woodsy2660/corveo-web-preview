@@ -169,7 +169,7 @@ enum ConsentHash {
 enum PayloadBuilder {
     /// Manual entry: the same ingest shape as the HealthKit path, with provenance stating
     /// exactly what is known (typed by the patient, on this phone, for the chosen arm).
-    static func manual(systolic: Double, diastolic: Double, takenAt: Date, arm: String) -> IngestPayload {
+    static func manual(systolic: Double, diastolic: Double, takenAt: Date, arm: String?) -> IngestPayload {
         let tz = Format.localTzInfo(takenAt)
         return IngestPayload(sourceType: .manual, observations: [
             IngestObservation(
@@ -182,8 +182,8 @@ enum PayloadBuilder {
                 sourceName: nil,
                 sourceDeviceModel: nil,
                 sourceUserEntered: true,
-                bodySiteCode: arm == "left" ? SNOMEDBodySite.leftArm : SNOMEDBodySite.rightArm,
-                context: ["arm": arm],
+                bodySiteCode: arm.map { $0 == "left" ? SNOMEDBodySite.leftArm : SNOMEDBodySite.rightArm },
+                context: arm.map { ["arm": $0] } ?? [:],
                 components: [
                     IngestComponent(sourceUuid: UUID().uuidString.lowercased(), code: LOINC.systolic, valueQuantity: systolic, valueUnit: LOINC.unit),
                     IngestComponent(sourceUuid: UUID().uuidString.lowercased(), code: LOINC.diastolic, valueQuantity: diastolic, valueUnit: LOINC.unit),

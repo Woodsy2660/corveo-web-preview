@@ -51,6 +51,8 @@ final class HealthModel {
     var isAvailable: Bool { engine.isAvailable }
     var connected: Bool { status.promptRequested && status.state != "unconfigured" }
     var backgroundUnavailable: Bool { status.state == "armFailed" }
+    /// Paused means the engine keeps its tuple but stops looking for new readings.
+    var paused: Bool { status.state == "configuredDisabled" }
     /// Bootstrap complete means at least one readable reading has ever committed.
     var samplesEverReceived: Bool { status.bootstrapComplete }
 
@@ -135,6 +137,17 @@ final class HealthModel {
             lastErrorCode = HealthKitEngine.errorCode(error)
         }
         refresh()
+    }
+
+    func pause() async {
+        do { try await engine.stopObserving() } catch { lastErrorCode = HealthKitEngine.errorCode(error) }
+        refresh()
+    }
+
+    func resume() async {
+        do { try await engine.startObserving() } catch { lastErrorCode = HealthKitEngine.errorCode(error) }
+        refresh()
+        await drain(trigger: .manual)
     }
 
     func handleForeground() async {

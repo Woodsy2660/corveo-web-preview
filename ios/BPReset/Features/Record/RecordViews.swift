@@ -4,82 +4,135 @@ import Charts
 // MARK: - Record tab (My Heart Record, Deliverables 4 and 6)
 
 enum TrendRange: Hashable, CaseIterable {
-    case twoWeeks, sixWeeks, all
+    case oneWeek, sixWeeks, all
     var days: Int? {
         switch self {
-        case .twoWeeks: return 14
+        case .oneWeek: return 7
         case .sixWeeks: return 42
         case .all: return nil
         }
     }
     var label: String {
         switch self {
-        case .twoWeeks: return AppCopy.trend.twoWeeks
+        case .oneWeek: return AppCopy.trend.oneWeek
         case .sixWeeks: return AppCopy.trend.sixWeeks
         case .all: return AppCopy.trend.all
         }
     }
+    var averageLabel: String {
+        switch self {
+        case .oneWeek: return AppCopy.trend.averageWeek
+        case .sixWeeks: return AppCopy.trend.averageSixWeeks
+        case .all: return AppCopy.trend.averageAll
+        }
+    }
 }
 
-/// The trend and the history on one screen. They are the same data at two grains; the chart
-/// summarises the list and the list is the chart's detail. Both are display-only: no
-/// thresholds, zones, bands or annotations. The two colours are fixed series identities.
+/// Mean of the readings behind the daily rows, weighted by how many each day holds. A
+/// summary of what is on screen, never a threshold or a target; it draws nothing on the chart.
+func periodAverage(_ rows: [BpTrendRow]) -> (systolic: Int, diastolic: Int)? {
+    let n = rows.reduce(0) { $0 + $1.readingCount }
+    guard n > 0 else { return nil }
+    let sys = rows.reduce(0.0) { $0 + $1.meanSystolic * Double($1.readingCount) } / Double(n)
+    let dia = rows.reduce(0.0) { $0 + $1.meanDiastolic * Double($1.readingCount) } / Double(n)
+    return (Int(sys.rounded()), Int(dia.rounded()))
+}
+
+/// My Heart Record: the trend and the history on one screen. They are the same data at two
+/// grains; the chart summarises the list and the list is the chart's detail. Both are
+/// display-only: no thresholds, zones, bands or annotations. The two colours are fixed
+/// series identities. The average over the period is a plain mean of the readings on screen.
 struct RecordView: View {
     @Environment(AppModel.self) private var model
+    @Environment(HealthModel.self) private var health
     @Environment(Router.self) private var router
-    @State private var range: TrendRange = .sixWeeks
+    @State private var range: TrendRange = .oneWeek
+    @State private var showAll = false
+    @State private var syncDone = false
 
     private var sinceDay: String? { range.days.map { Format.dayNDaysAgo($0) } }
+    private var average: (systolic: Int, diastolic: Int)? { periodAverage(model.trend) }
+    private var shownReadings: [BpReadingRow] { showAll ? model.readings : Array(model.readings.prefix(3)) }
 
     var body: some View {
         Screen(title: AppCopy.record.title, withTabBar: true,
                action: AnyView(ProfileLink { router.push(.settings) })) {
-            AppleHealthCard()
-
-            Text(AppCopy.trend.intro)
-                .cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary)
-                .padding(.bottom, Spacing.sm)
-
-            HStack {
-                Segmented(
-                    options: TrendRange.allCases.map { ($0, $0.label) },
-                    selection: $range,
-                    ariaLabel: AppCopy.trend.rangeAria)
-                Spacer()
-                Button { router.push(.addReading) } label: {
-                    Image(systemName: CIcon.plus)
-                        .font(.system(size: 18, weight: .regular))
-                        .foregroundStyle(CColor.actionInk)
-                        .frame(width: 40, height: 40)
-                        .background(CColor.action, in: Circle())
-                        .frame(width: 44, height: 44)
+            // Average for the period on screen. The block keeps its height while the
+            // readings load, so nothing beneath it hops when they land.
+            VStack(alignment: .leading, spacing: Spacing.xxxs) {
+                Text(range.averageLabel).eyebrow()
+                HStack(alignment: .firstTextBaseline, spacing: 0) {
+                    Text(average.map { "\($0.systolic)" } ?? "–")
+                    Text(" / ").foregroundStyle(CColor.inkTertiary)
+                    Text(average.map { "\($0.diastolic)" } ?? "–")
+                    Text(" \(AppCopy.common.unitMmHg)").cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel(AppCopy.readings.addCta)
+                .cDisplay(TypeScale.specialLg)
+                .foregroundStyle(CColor.heading)
             }
+            .opacity(average == nil ? 0 : 1)
+            .accessibilityHidden(average == nil)
             .padding(.bottom, Spacing.sm)
 
-            Card {
-                if model.trendLoading && model.trend.isEmpty {
-                    ProgressView().frame(maxWidth: .infinity, minHeight: 120)
-                } else if model.trend.isEmpty {
-                    Text(AppCopy.trend.empty).cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary)
-                } else {
-                    BpChart(rows: model.trend)
-                    HStack(spacing: Spacing.sm) {
-                        legend(CColor.chartSeries1, AppCopy.trend.legendSystolic, square: false, dashed: false)
-                        legend(CColor.chartSeries2, AppCopy.trend.legendDiastolic, square: true, dashed: true)
-                    }
-                    .padding(.top, Spacing.xxs)
-                }
+            Segmented(
+                options: TrendRange.allCases.map { ($0, $0.label) },
+                selection: $range,
+                ariaLabel: AppCopy.trend.rangeAria)
+            .padding(.bottom, Spacing.xs)
+
+            if model.trendLoading && model.trend.isEmpty {
+                Color.clear.frame(height: 220)
+            } else if model.trend.isEmpty {
+                Card { Text(AppCopy.trend.empty).cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary) }
+            } else {
+                BpChart(rows: model.trend)
             }
 
-            SectionHeading(text: AppCopy.record.historyHeading)
-                .padding(.top, Spacing.lg)
-                .padding(.bottom, Spacing.xxs)
+            HStack(spacing: Spacing.md) {
+                legend(CColor.chartSeries1, AppCopy.trend.legendSystolic, square: false, dashed: false)
+                legend(CColor.chartSeries2, AppCopy.trend.legendDiastolic, square: true, dashed: true)
+            }
+            .padding(.top, Spacing.xs)
+
+            Button { router.push(.addReading) } label: {
+                HStack(spacing: Spacing.xxs) {
+                    Image(systemName: CIcon.plus).font(.system(size: 15, weight: .medium))
+                    Text(AppCopy.readings.addCta).cText(TypeScale.labelButton, weight: .medium)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, Spacing.sm)
+                .foregroundStyle(CColor.heading)
+                .overlay(Capsule().stroke(CColor.hairline, lineWidth: 1))
+            }
+            .buttonStyle(.plain)
+            .padding(.top, Spacing.sm)
+
+            Text(AppCopy.trend.intro)
+                .cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
+                .padding(.top, Spacing.sm)
+
+            // History, with the Apple Health check in its heading row: when the app last
+            // looked, and a way to look now. Health users only.
+            HStack(alignment: .lastTextBaseline) {
+                SectionHeading(text: AppCopy.record.historyHeading)
+                Spacer()
+                if health.connected { healthCheck }
+            }
+            .padding(.top, Spacing.lg)
+            .padding(.bottom, Spacing.xxs)
+
+            if let problem = health.problemText {
+                Text(problem).cText(TypeScale.bodySm).foregroundStyle(CColor.ink)
+                    .padding(.bottom, Spacing.xs)
+            }
+            if health.status.rejectedCount > 0 {
+                Text(HealthSyncCopy.card.rejected(health.status.rejectedCount))
+                    .cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
+                    .padding(.bottom, Spacing.xs)
+            }
 
             if model.readingsLoading && model.readings.isEmpty {
-                ProgressView().frame(maxWidth: .infinity)
+                Color.clear.frame(height: 44)
             } else if model.readings.isEmpty {
                 Card { Text(AppCopy.readings.empty).cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary) }
             } else {
@@ -88,22 +141,75 @@ struct RecordView: View {
                         .cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
                         .padding(.bottom, Spacing.xs)
                 }
-                VStack(spacing: Spacing.xxs) {
-                    ForEach(model.readings) { reading in
+                // Quiet rows on the page ground, a hairline between: the record is a list.
+                VStack(spacing: 0) {
+                    ForEach(shownReadings) { reading in
                         ReadingRow(reading: reading)
                     }
                 }
-                if model.canLoadMoreReadings {
+                if model.readings.count > 3 {
+                    CButton(title: showAll ? AppCopy.readings.showFewer : AppCopy.readings.showAll, variant: .ghost) {
+                        withAnimation(Motion.brand) { showAll.toggle() }
+                    }
+                    .padding(.top, Spacing.xxs)
+                }
+                if showAll && model.canLoadMoreReadings {
                     CButton(title: model.loadingMore ? AppCopy.common.busy : AppCopy.readings.loadMore,
                             variant: .ghost, disabled: model.loadingMore) {
                         Task { await model.loadMoreReadings() }
                     }
-                    .padding(.top, Spacing.xs)
                 }
             }
         }
         .task { await model.loadReadings() }
         .task(id: range) { await model.loadTrend(sinceDay: sinceDay) }
+        .task {
+            // One quiet check when the record opens, so the patient arrives to "Updated"
+            // rather than "Waiting". The foreground drain covers every activation.
+            if health.connected, health.lastDrainAt.map({ Date().timeIntervalSince($0) > 300 }) ?? true {
+                await health.drain(trigger: .manual)
+            }
+        }
+    }
+
+    private var healthStatusLine: String {
+        if health.lastArrived > 0 { return HealthSyncCopy.card.arrived(health.lastArrived) }
+        if health.status.pendingCount > 0 { return HealthSyncCopy.card.pending(health.status.pendingCount) }
+        if let at = health.lastDrainAt { return HealthSyncCopy.card.updated(Format.time(at)) }
+        return HealthSyncCopy.card.waiting
+    }
+
+    private var healthCheck: some View {
+        HStack(spacing: Spacing.xxs) {
+            Text(healthStatusLine)
+                .cText(TypeScale.bodySm)
+                .foregroundStyle(health.lastArrived > 0 ? CColor.surfaceColor1 : CColor.inkTertiary)
+                .lineLimit(1)
+            Button {
+                Task {
+                    await health.drain(trigger: .manual)
+                    withAnimation(Motion.brand) { syncDone = true }
+                    try? await Task.sleep(nanoseconds: 2_200_000_000)
+                    withAnimation(Motion.brand) { syncDone = false }
+                }
+            } label: {
+                HStack(spacing: Spacing.xxxs) {
+                    Image(systemName: syncDone ? CIcon.check : CIcon.sync)
+                        .font(.system(size: 12, weight: .medium))
+                        .rotationEffect(.degrees(health.draining ? 360 : 0))
+                        .animation(health.draining ? .linear(duration: 0.9).repeatForever(autoreverses: false) : .default, value: health.draining)
+                    Text(health.draining ? HealthSyncCopy.card.sync.busy : syncDone ? HealthSyncCopy.card.sync.done : HealthSyncCopy.card.sync.idle)
+                        .cText(TypeScale.bodySm, weight: .medium)
+                }
+                .foregroundStyle(syncDone ? CColor.surfaceColor1 : CColor.heading)
+                .padding(.horizontal, Spacing.xs)
+                .padding(.vertical, Spacing.xxxs)
+                .overlay(Capsule().stroke(syncDone ? CColor.surfaceColor1 : CColor.hairline, lineWidth: 1))
+            }
+            .buttonStyle(.plain)
+            .disabled(health.draining)
+            .accessibilityLabel(HealthSyncCopy.card.sync.aria)
+        }
     }
 
     /// Series identity is carried three ways (colour, marker shape, line dash) so the chart
@@ -120,7 +226,7 @@ struct RecordView: View {
                     Circle().fill(color).frame(width: 8, height: 8)
                 }
             }
-            Text(label).cText(TypeScale.label).foregroundStyle(CColor.inkSecondary)
+            Text(label).cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
         }
         .accessibilityElement(children: .combine)
     }
@@ -130,51 +236,47 @@ struct ReadingRow: View {
     let reading: BpReadingRow
     @Environment(\.dynamicTypeSize) private var typeSize
 
+    /// Date, then provenance exactly as known: the source, the writing app's name for Apple
+    /// Health rows (rulebook §4.6), and the arm only when it is not the usual left.
+    private var meta: String {
+        var parts = [Format.dateTime(reading.effectiveTime)]
+        var source = reading.sourceType == .healthkit ? AppCopy.readings.sourceHealth : AppCopy.readings.sourceManual
+        if reading.sourceType == .healthkit, let name = reading.sourceName, !name.isEmpty { source += " (\(name))" }
+        if let site = reading.bodySiteDisplay, site != "Left arm" { source += ", \(site.lowercased())" }
+        parts.append(source)
+        return parts.joined(separator: " · ")
+    }
+
     var body: some View {
         Group {
             if typeSize.isAccessibilitySize {
-                // Accessibility sizes stack, so the value never wraps mid-number (rulebook §8.3).
-                VStack(alignment: .leading, spacing: Spacing.xxs) {
+                VStack(alignment: .leading, spacing: Spacing.xxxs) {
                     valueBlock
-                    chips(alignment: .leading)
+                    Text(meta).cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
                 }
             } else {
-                HStack(alignment: .center) {
+                HStack(alignment: .firstTextBaseline, spacing: Spacing.sm) {
                     valueBlock
-                    Spacer()
-                    chips(alignment: .trailing)
+                    Spacer(minLength: Spacing.sm)
+                    Text(meta).cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
+                        .multilineTextAlignment(.trailing)
                 }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, Spacing.sm)
         .padding(.vertical, Spacing.xs)
-        .background(CColor.card, in: RoundedRectangle(cornerRadius: Radius.md, style: .continuous))
+        .overlay(alignment: .bottom) { Hairline() }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityText)
     }
 
     private var valueBlock: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .firstTextBaseline, spacing: Spacing.xxs) {
-                Text("\(Format.mmHg(reading.systolic))/\(Format.mmHg(reading.diastolic))")
-                    .cText(TypeScale.bodyLg, weight: .medium).foregroundStyle(CColor.heading)
-                    .lineLimit(1)
-                    .fixedSize(horizontal: true, vertical: false)
-                Text(AppCopy.common.unitMmHg).cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
-            }
-            Text(Format.dateTime(reading.effectiveTime)).cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
-        }
-    }
-
-    private func chips(alignment: HorizontalAlignment) -> some View {
-        VStack(alignment: alignment, spacing: Spacing.xxxs) {
-            Chip(text: reading.sourceType == .healthkit ? AppCopy.readings.sourceHealth : AppCopy.readings.sourceManual)
-            // Provenance exactly as HealthKit reported it: the writing app's name, never an
-            // inference that it was a cuff (rulebook §4.6).
-            if reading.sourceType == .healthkit, let name = reading.sourceName, !name.isEmpty { Chip(text: name) }
-            // Most readings are left-arm; only flag the exception.
-            if let site = reading.bodySiteDisplay, site != "Left arm" { Chip(text: site) }
+        HStack(alignment: .firstTextBaseline, spacing: Spacing.xxs) {
+            Text("\(Format.mmHg(reading.systolic))/\(Format.mmHg(reading.diastolic))")
+                .cText(TypeScale.bodyBase, weight: .medium).foregroundStyle(CColor.heading)
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
+            Text(AppCopy.common.unitMmHg).cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
         }
     }
 
@@ -232,16 +334,6 @@ struct BpChart: View {
                 RuleMark(x: .value("Selected", row.date))
                     .foregroundStyle(CColor.hairline)
                     .lineStyle(StrokeStyle(lineWidth: 1))
-                    .annotation(position: .top, alignment: .center, spacing: 6) {
-                        VStack(spacing: 0) {
-                            Text(Format.date(row.date)).cText(TypeScale.label).foregroundStyle(CColor.textSecondaryInverse)
-                            Text("\(Format.mmHg(row.meanSystolic))/\(Format.mmHg(row.meanDiastolic)) \(AppCopy.common.unitMmHg)")
-                                .cMono(TypeScale.label).foregroundStyle(CColor.actionInk)
-                        }
-                        .padding(.horizontal, Spacing.xxs)
-                        .padding(.vertical, Spacing.xxxs)
-                        .background(CColor.action, in: RoundedRectangle(cornerRadius: Radius.sm, style: .continuous))
-                    }
                 PointMark(x: .value("Day", row.date), y: .value("mmHg", row.meanSystolic))
                     .symbol(.circle).foregroundStyle(CColor.chartSeries1).symbolSize(48)
                 PointMark(x: .value("Day", row.date), y: .value("mmHg", row.meanDiastolic))
@@ -250,7 +342,7 @@ struct BpChart: View {
         }
         .chartYScale(domain: domain, range: .plotDimension(startPadding: 4, endPadding: 12))
         .chartYAxis {
-            AxisMarks(position: .leading, values: yTicks) { _ in
+            AxisMarks(position: .trailing, values: yTicks) { _ in
                 AxisGridLine().foregroundStyle(CColor.hairline)
                 AxisValueLabel().font(.system(size: 10, design: .monospaced)).foregroundStyle(CColor.inkTertiary)
             }
@@ -261,12 +353,27 @@ struct BpChart: View {
                     .font(.system(size: 10, design: .monospaced)).foregroundStyle(CColor.inkTertiary)
             }
         }
-        .chartXScale(range: .plotDimension(startPadding: 8, endPadding: 28))
+        .chartXScale(range: .plotDimension(startPadding: 8, endPadding: 8))
         .chartPlotStyle { plot in plot.clipped() }
         .chartLegend(.hidden)
         .chartXSelection(value: $selected)
         .frame(height: height)
         .clipped()
+        // Readout for the day under the finger: one fixed line just inside the top of the
+        // plot rather than a box chasing the point. Mean of that day, rounded.
+        .overlay(alignment: .top) {
+            if let row = selectedRow {
+                HStack(spacing: Spacing.xxs) {
+                    Text(Format.date(row.date)).foregroundStyle(CColor.inkTertiary)
+                    Text("\(Int(row.meanSystolic.rounded()))/\(Int(row.meanDiastolic.rounded()))")
+                        .cText(TypeScale.bodySm, weight: .medium).foregroundStyle(CColor.heading)
+                    Text(AppCopy.common.unitMmHg).foregroundStyle(CColor.inkTertiary)
+                }
+                .cText(TypeScale.bodySm)
+                .padding(.top, 2)
+                .allowsHitTesting(false)
+            }
+        }
         .accessibilityLabel(AppCopy.trend.chartAria)
     }
 
@@ -397,7 +504,7 @@ struct ManualEntryForm: View {
     @Environment(AppModel.self) private var model
     @State private var draft = ManualEntryDraft()
     @State private var takenAt = Date()
-    @State private var arm = "left"
+    @State private var arm: String? = nil
     @State private var showErrors = false
     @State private var formError: String? = nil
     @State private var saving = false

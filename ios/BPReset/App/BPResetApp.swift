@@ -145,6 +145,11 @@ final class AppState {
 
 enum AppRoute: Hashable {
     case settings
+    case settingsAppleHealth
+    case settingsAbout
+    case settingsData
+    case settingsReminders
+    case settingsAccount
     case cuffs
     case addReading
     case chapter(slug: String, week: Int)
@@ -159,6 +164,16 @@ enum AppRoute: Hashable {
 final class Router {
     var tab: MainTab = .record
     var path: [AppRoute] = []
+
+    /// Everything a tab leads to keeps the bar, with that tab lit: a chapter, an article, the
+    /// library are places. Tasks and overlays (add, settings, the viewer) close instead.
+    var showsTabBar: Bool {
+        guard let last = path.last else { return true }
+        switch last {
+        case .chapter, .programBrowse, .programDetail, .inFocus: return true
+        default: return false
+        }
+    }
 
     func push(_ route: AppRoute) { path.append(route) }
     func pop() { if !path.isEmpty { path.removeLast() } }
