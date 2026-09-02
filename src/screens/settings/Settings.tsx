@@ -1,66 +1,38 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Screen, ProfileLink } from "@/components/ui/Screen";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { ChevronRightIcon } from "@/components/ui/icons";
 import { APP } from "@/copy/app";
 import { JOURNEY } from "@/copy/journey";
 import { HEALTH_SYNC } from "@/copy/health-sync";
-import { SAFETY, VALIDATED_CUFFS } from "@/copy/safety";
-import { getApi, resetApi } from "@/lib/api";
-import { useConsentStatus, useProgramProgress } from "@/lib/api/hooks";
+import { resetApi } from "@/lib/api";
+import { useProgramProgress } from "@/lib/api/hooks";
 import { CORE_PROGRAM_SLUG, findProgram, readCount } from "@/lib/programs";
 import { getHealthPlugin, resetHealthPlugin, type AuthorizationState } from "@/lib/health";
 import { useJourney } from "@/lib/journey/state";
-import { fmtFullDate } from "@/lib/format";
 import { useQueryClient } from "@tanstack/react-query";
 
 /**
  * Settings, which is as much the patient's page as the app's: it opens on
  * who they are in the program (week, how readings arrive, the rhythm they
- * chose), then Apple Health status, export and deletion (Deliverable 12),
- * consent receipt, the safety surface, and the dev-only demo reset.
+ * chose), then Apple Health status, then a short menu to the longer
+ * reading: about this app (the safety surface, Deliverable 12), your data
+ * (export, deletion, consent receipt) and the validated monitors
+ * (Deliverable 8). The dev-only demo reset stays at the foot.
  */
 export function Settings() {
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const { data: consent } = useConsentStatus();
   const { resetJourney, connectChoice, cadence } = useJourney();
   const { data: progress } = useProgramProgress();
   const [health, setHealth] = useState<AuthorizationState | null>(null);
-  const [confirmingDelete, setConfirmingDelete] = useState(false);
-  const [exporting, setExporting] = useState(false);
   const c = APP.settings;
 
   useEffect(() => {
     void getHealthPlugin().getAuthorizationState().then(setHealth);
   }, []);
-
-  const exportData = async () => {
-    setExporting(true);
-    try {
-      // On device this hands the files to the iOS share sheet (docs/02 §4.4).
-      const result = await getApi().exportPatientData();
-      const blob = new Blob([result.csv], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "corveo-my-heart-record.csv";
-      a.click();
-      URL.revokeObjectURL(url);
-    } finally {
-      setExporting(false);
-    }
-  };
-
-  const requestDeletion = async () => {
-    await getApi().requestAccountDeletion();
-    resetJourney();
-    resetHealthPlugin();
-    await qc.invalidateQueries();
-    navigate("/journey/welcome", { replace: true });
-  };
 
   const resetDemo = async () => {
     resetApi();
@@ -83,11 +55,14 @@ export function Settings() {
     [c.profile.rhythmLabel, cadence ? JOURNEY.cadence.options[cadence].title : c.profile.rhythmUnset],
   ];
 
+  const menu: [string, string][] = [
+    [c.menu.about, "/app/settings/about"],
+    [c.menu.data, "/app/settings/data"],
+    [c.menu.monitors, "/app/cuffs"],
+  ];
+
   return (
-    <Screen
-      title={c.title}
-      action={<ProfileLink />}
-    >
+    <Screen title={c.title} action={<ProfileLink />}>
       <div className="flex flex-col gap-[var(--spacing-sm)]">
         {/* — You — the facts the patient set on the way in, as a quiet list. */}
         <section aria-label={c.profile.title} className="pb-[var(--spacing-2xs)]">
@@ -125,101 +100,25 @@ export function Settings() {
           </p>
         </Card>
 
-        <Card label={c.yourData.title}>
-          <p className="pb-[var(--spacing-sm)]" style={{ fontSize: "var(--text-body-sm)" }}>
-            {c.yourData.body}
-          </p>
-          <div className="flex flex-col gap-[var(--spacing-2xs)]">
-            <Button variant="secondary" disabled={exporting} onClick={exportData}>
-              {exporting ? APP.common.busy : c.yourData.exportCta}
-            </Button>
-            <p className="text-ink-tertiary" style={{ fontSize: "var(--text-label)" }}>
-              {c.yourData.exportNote}
-            </p>
-
-            {confirmingDelete ? (
-              <div className="rounded-md border border-hairline p-[var(--spacing-sm)]">
-                <h3 className="pb-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-heading-xl)" }}>
-                  {c.yourData.deleteConfirmTitle}
-                </h3>
-                <p className="pb-[var(--spacing-sm)] text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
-                  {c.yourData.deleteConfirmBody}
-                </p>
-                <div className="flex flex-col gap-[var(--spacing-2xs)]">
-                  <Button onClick={requestDeletion}>{c.yourData.deleteConfirmCta}</Button>
-                  <Button variant="secondary" onClick={() => setConfirmingDelete(false)}>
-                    {c.yourData.deleteCancelCta}
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <Button variant="secondary" onClick={() => setConfirmingDelete(true)}>
-                {c.yourData.deleteCta}
-              </Button>
-            )}
-          </div>
-          {consent?.has_active_consent && consent.version && consent.last_event_at ? (
-            <p className="pt-[var(--spacing-sm)] text-ink-tertiary" style={{ fontSize: "var(--text-label)" }}>
-              {c.yourData.consentReceipt(consent.version, fmtFullDate(consent.last_event_at))}
-            </p>
-          ) : null}
-        </Card>
-
-        {/*
-         * The safety surface (Deliverable 12) and the validated-monitor list
-         * (Deliverable 8) live here: "about this app" is account-adjacent
-         * reference, and the Learn tab is the publication only. This reverses
-         * the earlier move to Education — the Stage 2 and Stage 3 test
-         * scripts reference their location and need updating.
-         */}
-        <Card label={c.aboutTitle}>
-          <h2 className="pb-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-heading-xl)" }}>
-            {SAFETY.title}
-          </h2>
-
-          <p className="eyebrow pb-[var(--spacing-3xs)]">{SAFETY.does.title}</p>
-          <ul
-            className="list-disc pb-[var(--spacing-xs)] pl-[var(--spacing-sm)] text-ink-secondary"
-            style={{ fontSize: "var(--text-body-sm)" }}
-          >
-            {SAFETY.does.items.map((item) => (
-              <li key={item}>{item}</li>
+        {/* — Menu — each row is a page of its own; the whole row is the tap. */}
+        <nav aria-label={c.menuAria}>
+          <ul className="m-0 flex list-none flex-col p-0">
+            {menu.map(([label, to]) => (
+              <li key={to} className="border-b border-hairline">
+                <Link
+                  to={to}
+                  className="flex items-center justify-between py-[var(--spacing-sm)] text-heading"
+                  style={{ fontSize: "var(--text-body-base)", fontWeight: 500 }}
+                >
+                  {label}
+                  <span className="text-ink-tertiary" style={{ fontSize: "var(--text-body-lg)" }}>
+                    <ChevronRightIcon />
+                  </span>
+                </Link>
+              </li>
             ))}
           </ul>
-
-          <p className="eyebrow pb-[var(--spacing-3xs)]">{SAFETY.doesNot.title}</p>
-          <ul
-            className="list-disc pb-[var(--spacing-xs)] pl-[var(--spacing-sm)] text-ink-secondary"
-            style={{ fontSize: "var(--text-body-sm)" }}
-          >
-            {SAFETY.doesNot.items.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-
-          <p className="pb-[var(--spacing-2xs)]" style={{ fontSize: "var(--text-body-sm)" }}>
-            {SAFETY.seekAdvice}
-          </p>
-          <p className="text-ink-tertiary" style={{ fontSize: "var(--text-label)" }}>
-            {SAFETY.disclaimer}
-          </p>
-        </Card>
-
-        <Card label={c.cuffsTitle}>
-          <p
-            className="pb-[var(--spacing-xs)] text-ink-secondary"
-            style={{ fontSize: "var(--text-body-sm)" }}
-          >
-            {VALIDATED_CUFFS.intro}
-          </p>
-          <Link
-            to="/app/cuffs"
-            className="underline underline-offset-4"
-            style={{ fontSize: "var(--text-body-sm)" }}
-          >
-            {VALIDATED_CUFFS.title}
-          </Link>
-        </Card>
+        </nav>
 
         {import.meta.env.DEV || import.meta.env.VITE_DEMO === "true" ? (
           <Card label={c.demo.title}>

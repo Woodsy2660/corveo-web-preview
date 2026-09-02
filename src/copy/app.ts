@@ -172,8 +172,13 @@ export const APP = {
       rhythmLabel: "Rhythm",
       rhythmUnset: "Not chosen yet",
     },
-    aboutTitle: "About this app",
-    cuffsTitle: "Validated monitors",
+    /** The menu: each row is a page of its own. */
+    menuAria: "Settings",
+    menu: {
+      about: "About this app",
+      data: "Your data",
+      monitors: "Arm monitors",
+    },
     appleHealth: {
       title: "Apple Health",
       readsOnly: "Corveo reads blood pressure only. It never writes.",

@@ -20,6 +20,8 @@ import { Chapter } from "@/screens/tabs/Program/Chapter";
 import { ProgramBrowse } from "@/screens/tabs/Program/ProgramIndex";
 import { ProgramDetail } from "@/screens/tabs/Program/ProgramDetail";
 import { Settings } from "@/screens/settings/Settings";
+import { About } from "@/screens/settings/About";
+import { YourData } from "@/screens/settings/YourData";
 import { ValidatedCuffs } from "@/screens/settings/ValidatedCuffs";
 import { BehindTheScenes } from "@/screens/behind/BehindTheScenes";
 
@@ -81,6 +83,8 @@ export function App() {
         <Route path="/app/education/pulse/:slug" element={<PulseViewer />} />
         <Route path="/app/add" element={<ManualEntry />} />
         <Route path="/app/settings" element={<Settings />} />
+        <Route path="/app/settings/about" element={<About />} />
+        <Route path="/app/settings/data" element={<YourData />} />
         <Route path="/app/cuffs" element={<ValidatedCuffs />} />
         {/* Readings and Trend merged into Record; the shared web preview is
             bookmarked, so the old paths keep working. */}
