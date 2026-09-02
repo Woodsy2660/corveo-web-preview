@@ -13,6 +13,7 @@ export const APP = {
     settingsLink: "Settings",
     /** Accessible name for the header profile icon — no visible label. */
     profileAria: "Profile and settings",
+    profileCloseAria: "Close settings",
     cancel: "Cancel",
     back: "Back",
     busy: "…",

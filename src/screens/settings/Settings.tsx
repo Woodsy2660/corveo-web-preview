@@ -72,11 +72,6 @@ export function Settings() {
     <Screen
       title={c.title}
       action={<ProfileLink />}
-      footer={
-        <Button variant="ghost" onClick={() => navigate(-1)}>
-          {APP.common.back}
-        </Button>
-      }
     >
       <div className="flex flex-col gap-[var(--spacing-sm)]">
         <Card label={c.appleHealth.title}>

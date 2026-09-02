@@ -1,25 +1,47 @@
 import { useEffect, useRef, type ReactNode } from "react";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { CORVEO_WORDMARK } from "@/copy/product";
 import { APP } from "@/copy/app";
 import { ProfileIcon } from "@/components/ui/icons";
 import logoUrl from "@/assets/brand/logo.svg";
 
 /**
- * Header affordance for the tab screens: profile and settings behind a
- * single icon, so the top of the app is the wordmark and nothing else.
- * Account, data export, deletion and the consent receipt all live behind it.
+ * Header affordance: profile and settings behind a single icon, so the top
+ * of the app is the wordmark and nothing else. Account, data export,
+ * deletion and the consent receipt all live behind it.
+ *
+ * It toggles. On any page it opens Settings; on Settings it is drawn
+ * pressed and takes you back to where you came from, so the same spot in
+ * the header opens and closes the one drawer the app has.
  */
 export function ProfileLink() {
-  return (
+  const navigate = useNavigate();
+  const onSettings = useLocation().pathname === "/app/settings";
+  const className = `-my-[11px] -mr-[11px] flex size-[44px] items-center justify-center ${
+    onSettings ? "text-heading" : "text-ink-tertiary"
+  }`;
+  const style = { fontSize: "var(--text-body-lg)" };
+
+  // 44px hit area for a 23px glyph; negative margin keeps the icon
+  // optically on the header edge rather than inset by the padding.
+  return onSettings ? (
+    <button
+      onClick={() => navigate(-1)}
+      aria-label={APP.common.profileCloseAria}
+      title={APP.common.profileCloseAria}
+      aria-pressed
+      className={className}
+      style={style}
+    >
+      <ProfileIcon />
+    </button>
+  ) : (
     <Link
       to="/app/settings"
       aria-label={APP.common.profileAria}
       title={APP.common.profileAria}
-      /* 44px hit area for a 23px glyph; negative margin keeps the icon
-         optically on the header edge rather than inset by the padding. */
-      className="-my-[11px] -mr-[11px] flex size-[44px] items-center justify-center text-ink-tertiary"
-      style={{ fontSize: "var(--text-body-lg)" }}
+      className={className}
+      style={style}
     >
       <ProfileIcon />
     </Link>
