@@ -175,6 +175,12 @@ final class Router {
         }
     }
 
+    /// A tab tap is a way out of anything: it lands on that tab's root, whatever was pushed.
+    func select(_ tab: MainTab) {
+        if !path.isEmpty { path.removeAll() }
+        self.tab = tab
+    }
+
     func push(_ route: AppRoute) { path.append(route) }
     func pop() { if !path.isEmpty { path.removeLast() } }
     func popToRoot() { path.removeAll() }

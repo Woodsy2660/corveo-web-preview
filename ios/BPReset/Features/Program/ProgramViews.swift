@@ -94,11 +94,12 @@ struct ChapterRow: View {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(chapter.title)
                         .cText(TypeScale.bodyLg, weight: .medium).foregroundStyle(CColor.heading)
-                        .lineLimit(1)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
                     Text(open ? chapter.excerpt : AppCopy.program.lockedNote)
                         .cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary)
                         .multilineTextAlignment(.leading)
-                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
                         .padding(.top, 2)
                     Spacer(minLength: Spacing.xxxs)
                     HStack(spacing: Spacing.xxs) {
@@ -123,7 +124,7 @@ struct ChapterRow: View {
                         }
                     }
                     .cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
-                    .lineLimit(1)
+                    .fixedSize(horizontal: false, vertical: true)
                 }
                 .frame(minHeight: 96)
                 Spacer(minLength: 0)
@@ -170,19 +171,23 @@ struct ChapterView: View {
                 overline: "\(program.unitLabel) \(chapter.week)",
                 title: chapter.title,
                 withTabBar: true,
-                footer: AnyView(
-                    done
-                    ? CButton(title: nextOpen ? AppCopy.chapter.next : AppCopy.chapter.back) {
-                        if nextOpen, let next { router.path[router.path.count - 1] = .chapter(slug: program.slug, week: next.week) }
-                        else { router.pop() }
-                    }
-                    : CButton(title: marking ? AppCopy.common.busy : AppCopy.chapter.markRead, disabled: marking) {
-                        Task {
-                            marking = true
-                            defer { marking = false }
-                            await model.updateProgress(completedSteps: [Programs.stepKey(program.slug, week): true])
+                footer: AnyView(VStack(spacing: Spacing.xxs) {
+                    if done {
+                        CButton(title: nextOpen ? AppCopy.chapter.next : AppCopy.chapter.back) {
+                            if nextOpen, let next { router.path[router.path.count - 1] = .chapter(slug: program.slug, week: next.week) }
+                            else { router.pop() }
                         }
-                    })
+                    } else {
+                        CButton(title: marking ? AppCopy.common.busy : AppCopy.chapter.markRead, disabled: marking) {
+                            Task {
+                                marking = true
+                                defer { marking = false }
+                                await model.updateProgress(completedSteps: [Programs.stepKey(program.slug, week): true])
+                            }
+                        }
+                    }
+                    CButton(title: AppCopy.common.back, variant: .ghost) { router.pop() }
+                })
             ) {
                 if let deck = chapter.deck {
                     Text(deck).cText(TypeScale.bodyLg).lineSpacing(4).foregroundStyle(CColor.inkSecondary)
@@ -260,7 +265,8 @@ struct ArticleBody: View {
 struct ProgramBrowseView: View {
     @Environment(Router.self) private var router
     var body: some View {
-        Screen(title: AppCopy.programIndex.title, withTabBar: true) {
+        Screen(title: AppCopy.programIndex.title, withTabBar: true,
+               footer: AnyView(CButton(title: AppCopy.common.back, variant: .ghost) { router.pop() })) {
             ProgramIndex(embedded: false)
         }
     }
@@ -351,18 +357,22 @@ struct ProgramDetailView: View {
                 overline: AppCopy.programIndex.chapterCount(program.chapters.count, program.unitLabel),
                 title: program.title,
                 withTabBar: true,
-                footer: core ? nil : AnyView(
-                    CButton(title: following ? AppCopy.programIndex.following : AppCopy.programIndex.follow,
-                            variant: following ? .secondary : .primary) {
-                        if following {
-                            follow.unfollow(program.slug)
-                        } else {
-                            follow.follow(program.slug)
-                            follow.setActive(program.slug)
-                            router.popToRoot()
-                            router.tab = .program
+                footer: AnyView(VStack(spacing: Spacing.xxs) {
+                    if !core {
+                        CButton(title: following ? AppCopy.programIndex.following : AppCopy.programIndex.follow,
+                                variant: following ? .secondary : .primary) {
+                            if following {
+                                follow.unfollow(program.slug)
+                            } else {
+                                follow.follow(program.slug)
+                                follow.setActive(program.slug)
+                                router.popToRoot()
+                                router.tab = .program
+                            }
                         }
-                    })
+                    }
+                    CButton(title: AppCopy.common.back, variant: .ghost) { router.pop() }
+                })
             ) {
                 Text(program.description).cText(TypeScale.bodyBase).foregroundStyle(CColor.inkSecondary)
                 Text(AppCopy.program.progress(read, program.chapters.count))
@@ -428,7 +438,7 @@ struct ProgramRail: View {
                                 VStack(alignment: .leading, spacing: Spacing.xxxs) {
                                     Text(program.title).cText(TypeScale.bodyBase).foregroundStyle(CColor.heading)
                                         .multilineTextAlignment(.leading)
-                                        .lineLimit(2)
+                                        .fixedSize(horizontal: false, vertical: true)
                                     Text(followed ? AppCopy.programIndex.following : AppCopy.programIndex.chapterCount(program.chapters.count, program.unitLabel)).eyebrow()
                                 }
                                 .frame(width: 150, alignment: .leading)

@@ -37,7 +37,7 @@ struct MainTabsView: View {
             }
             if router.showsTabBar {
                 TabBarFade()
-                FloatingTabBar(selection: $router.tab)
+                FloatingTabBar(selection: Binding(get: { router.tab }, set: { router.select($0) }))
             }
         }
         .animation(Motion.brand, value: router.showsTabBar)

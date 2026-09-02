@@ -186,7 +186,7 @@ struct RecordView: View {
             Text(healthStatusLine)
                 .cText(TypeScale.bodySm)
                 .foregroundStyle(health.lastArrived > 0 ? CColor.surfaceColor1 : CColor.inkTertiary)
-                .lineLimit(1)
+                .multilineTextAlignment(.trailing)
             Button {
                 Task {
                     await health.drain(trigger: .manual)
@@ -409,89 +409,6 @@ struct BpChart: View {
                     .symbol(symbol).foregroundStyle(color).symbolSize(40)
             }
         }
-    }
-}
-
-// MARK: - Apple Health card
-
-/// The Apple Health surface the patient actually sees: connected, reading only, when it
-/// last looked, and a way to look now. It reports mechanism, never anything about a value,
-/// and never a "denied" state the app is not entitled to claim.
-struct AppleHealthCard: View {
-    @Environment(HealthModel.self) private var health
-    @State private var done = false
-
-    var body: some View {
-        if health.connected {
-            Card {
-                HStack(alignment: .firstTextBaseline) {
-                    Text(HealthSyncCopy.card.title).cText(TypeScale.bodyBase, weight: .medium).foregroundStyle(CColor.heading)
-                    Spacer()
-                    HStack(spacing: Spacing.xxxs) {
-                        Image(systemName: CIcon.check).font(.system(size: 11, weight: .semibold)).foregroundStyle(CColor.surfaceColor1)
-                        Text(HealthSyncCopy.card.connected).cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
-                    }
-                }
-                Text(health.backgroundUnavailable ? HealthSyncCopy.card.backgroundUnavailable : HealthSyncCopy.card.readsOnly)
-                    .cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary)
-                    .padding(.top, Spacing.xxxs)
-
-                Hairline().padding(.top, Spacing.xs)
-
-                HStack(spacing: Spacing.sm) {
-                    Text(statusLine)
-                        .cText(TypeScale.bodySm)
-                        .foregroundStyle(health.lastArrived > 0 ? CColor.surfaceColor1 : CColor.inkTertiary)
-                        .lineLimit(1)
-                    Spacer()
-                    Button {
-                        Task {
-                            await health.drain(trigger: .manual)
-                            withAnimation(Motion.brand) { done = true }
-                            try? await Task.sleep(nanoseconds: 2_200_000_000)
-                            withAnimation(Motion.brand) { done = false }
-                        }
-                    } label: {
-                        HStack(spacing: Spacing.xxs) {
-                            Image(systemName: done ? CIcon.check : CIcon.sync)
-                                .font(.system(size: 13, weight: .medium))
-                                .rotationEffect(.degrees(health.draining ? 360 : 0))
-                                .animation(health.draining ? .linear(duration: 0.9).repeatForever(autoreverses: false) : .default, value: health.draining)
-                            Text(health.draining ? HealthSyncCopy.card.sync.busy : done ? HealthSyncCopy.card.sync.done : HealthSyncCopy.card.sync.idle)
-                                .cText(TypeScale.bodySm, weight: .medium)
-                        }
-                        .foregroundStyle(done ? CColor.surfaceColor1 : CColor.heading)
-                        .padding(.horizontal, Spacing.sm)
-                        .padding(.vertical, Spacing.xxs)
-                        .overlay(Capsule().stroke(done ? CColor.surfaceColor1 : CColor.hairline, lineWidth: 1))
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(health.draining)
-                    .accessibilityLabel(HealthSyncCopy.card.sync.aria)
-                }
-                .padding(.top, Spacing.xs)
-
-                if let problem = health.problemText {
-                    Text(problem)
-                        .cText(TypeScale.bodySm).foregroundStyle(CColor.ink)
-                        .padding(.top, Spacing.xxs)
-                }
-                if health.status.rejectedCount > 0 {
-                    Text(HealthSyncCopy.card.rejected(health.status.rejectedCount))
-                        .cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
-                        .padding(.top, Spacing.xxs)
-                }
-            }
-            .padding(.bottom, Spacing.sm)
-            .onAppear { health.refresh() }
-        }
-    }
-
-    private var statusLine: String {
-        if health.lastArrived > 0 { return HealthSyncCopy.card.arrived(health.lastArrived) }
-        if health.status.pendingCount > 0 { return HealthSyncCopy.card.pending(health.status.pendingCount) }
-        if let at = health.lastDrainAt { return HealthSyncCopy.card.updated(Format.time(at)) }
-        return HealthSyncCopy.card.waiting
     }
 }
 

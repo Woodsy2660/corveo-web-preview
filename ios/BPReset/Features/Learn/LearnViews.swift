@@ -22,24 +22,28 @@ struct LearnView: View {
             .padding(.bottom, Spacing.xxs)
 
             ScrollView(.horizontal) {
-                HStack(spacing: Spacing.xxs) {
+                HStack(alignment: .top, spacing: Spacing.xxs) {
                     ForEach(pulseItems) { item in
                         // A photograph with the title over it. One even scrim, no gradient,
                         // keeps the white serif legible on any picture.
                         Button { router.push(.pulse(slug: item.slug)) } label: {
+                            // The card grows with its title rather than clipping it; the
+                            // photograph fills whatever height the rail settles on.
                             ZStack(alignment: .bottomLeading) {
-                                Image(Art.pulse(item.slug)).resizable().scaledToFill()
-                                    .frame(width: 112, height: 152)
-                                Color.black.opacity(0.4)
+                                Color.clear
                                 Text(item.title)
                                     .cDisplay(TypeScale.bodyBase)
                                     .foregroundStyle(CColor.textHeadingInverse)
                                     .multilineTextAlignment(.leading)
-                                    .lineLimit(4)
-                                    .minimumScaleFactor(0.8)
+                                    .fixedSize(horizontal: false, vertical: true)
                                     .padding(Spacing.xs)
                             }
-                            .frame(width: 112, height: 152)
+                            .frame(width: 112)
+                            .frame(minHeight: 152)
+                            .background {
+                                Image(Art.pulse(item.slug)).resizable().scaledToFill()
+                                    .overlay(Color.black.opacity(0.4))
+                            }
                             .clipShape(RoundedRectangle(cornerRadius: Radius.md, style: .continuous))
                         }
                         .buttonStyle(.plain)
@@ -71,10 +75,10 @@ struct LearnView: View {
                                 Text(article.title)
                                     .cText(TypeScale.bodyLg, weight: .medium).foregroundStyle(CColor.heading)
                                     .multilineTextAlignment(.leading)
-                                    .lineLimit(2)
+                                    .fixedSize(horizontal: false, vertical: true)
                                 Text(article.excerpt).cText(TypeScale.bodySm).foregroundStyle(CColor.inkSecondary)
                                     .multilineTextAlignment(.leading)
-                                    .lineLimit(1)
+                                    .fixedSize(horizontal: false, vertical: true)
                                     .padding(.top, 2)
                                 Spacer(minLength: Spacing.xxxs)
                                 HStack(spacing: Spacing.xxxs) {
@@ -106,7 +110,8 @@ struct InFocusArticleView: View {
 
     var body: some View {
         if let article = inFocusArticles.first(where: { $0.slug == slug }) {
-            Screen(overline: AppCopy.inFocus.overline, title: article.title, withTabBar: true) {
+            Screen(overline: AppCopy.inFocus.overline, title: article.title, withTabBar: true,
+                   footer: AnyView(CButton(title: AppCopy.common.back, variant: .ghost) { router.pop() })) {
                 if let deck = article.deck {
                     Text(deck).cText(TypeScale.bodyLg).lineSpacing(4).foregroundStyle(CColor.inkSecondary)
                         .padding(.bottom, Spacing.sm)
@@ -127,7 +132,8 @@ struct InFocusArticleView: View {
                 ArticleBody(sections: article.sections ?? [])
             }
         } else {
-            Screen(title: AppCopy.inFocus.notFound, withTabBar: true) {
+            Screen(title: AppCopy.inFocus.notFound, withTabBar: true,
+                   footer: AnyView(CButton(title: AppCopy.common.back, variant: .ghost) { router.pop() })) {
                 CButton(title: AppCopy.inFocus.back) { router.pop() }
             }
         }
