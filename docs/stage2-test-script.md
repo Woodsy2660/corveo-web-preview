@@ -40,13 +40,13 @@ Result key: **PASS**, **FAIL**, **PARTIAL** (state what is missing), **N/R** (no
 | T2 | First-run authorisation | Fresh install → journey → Connect → Apple Health → Continue | The real iOS sheet appears exactly once; both blood-pressure read types listed; app proceeds identically on Allow or Don't Allow; no "denied" wording anywhere | c | **PASS** 2 Sep (NB) on `iPhone18,3` |
 | T-A | Manual capture path | Journey first capture, or Record → + → values within bounds → Save | Row appears on Record tab with the Manual chip; a row exists in `v_bp_readings` with `source_type = manual` and the chosen arm; out-of-bounds input shows only "Please check this value." | a, d | **PASS** 2 Sep (NB), dev project |
 | T3 | Snapshot semantics | Harness reader Q: catch-up → `getPendingSnapshot` twice → acknowledge → snapshot; then acknowledge with a stale id | Same items and snapshotId on both reads; empty after acknowledge; stale id rejects `SNAPSHOT_STALE` | c | PASS in `spkclose.sh` on the sidecar 26 Aug; **re-run on this handset in §5** |
-| T4 | Cuff → Apple Health → app, foreground | Take an Omron reading → open OMRON connect (transfer) → confirm it in Health → Browse → Heart → Blood Pressure → open BP Reset | Row appears with the Apple Health chip **and the OMRON connect source chip**; count of Apple Health rows increases by one; `source_system` in the DB is the Omron bundle id | b, d | N/R, cuff paired 2 Sep |
+| T4 | Cuff → Apple Health → app, foreground | Take an Omron reading → open OMRON connect (transfer) → confirm it in Health → Browse → Heart → Blood Pressure → open BP Reset | Row appears with the Apple Health chip **and the OMRON connect source chip**; count of Apple Health rows increases by one; `source_system` in the DB is the Omron bundle id | b, d | **PASS** 2 Sep (NB), second reading; see OBS-1 for the first |
 | T5a | Background capture | BP Reset running, sent to the home screen (not swiped away). Writer: delay 30 s → Schedule save → lock the phone → wait 60 s → unlock → open BP Reset | The reading is already on the Record tab without tapping Sync (observer wake → queue → drain on activation) | b, c, d | **PASS** 2 Sep (NB), writer source |
 | T5b | Force-quit recovery | Swipe BP Reset away → writer Save one NOW → relaunch BP Reset manually | **No wake expected** while force-quit; the reading arrives once on the first foreground catch-up, exactly once | c | N/R |
 | T6 | Endurance (48 h soak) | T5a five times across 48 h, including one phone reboot and one save while the phone has been locked for 10 min | Still capturing on day 3; every deferred pass converges; zero duplicate rows | c | N/R, start now |
 | T7 | Layer-1 idempotency | (i) uninstall → reinstall → sign in same account → connect; (ii) `spk4.sh` anchor-reset drill on the harness | Backfill from enrolment produces zero duplicate rows in `v_bp_readings`; `duplicates` counted by the RPC. Depends on the uniqueness constraint (Q6, Ben) | c | N/R |
 | T8 | Layer-2 manual vs HealthKit | Out of V1 (N-09): manual and Apple Health rows of the same event both display | Both rows shown honestly, no merge, no evaluation | c | N/A in V1, record as such |
-| T9 | Attribution | One reading each from Omron, the writer, and a second real source if available, in one session | Three rows, three distinct source chips; DB `source_system` matches each writing app's bundle id; nothing labels a writer row as a cuff | c | PARTIAL 2 Sep: writer attributed correctly; Omron pending T4 |
+| T9 | Attribution | One reading each from Omron, the writer, and a second real source if available, in one session | Three rows, three distinct source chips; DB `source_system` matches each writing app's bundle id; nothing labels a writer row as a cuff | c | PASS for two sources 2 Sep (writer, OMRON connect), each with its own source chip; third source N/R |
 | T10 | Denial and bootstrap backfill | Fresh install → Connect → Don't Allow → use the app, add a manual reading → Settings → Health → Data Access → BP Reset → allow both → open BP Reset | Card shows the neutral "no readings yet" copy, never "denied"; manual entry and all six weeks usable; after granting, history backfills from the enrolment date, exactly once | c | N/R |
 | T10b | Revocation after flow | Granted and synced → Health → revoke BP Reset's read access → take a cuff reading → open BP Reset | Store appears empty to the app; card copy stays neutral; existing rows intact; nothing claims denial | c | N/R |
 | T11 | Bright-line audit | Inspect every screen, the chart, the card copy, notification text, the ingest payload and the Swift/SQL sources for thresholds, bands, zones, alerts, scores or value-mapped colour | Zero interpretive artefacts. Chart colours are fixed series identities; bounds are typo checks with fixed copy | e | Code audit PASS 2 Sep (§6); screen audit at walkthrough |
@@ -95,6 +95,12 @@ Checked in the native app sources:
 - `Copy/`: no word from the escalate list (diagnose, detect, treat, lower, reduce, control, manage, risk, warning, alert, abnormal, accurate) is used about a reading. Reminders are rhythm-only by copy and by design.
 - No notification code exists yet (Stage 3); when it lands, the scheduler must never receive a reading object.
 
+## 6a. Open observations
+
+| ID | Observed | Status |
+|---|---|---|
+| OBS-1 | 2 Sep, first Omron reading on the handset: the drain reported one row rejected by the backend and acknowledged it (N-04). The build at the time kept only the count, not the reason code, so the cause is unrecoverable. The second Omron reading, minutes later, imported normally. All six backend reasons are structural or bounds checks; the payload builder is deterministic, so the candidates are a bounds or ordering rule on that specific sample. | Open. The build now records the reason code of every rejection in the engine diagnostics (development card). Watch during the soak; if it recurs the code identifies the rule. Ask Ben whether the RPC should also write rejected reasons (codes only) to `audit_event` so the server keeps its own record. |
+
 ## 7. Results log
 
 | Date | Test | Handset | Result | Notes (counts and codes only) |
@@ -104,3 +110,6 @@ Checked in the native app sources:
 | 2 Sep 2026 | T4 shape (writer as source) | iPhone18,3 / 23G83 | PASS | 1 Apple Health row after foreground activation, source = writer bundle id |
 | 2 Sep 2026 | T5a shape (writer, delayed save, locked) | iPhone18,3 / 23G83 | PASS | Row present on reopen without Sync |
 | 2 Sep 2026 | T11 code audit | n/a | PASS | §6 |
+| 2 Sep 2026 | T4 (Omron, live cuff) | iPhone18,3 / 23G83 | PASS | 1 Apple Health row with source chip = OMRON connect; first attempt rejected by backend (OBS-1) |
+| 2 Sep 2026 | T9 (two sources) | iPhone18,3 / 23G83 | PASS | writer and OMRON connect rows each carry their own source chip |
+| 2 Sep 2026 | Spike env report (reader Q) | iPhone18,3 / 23G83 | EVIDENTIAL | class printed by `-spikeEnvReport`; D-003 re-take eligible |
