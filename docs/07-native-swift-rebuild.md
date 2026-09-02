@@ -126,6 +126,16 @@ Bundle ID `dev.aiplease.bpreset` (throwaway, sandbox team). Deployment target iO
   `xcodebuild test -project ios/BPReset.xcodeproj -scheme BPReset -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -only-testing:BPResetTests SUPABASE_URL= SUPABASE_PUBLISHABLE_KEY=`
   (the two blank overrides keep the host app on the mock). HealthKit validates correlations at
   construction, so the mapper's missing-child and duplicate-child guards remain device-only.
+- **Retry funnel (2 Sep, afternoon).** The engine now observes `protectedDataDidBecomeAvailable`:
+  a wake that found the store locked leaves the pending flag set with the anchor untouched, and
+  the next unlock retries the catch-up in place if the process is still alive. Not yet on the
+  phone (the soak build is frozen); it is exercised by soak checkpoint C3's shape once installed.
+- **Release configuration checked on the simulator (2 Sep).** `CRScopeEnabled` reaches the
+  bundle as NO, the tab bar shows Program and Record only, the share usage string is present and
+  the update key absent. The development card is compiled out of Release, which the Release build
+  caught as a compile error the first time.
+- **T14 variant.** `Entitlements/BPReset-NoBackgroundDelivery.entitlements` exists for the
+  arming-failure test after the soak: build with `CODE_SIGN_ENTITLEMENTS` pointing at it.
 - **Still open for Stage 3:** the strict-concurrency pass; T14 on the product build; the
   48-hour soak (running, `docs/soak-log.md`); Corveo's review of the reminder copy; privacy
   policy and support URLs; App Store assets.

@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 import HealthKit
 
 /// The product engine (guide §12 P2), grown from the §11 spike engine that was proven on
@@ -69,6 +70,7 @@ final class HealthKitEngine: @unchecked Sendable {
     private var catchUpInFlight = false
     private var resetting = false
     private(set) var catchUpPending = false
+    private var unlockRetryObserver: NSObjectProtocol?
     private(set) var loadFault: BPError?
 
     /// Hint only (§7.1 addListener). The app drains unconditionally on foreground regardless.
@@ -98,7 +100,27 @@ final class HealthKitEngine: @unchecked Sendable {
 
     /// Strict-load, then apply anchor-recovery trigger (a): secure-unarchive failure of
     /// `anchorData` at load clears `anchorData` + `bootstrapComplete` ONLY.
+    /// §12 P2 retry funnel. A wake that found the store locked left `catchUpPending` set with
+    /// the anchor untouched (HK_TEMP_UNAVAILABLE). When iOS reports protected data available
+    /// again while this process is still alive, retry once, without waiting for a foreground
+    /// activation. If the process is gone by then, the next launch or foreground drain covers it.
+    private func installUnlockRetry() {
+        guard unlockRetryObserver == nil else { return }
+        unlockRetryObserver = NotificationCenter.default.addObserver(
+            forName: UIApplication.protectedDataDidBecomeAvailableNotification, object: nil, queue: nil
+        ) { [weak self] _ in
+            guard let self, self.onExecutor({ self.catchUpPending }) else { return }
+            Log.event("hkLocked.retry")
+            Task {
+                if let out = try? await self.runCatchUp(trigger: .retry), out.queued > 0 {
+                    self.onReadingsAvailable?(self.status().pendingCount)
+                }
+            }
+        }
+    }
+
     func loadAtLaunch() {
+        installUnlockRetry()
         onExecutor {
             do {
                 try store.loadStrict()
