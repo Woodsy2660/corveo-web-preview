@@ -148,28 +148,40 @@ struct Segmented<T: Hashable>: View {
     let ariaLabel: String
 
     var body: some View {
-        HStack(spacing: 0) {
-            ForEach(options, id: \.value) { opt in
-                let on = opt.value == selection
-                Button {
-                    withAnimation(Motion.brand) { selection = opt.value }
-                } label: {
-                    Text(opt.label)
-                        .cText(TypeScale.bodySm)
-                        .padding(.horizontal, Spacing.sm)
-                        .padding(.vertical, Spacing.xxxs)
-                        .foregroundStyle(on ? CColor.actionInk : CColor.inkSecondary)
-                        .background(on ? CColor.action : .clear, in: Capsule())
-                }
-                .buttonStyle(.plain)
-                .accessibilityAddTraits(on ? [.isSelected] : [])
-            }
+        // A row while the labels fit; a stack at accessibility type sizes (rulebook §8.3).
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 0) { segments(fullWidth: false) }
+                .padding(2)
+                .background(CColor.card, in: Capsule())
+                .overlay(Capsule().stroke(CColor.hairline, lineWidth: 1))
+            VStack(spacing: 0) { segments(fullWidth: true) }
+                .padding(2)
+                .background(CColor.card, in: RoundedRectangle(cornerRadius: Radius.lg, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: Radius.lg, style: .continuous).stroke(CColor.hairline, lineWidth: 1))
         }
-        .padding(2)
-        .background(CColor.card, in: Capsule())
-        .overlay(Capsule().stroke(CColor.hairline, lineWidth: 1))
         .accessibilityElement(children: .contain)
         .accessibilityLabel(ariaLabel)
+    }
+
+    @ViewBuilder
+    private func segments(fullWidth: Bool) -> some View {
+        ForEach(options, id: \.value) { opt in
+            let on = opt.value == selection
+            Button {
+                withAnimation(Motion.brand) { selection = opt.value }
+            } label: {
+                Text(opt.label)
+                    .cText(TypeScale.bodySm)
+                    .lineLimit(1)
+                    .padding(.horizontal, Spacing.sm)
+                    .padding(.vertical, Spacing.xxxs)
+                    .frame(maxWidth: fullWidth ? .infinity : nil, minHeight: fullWidth ? 44 : 0)
+                    .foregroundStyle(on ? CColor.actionInk : CColor.inkSecondary)
+                    .background(on ? CColor.action : .clear, in: Capsule())
+            }
+            .buttonStyle(.plain)
+            .accessibilityAddTraits(on ? [.isSelected] : [])
+        }
     }
 }
 

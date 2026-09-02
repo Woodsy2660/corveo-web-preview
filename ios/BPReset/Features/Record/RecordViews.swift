@@ -121,31 +121,54 @@ struct RecordView: View {
 
 struct ReadingRow: View {
     let reading: BpReadingRow
+    @Environment(\.dynamicTypeSize) private var typeSize
+
     var body: some View {
-        HStack(alignment: .center) {
-            VStack(alignment: .leading, spacing: 0) {
-                HStack(alignment: .firstTextBaseline, spacing: Spacing.xxs) {
-                    Text("\(Format.mmHg(reading.systolic))/\(Format.mmHg(reading.diastolic))")
-                        .cText(TypeScale.bodyLg, weight: .medium).foregroundStyle(CColor.heading)
-                    Text(AppCopy.common.unitMmHg).cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
+        Group {
+            if typeSize.isAccessibilitySize {
+                // Accessibility sizes stack, so the value never wraps mid-number (rulebook §8.3).
+                VStack(alignment: .leading, spacing: Spacing.xxs) {
+                    valueBlock
+                    chips(alignment: .leading)
                 }
-                Text(Format.dateTime(reading.effectiveTime)).cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
-            }
-            Spacer()
-            VStack(alignment: .trailing, spacing: Spacing.xxxs) {
-                Chip(text: reading.sourceType == .healthkit ? AppCopy.readings.sourceHealth : AppCopy.readings.sourceManual)
-                // Provenance exactly as HealthKit reported it: the writing app's name, never an
-                // inference that it was a cuff (rulebook §4.6).
-                if reading.sourceType == .healthkit, let name = reading.sourceName, !name.isEmpty { Chip(text: name) }
-                // Most readings are left-arm; only flag the exception.
-                if let site = reading.bodySiteDisplay, site != "Left arm" { Chip(text: site) }
+            } else {
+                HStack(alignment: .center) {
+                    valueBlock
+                    Spacer()
+                    chips(alignment: .trailing)
+                }
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, Spacing.sm)
         .padding(.vertical, Spacing.xs)
         .background(CColor.card, in: RoundedRectangle(cornerRadius: Radius.md, style: .continuous))
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityText)
+    }
+
+    private var valueBlock: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .firstTextBaseline, spacing: Spacing.xxs) {
+                Text("\(Format.mmHg(reading.systolic))/\(Format.mmHg(reading.diastolic))")
+                    .cText(TypeScale.bodyLg, weight: .medium).foregroundStyle(CColor.heading)
+                    .lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
+                Text(AppCopy.common.unitMmHg).cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
+            }
+            Text(Format.dateTime(reading.effectiveTime)).cText(TypeScale.bodySm).foregroundStyle(CColor.inkTertiary)
+        }
+    }
+
+    private func chips(alignment: HorizontalAlignment) -> some View {
+        VStack(alignment: alignment, spacing: Spacing.xxxs) {
+            Chip(text: reading.sourceType == .healthkit ? AppCopy.readings.sourceHealth : AppCopy.readings.sourceManual)
+            // Provenance exactly as HealthKit reported it: the writing app's name, never an
+            // inference that it was a cuff (rulebook §4.6).
+            if reading.sourceType == .healthkit, let name = reading.sourceName, !name.isEmpty { Chip(text: name) }
+            // Most readings are left-arm; only flag the exception.
+            if let site = reading.bodySiteDisplay, site != "Left arm" { Chip(text: site) }
+        }
     }
 
     /// Spoken form per the rulebook §8.2: date, systolic, diastolic, provenance.
