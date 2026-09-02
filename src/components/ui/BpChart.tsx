@@ -14,28 +14,37 @@ import { fmtDate } from "@/lib/format";
  * ranges, or annotations that evaluate a value may be added here — that is a
  * contractual line (SOW A.3.3), not a style choice. The chart and its
  * tooltip show daily mean systolic and diastolic exactly as recorded.
+ *
+ * Drawn edge to edge: the plot runs from the screen's left edge to a
+ * gutter on the right that holds the scale, next to the newest point. With
+ * `leadIn` the line enters from the edge, which is only honest when there
+ * are earlier readings off screen; without it the line starts inset.
  */
 export function BpChart({
   rows,
   ariaLabel,
+  width = 340,
   height = 220,
+  leadIn = false,
 }: {
   rows: BpTrendRow[];
   ariaLabel: string;
+  width?: number;
   height?: number;
+  leadIn?: boolean;
 }) {
   const gradientId = useId();
   const svgRef = useRef<SVGSVGElement>(null);
   const [active, setActive] = useState<number | null>(null);
 
-  const width = 340;
-  const pad = { top: 16, right: 12, bottom: 28, left: 34 };
+  const pad = { top: 16, right: 40, bottom: 28, left: leadIn ? 0 : 24 };
 
   if (rows.length === 0) return null;
 
   const innerW = width - pad.left - pad.right;
   const innerH = height - pad.top - pad.bottom;
   const baseline = pad.top + innerH;
+  const plotRight = width - pad.right;
 
   const values = rows.flatMap((r) => [r.mean_systolic, r.mean_diastolic]);
   const rawMin = Math.min(...values);
@@ -115,17 +124,17 @@ export function BpChart({
         {yTicks.map((t) => (
           <g key={t}>
             <line
-              x1={pad.left}
-              x2={width - pad.right}
+              x1={0}
+              x2={plotRight}
               y1={y(t)}
               y2={y(t)}
               stroke="var(--app-hairline)"
               strokeWidth="1"
             />
             <text
-              x={pad.left - 6}
+              x={plotRight + 8}
               y={y(t) + 3}
-              textAnchor="end"
+              textAnchor="start"
               fontSize="10"
               fontFamily="var(--font-mono)"
               fill="var(--app-ink-tertiary)"
@@ -198,7 +207,7 @@ export function BpChart({
           return (
             <text
               key={row.day}
-              x={x(i)}
+              x={n === 0 ? Math.max(x(i), 8) : x(i)}
               y={height - 8}
               textAnchor={n === 0 ? "start" : n === xLabelIdx.length - 1 ? "end" : "middle"}
               fontSize="10"

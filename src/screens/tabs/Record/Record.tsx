@@ -18,6 +18,9 @@ type Range = "1w" | "6w" | "all";
 
 const RANGE_DAYS: Record<Range, number | null> = { "1w": 7, "6w": 42, all: null };
 
+/** Screen width less the right page padding: the chart bleeds to the left edge. */
+const CHART_WIDTH = 393 - 24;
+
 /** Mean of the readings behind the daily rows, weighted by how many each day holds. */
 function periodAverage(rows: BpTrendRow[]): { systolic: number; diastolic: number } | null {
   const n = rows.reduce((sum, r) => sum + r.reading_count, 0);
@@ -94,20 +97,31 @@ export function Record() {
         />
       </div>
 
-      {/* — Chart — side padding kept to the axis gutter so the plot runs wide. */}
-      <div className="rounded-md border border-hairline bg-card px-[var(--spacing-2xs)] py-[var(--spacing-sm)]">
-        {trendLoading ? null : chartEmpty ? (
-          <p className="px-[var(--spacing-2xs)] text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
+      {/* — Chart — no card: it bleeds past the page padding to the left
+          edge, and the scale sits in a gutter on the right by the newest
+          point. The line enters from the edge on 1W and 6W, where earlier
+          readings exist off screen; on All it starts inset. */}
+      {trendLoading ? null : chartEmpty ? (
+        <Card>
+          <p className="text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
             {t.empty}
           </p>
-        ) : (
-          <BpChart rows={rows ?? []} ariaLabel={t.chartAria} height={250} />
-        )}
-      </div>
+        </Card>
+      ) : (
+        <div className="-ml-[var(--spacing-md)]">
+          <BpChart
+            rows={rows ?? []}
+            ariaLabel={t.chartAria}
+            width={CHART_WIDTH}
+            height={250}
+            leadIn={range !== "all"}
+          />
+        </div>
+      )}
 
       {/* — Legend, under the chart, left, quiet — */}
       <div
-        className="flex gap-[var(--spacing-md)] px-[var(--spacing-2xs)] pt-[var(--spacing-xs)] text-ink-tertiary"
+        className="flex gap-[var(--spacing-md)] pt-[var(--spacing-xs)] text-ink-tertiary"
         style={{ fontSize: "var(--text-label)" }}
       >
         <span className="flex items-center gap-[var(--spacing-3xs)]">
