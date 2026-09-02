@@ -86,7 +86,7 @@ export function Screen({
         {title ? (
           <h1
             className="fade-up pb-[var(--spacing-sm)]"
-            style={{ fontSize: "var(--text-heading-3xl)", lineHeight: 1.15 }}
+            style={{ fontSize: "var(--text-heading-2xl)", lineHeight: 1.15 }}
           >
             {title}
           </h1>
