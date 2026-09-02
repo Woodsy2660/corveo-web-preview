@@ -46,7 +46,6 @@ export const JOURNEY = {
     passwordLabel: "Password",
     adultAttestation: "I am 18 years or older.",
     cta: "Create account",
-    note: "Prototype note: sign-in is simulated. Account creation is wired at integration.",
   },
 
   connect: {

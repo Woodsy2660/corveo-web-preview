@@ -54,12 +54,6 @@ export function Signup() {
         </label>
       </div>
 
-      <p
-        className="pt-[var(--spacing-md)] text-ink-tertiary"
-        style={{ fontSize: "var(--text-body-sm)" }}
-      >
-        {c.note}
-      </p>
     </Screen>
   );
 }
