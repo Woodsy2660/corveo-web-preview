@@ -9,21 +9,25 @@ import { JOURNEY } from "@/copy/journey";
 import { HEALTH_SYNC } from "@/copy/health-sync";
 import { SAFETY, VALIDATED_CUFFS } from "@/copy/safety";
 import { getApi, resetApi } from "@/lib/api";
-import { useConsentStatus } from "@/lib/api/hooks";
+import { useConsentStatus, useProgramProgress } from "@/lib/api/hooks";
+import { CORE_PROGRAM_SLUG, findProgram, readCount } from "@/lib/programs";
 import { getHealthPlugin, resetHealthPlugin, type AuthorizationState } from "@/lib/health";
 import { useJourney } from "@/lib/journey/state";
 import { fmtFullDate } from "@/lib/format";
 import { useQueryClient } from "@tanstack/react-query";
 
 /**
- * Settings — Apple Health status, export and deletion (Deliverable 12),
+ * Settings, which is as much the patient's page as the app's: it opens on
+ * who they are in the program (week, how readings arrive, the rhythm they
+ * chose), then Apple Health status, export and deletion (Deliverable 12),
  * consent receipt, the safety surface, and the dev-only demo reset.
  */
 export function Settings() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { data: consent } = useConsentStatus();
-  const { resetJourney } = useJourney();
+  const { resetJourney, connectChoice, cadence } = useJourney();
+  const { data: progress } = useProgramProgress();
   const [health, setHealth] = useState<AuthorizationState | null>(null);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -67,6 +71,17 @@ export function Settings() {
   };
 
   const connected = health?.state === "requested";
+  const program = findProgram(CORE_PROGRAM_SLUG);
+  const profileRows: [string, string][] = [
+    [
+      c.profile.programLabel,
+      program
+        ? `${c.profile.program(progress?.current_week ?? 1, program.chapters.length)} · ${APP.program.progress(readCount(progress, program), program.chapters.length)}`
+        : "",
+    ],
+    [c.profile.readingsLabel, connectChoice ? c.profile.readings[connectChoice] : c.profile.readings.none],
+    [c.profile.rhythmLabel, cadence ? JOURNEY.cadence.options[cadence].title : c.profile.rhythmUnset],
+  ];
 
   return (
     <Screen
@@ -74,6 +89,26 @@ export function Settings() {
       action={<ProfileLink />}
     >
       <div className="flex flex-col gap-[var(--spacing-sm)]">
+        {/* — You — the facts the patient set on the way in, as a quiet list. */}
+        <section aria-label={c.profile.title} className="pb-[var(--spacing-2xs)]">
+          <p className="eyebrow pb-[var(--spacing-2xs)]">{c.profile.title}</p>
+          <dl className="m-0 flex flex-col">
+            {profileRows.map(([label, value]) => (
+              <div
+                key={label}
+                className="flex items-baseline justify-between gap-[var(--spacing-sm)] border-b border-hairline py-[var(--spacing-2xs)]"
+              >
+                <dt className="text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)" }}>
+                  {label}
+                </dt>
+                <dd className="m-0 text-right" style={{ fontSize: "var(--text-body-sm)" }}>
+                  {value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
         <Card label={c.appleHealth.title}>
           <p style={{ fontSize: "var(--text-body-sm)" }}>
             {connected ? c.appleHealth.readsOnly : c.appleHealth.notConnected}

@@ -158,6 +158,20 @@ export const APP = {
 
   settings: {
     title: "Your data, your record.",
+    /** The page opens on the patient: where they are, how readings arrive, the rhythm chosen. */
+    profile: {
+      title: "You",
+      programLabel: "Program",
+      program: (week: number, total: number) => `Week ${week} of ${total}`,
+      readingsLabel: "Readings",
+      readings: {
+        healthkit: "Apple Health",
+        manual: "Entered by hand",
+        none: "No monitor yet",
+      },
+      rhythmLabel: "Rhythm",
+      rhythmUnset: "Not chosen yet",
+    },
     aboutTitle: "About this app",
     cuffsTitle: "Validated monitors",
     appleHealth: {
