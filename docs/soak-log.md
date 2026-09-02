@@ -22,7 +22,7 @@
 
 | # | When | What to do | Expected | Result |
 |---|---|---|---|---|
-| C1 | Tue 2 Sep, at start | Baseline counts. Then writer: delay 30 s, Schedule save, lock the phone at once, wait 60 s, unlock, open BP Reset. | New Apple Health row present without tapping Sync. Pending 0 afterwards. | |
+| C1 | Tue 2 Sep, at start | Baseline counts. Then writer: delay 30 s, Schedule save, lock the phone at once, wait 60 s, unlock, open BP Reset. | New Apple Health row present without tapping Sync. Pending 0 afterwards. | **PASS** |
 | C2 | Tue 2 Sep, evening | With BP Reset in the background (not opened for at least an hour), take an Omron reading, let OMRON connect transfer it, wait two minutes, then open BP Reset. | Row present with the OMRON connect chip; rejected count unchanged. | |
 | C3 | Wed 3 Sep, morning | Locked store. Writer: delay 90 s (its longest), Schedule save, lock the phone immediately and leave it locked for at least 10 minutes in total. Unlock, wait 30 s without opening anything, then open BP Reset. Whether iOS delivered the wake while locked (a deferred pass, protected data unavailable) or held it until unlock, the criterion is the same. | The reading arrives exactly once; pending 0 afterwards; no duplicate. | |
 | C4 | Wed 3 Sep, evening | Reboot. After the reboot, unlock the phone but do not open BP Reset. Take an Omron reading (or open the writer, Schedule save with a 90 s delay, and go back to the home screen), wait two minutes, then open BP Reset. | Row present. The observer survived the reboot and background delivery relaunched the app before it was opened. | |
@@ -54,7 +54,7 @@ Pass when `distinct_uuids = rows` on every line of the first query, and every `d
 
 | Checkpoint | Time | Apple Health rows before → after | Card before → after (pending / held / rejected / malformed) | Arrived without Sync | Notes |
 |---|---|---|---|---|---|
-| C1 | | | | | |
+| C1 | Tue 2 Sep 10:47 | 9 → 10 | pending 0 → 0 / held 0 / rejected 1 → 1 (pre-soak OBS-1) / malformed 0 | Yes | Writer, 30 s delay, phone locked for the save. PASS |
 | C2 | | | | | |
 | C3 | | | | | |
 | C4 | | | | | |
