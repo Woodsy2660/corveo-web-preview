@@ -3,10 +3,10 @@
 | | |
 |---|---|
 | **Test** | T6 in `docs/stage2-test-script.md` (guide v1.3 §14): still capturing on day 3; every deferred pass converges; zero duplicate rows. Evidences Stage 2 criterion (c). |
-| **Started** | Tuesday 2 September 2026, 10:39 AEST on build `0d4a0b4`. **Abandoned after C1** on Nick's direction so the finished build could go on the phone. Restarted Thu 3 Sep 08:03 AEST on `e50977e`, then the phone was rebuilt five more times that morning (type policy, navigation, rename, dismiss, provenance). **Restarted for good at 08:51 AEST Thu 3 Sep 2026 on build `37c09ff`**, the finished build. The checkpoints below run from C1 against that build. |
+| **Started** | Tuesday 2 September 2026, 10:39 AEST on build `0d4a0b4`. **Abandoned after C1** on Nick's direction so the finished build could go on the phone. Restarted Thu 3 Sep 08:03 AEST on `e50977e`, then the phone was rebuilt five more times that morning (type policy, navigation, rename, dismiss, provenance). **Restarted for good at 08:51 AEST Thu 3 Sep 2026 on build `37c09ff`**, the finished build. **Set aside again at 09:11 AEST Thu 3 Sep** on Nick's direction for a fresh-install demo walkthrough (the app was uninstalled, rebuilt from the same code and reinstalled, so onboarding and the Apple Health sheet start over). The soak restarts from C1 once the walkthrough is done and Nick says the phone is frozen; the checkpoint dates below move with it. |
 | **Ends** | 48 hours after the restart: Saturday 5 September 2026, 08:51 AEST, or later |
 | **Handset** | iPhone 17, `iPhone18,3`, iOS 26.6.1 build 23G83 |
-| **Build under test** | `dev.aiplease.bpreset` (display name Corveo) Debug, commit `37c09ff` on `integration/native-app`, installed 3 Sep. **Not reinstalled, rebuilt or force-quit for the duration.** The free-team profile is valid until 10 September. |
+| **Build under test** | `dev.aiplease.bpreset` (display name Corveo) Debug, app code as at commit `37c09ff` on `integration/native-app` (built from `d970874`, docs-only on top), reinstalled 09:11 on 3 Sep. **Not reinstalled, rebuilt or force-quit for the duration.** The free-team profile is valid until 10 September. |
 | **Sources** | `dev.lucab.bpwriter` (synthetic, the only app with Health write permission; delayed saves of 10 to 90 s) and the loan Omron cuff through OMRON connect. |
 | **Backend** | Corveo dev project, v0.2 schema. |
 | **Operator** | Nick |
