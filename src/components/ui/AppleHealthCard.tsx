@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card } from "@/components/ui/Card";
 import { CheckIcon, SyncIcon } from "@/components/ui/icons";
 import { HEALTH_SYNC } from "@/copy/health-sync";
 import { queryKeys } from "@/lib/api/hooks";
-import { getHealthPlugin, type AuthorizationState } from "@/lib/health";
+import { getHealthPlugin, type AuthorizationState, type SyncResult } from "@/lib/health";
 import { subscribeDemoHealth, takeCuffReading, unreadCount } from "@/lib/health/demo";
 import { fmtTime } from "@/lib/format";
 
@@ -18,10 +18,12 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
  * never anything about a value, and never a "denied" state we are not
  * entitled to claim.
  *
- * Sync is a real foreground check, the same one that runs unprompted on
- * every activation. In the web preview, where no cuff exists, it also stands
- * in for the cuff having taken a reading since you last looked — that part,
- * and only that part, is gated to the demo build.
+ * Sync is a real foreground check. One runs unprompted when the record
+ * opens, the way the native app catches up on every activation (docs/03
+ * §5), so the patient arrives to "Updated" rather than "Waiting". The button
+ * runs the same check on demand. In the web preview, where no cuff exists,
+ * the button also stands in for the cuff having taken a reading since you
+ * last looked — that part, and only that part, is gated to the demo build.
  */
 export function AppleHealthCard() {
   const qc = useQueryClient();
@@ -29,11 +31,32 @@ export function AppleHealthCard() {
   const [auth, setAuth] = useState<AuthorizationState | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [arrived, setArrived] = useState(false);
+  const openedCheck = useRef(false);
 
   useEffect(() => {
     void getHealthPlugin().getAuthorizationState().then(setAuth);
     return subscribeDemoHealth(() => {});
   }, []);
+
+  /** The check itself: look, record when we looked, refresh the record if anything came. */
+  const check = async (): Promise<SyncResult> => {
+    const result = await getHealthPlugin().syncNow();
+    setAuth(await getHealthPlugin().getAuthorizationState());
+    if (result.inserted > 0) {
+      await qc.invalidateQueries({ queryKey: queryKeys.readings });
+      await qc.invalidateQueries({ queryKey: queryKeys.trend });
+    }
+    return result;
+  };
+
+  // The unprompted check, once per open, only after authorisation was
+  // requested. Quiet: no spinner, no pretend cuff reading.
+  useEffect(() => {
+    if (auth?.state !== "requested" || openedCheck.current) return;
+    openedCheck.current = true;
+    void check();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth?.state]);
 
   if (auth?.state !== "requested") return null;
 
@@ -47,15 +70,9 @@ export function AppleHealthCard() {
 
     // A held beat. Returning instantly reads as "nothing happened" rather
     // than "it looked and there was nothing". Kept short — the mock API's
-    // own latency and the two refetches below already add most of a second.
-    const [result] = await Promise.all([getHealthPlugin().syncNow(), sleep(420)]);
-    setAuth(await getHealthPlugin().getAuthorizationState());
-
-    if (result.inserted > 0) {
-      await qc.invalidateQueries({ queryKey: queryKeys.readings });
-      await qc.invalidateQueries({ queryKey: queryKeys.trend });
-      setArrived(true);
-    }
+    // own latency and the refetches already add most of a second.
+    const [result] = await Promise.all([check(), sleep(420)]);
+    if (result.inserted > 0) setArrived(true);
 
     setPhase("done");
     window.setTimeout(() => setPhase("idle"), 2200);
@@ -71,7 +88,7 @@ export function AppleHealthCard() {
   const label = phase === "busy" ? c.sync.busy : phase === "done" ? c.sync.done : c.sync.idle;
 
   return (
-    <Card className="mb-[var(--spacing-sm)]">
+    <Card className="mt-[var(--spacing-lg)]">
       <div className="flex items-baseline justify-between gap-[var(--spacing-sm)]">
         <span style={{ fontSize: "var(--text-body-base)", fontWeight: 500 }}>{c.title}</span>
         <span
