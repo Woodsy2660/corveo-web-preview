@@ -245,17 +245,18 @@ export function BpChart({
         })}
       </svg>
 
-      {/* Readout for the day under the finger: one fixed line at the top
-          centre rather than a box chasing the point, so the chart stays
-          readable while the finger moves. Mean of that day, rounded. */}
+      {/* Readout for the day under the finger: one fixed line just inside
+          the top of the plot rather than a box chasing the point, so the
+          chart stays readable while the finger moves. Mean of that day,
+          rounded. */}
       {activeRow ? (
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 flex justify-center gap-[var(--spacing-2xs)] text-ink-secondary"
+          className="pointer-events-none absolute inset-x-0 flex justify-center gap-[var(--spacing-2xs)] text-ink-secondary"
           style={{
+            top: `${((pad.top + 8) / height) * 100}%`,
             fontSize: "var(--text-body-sm)",
             lineHeight: "var(--leading-label)",
             whiteSpace: "nowrap",
-            transform: "translateY(-2px)",
           }}
         >
           <span className="text-ink-tertiary">{fmtDate(`${activeRow.day}T00:00:00`)}</span>
