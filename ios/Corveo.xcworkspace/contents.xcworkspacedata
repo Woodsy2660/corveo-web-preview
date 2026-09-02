@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace version = "1.0">
+   <FileRef location = "group:BPReset.xcodeproj"></FileRef>
+   <FileRef location = "group:../native/spike/BPSpikeC.xcodeproj"></FileRef>
+   <FileRef location = "group:../native/spike/BPSpikeQ.xcodeproj"></FileRef>
+   <FileRef location = "group:../native/spike/BPWriter.xcodeproj"></FileRef>
+</Workspace>

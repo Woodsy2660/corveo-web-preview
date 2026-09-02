@@ -136,6 +136,13 @@ Bundle ID `dev.aiplease.bpreset` (throwaway, sandbox team). Deployment target iO
   caught as a compile error the first time.
 - **T14 variant.** `Entitlements/BPReset-NoBackgroundDelivery.entitlements` exists for the
   arming-failure test after the soak: build with `CODE_SIGN_ENTITLEMENTS` pointing at it.
+- **App icon and workspace (2 Sep).** A placeholder icon derived from Corveo's own mark, the
+  wave-and-loop glyph from the logotype, in black on the app's cream ground; 1024 px, no alpha
+  channel, source SVG kept beside it in the asset catalog. Corveo's designed icon replaces it
+  when supplied. `ios/Corveo.xcworkspace` opens the product and the three harness projects in
+  one Xcode window; the harness apps stay separate binaries by design (see docs/06 N-12 and the
+  attribution note in the Stage 2 script): the writer is the only binary allowed the Health
+  write permission, and its distinct bundle identity is what makes source attribution testable.
 - **Still open for Stage 3:** the strict-concurrency pass; T14 on the product build; the
   48-hour soak (running, `docs/soak-log.md`); Corveo's review of the reminder copy; privacy
   policy and support URLs; App Store assets.
