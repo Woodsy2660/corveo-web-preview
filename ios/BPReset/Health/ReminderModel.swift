@@ -69,6 +69,23 @@ final class ReminderModel {
         }
     }
 
+    #if DEBUG
+    /// Development only: the same fixed content, ten seconds from now, so the banner can be
+    /// seen without waiting for a slot. Background the app or lock the phone to see it.
+    func sendTestReminder() async {
+        let content = UNMutableNotificationContent()
+        content.title = ReminderCopy.title
+        content.body = ReminderCopy.body
+        content.sound = .default
+        content.interruptionLevel = .active
+        let request = UNNotificationRequest(
+            identifier: Self.idPrefix + "test",
+            content: content,
+            trigger: UNTimeIntervalNotificationTrigger(timeInterval: 10, repeats: false))
+        try? await center.add(request)
+    }
+    #endif
+
     private func clear() {
         center.removeAllPendingNotificationRequests()
     }

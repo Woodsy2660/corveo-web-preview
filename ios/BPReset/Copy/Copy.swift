@@ -392,6 +392,7 @@ enum ReminderCopy {
         static let noRhythm = "Choose a rhythm to set reminder times."
         static let deniedNote = "Notifications for BP Reset are off in iOS Settings. Turn them on there to receive reminders."
         static let openSettings = "Open iOS Settings"
+        static let testCta = "Send a test reminder (10 seconds)"
         static func short(_ c: CadenceChoice) -> String {
             switch c {
             case .twiceDaily: return "Twice daily"

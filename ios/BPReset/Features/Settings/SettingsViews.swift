@@ -255,6 +255,10 @@ struct SettingsView: View {
             }
             Text(AppCopy.settings.demo.note).cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
                 .padding(.top, Spacing.xxs)
+            CButton(title: ReminderCopy.settings.testCta, variant: .secondary) {
+                Task { await reminders.sendTestReminder() }
+            }
+            .padding(.top, Spacing.xs)
             // Engine diagnostics: states, counts and reason codes only (guide §7.3).
             let st = health.status
             let reasons = st.rejectionReasons.sorted { $0.key < $1.key }
