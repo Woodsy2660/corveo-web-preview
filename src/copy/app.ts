@@ -72,6 +72,9 @@ export const APP = {
       "No readings yet. Your record begins with the first reading you add or share.",
     sparse: "Your picture is building. Only a few readings so far.",
     addCta: "Add a reading",
+    /** History shows the latest few; the rest unfold on request. */
+    showAll: "See all readings",
+    showFewer: "Show fewer",
     sourceHealth: "Apple Health",
     sourceManual: "Manual",
   },

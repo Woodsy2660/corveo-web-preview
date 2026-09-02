@@ -41,6 +41,7 @@ function periodAverage(rows: BpTrendRow[]): { systolic: number; diastolic: numbe
 export function Record() {
   const navigate = useNavigate();
   const [range, setRange] = useState<Range>("6w");
+  const [showAll, setShowAll] = useState(false);
   const days = RANGE_DAYS[range];
   const since = days ? dayNDaysAgo(days) : undefined;
 
@@ -78,8 +79,9 @@ export function Record() {
         </div>
       ) : null}
 
-      {/* — Period, above the chart, quiet: the selected pill is the only ink. — */}
-      <div className="pb-[var(--spacing-xs)]">
+      {/* — Period, above the chart, quiet: the selected pill is the only ink.
+          Pulled left by its own padding so "1W" lines up with the number. — */}
+      <div className="-ml-[var(--spacing-sm)] pb-[var(--spacing-xs)]">
         <Segmented
           ariaLabel={t.rangeAria}
           value={range}
@@ -188,7 +190,7 @@ export function Record() {
             </p>
           ) : null}
           <ul className="flex flex-col gap-[var(--spacing-2xs)]">
-            {readings.map((reading) => (
+            {(showAll ? readings : readings.slice(0, 3)).map((reading) => (
               <li
                 key={reading.id}
                 className="flex items-center justify-between rounded-md bg-card px-[var(--spacing-sm)] py-[var(--spacing-xs)]"
@@ -217,6 +219,16 @@ export function Record() {
               </li>
             ))}
           </ul>
+          {readings.length > 3 ? (
+            <Button
+              variant="ghost"
+              className="mt-[var(--spacing-2xs)]"
+              onClick={() => setShowAll((v) => !v)}
+              aria-expanded={showAll}
+            >
+              {showAll ? r.showFewer : r.showAll}
+            </Button>
+          ) : null}
         </>
       )}
     </Screen>
