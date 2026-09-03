@@ -261,6 +261,10 @@ struct YourDataView: View {
     @Environment(ReminderModel.self) private var reminders
 
     @State private var confirmingDelete = false
+    #if DEBUG
+    @State private var seeding = false
+    @State private var seedResult: String?
+    #endif
     @State private var exporting = false
     @State private var exportItems: [URL] = []
     @State private var exportDir: URL? = nil
@@ -351,6 +355,20 @@ struct YourDataView: View {
                 Task { await reminders.sendTestReminder() }
             }
             .padding(.top, Spacing.xs)
+            CButton(title: seeding ? AppCopy.settings.demo.seedBusy : AppCopy.settings.demo.seedCta,
+                    variant: .secondary, disabled: seeding) {
+                Task {
+                    seeding = true
+                    defer { seeding = false }
+                    if let r = await model.seedDemoReadings() {
+                        seedResult = AppCopy.settings.demo.seedDone(inserted: r.inserted, duplicates: r.duplicates, rejected: r.rejected)
+                    } else {
+                        seedResult = AppCopy.settings.demo.seedFailed
+                    }
+                }
+            }
+            .padding(.top, Spacing.xs)
+            Text(seedResult ?? AppCopy.settings.demo.seedNote).cText(TypeScale.label).foregroundStyle(CColor.inkTertiary)
             // Engine diagnostics: states, counts and reason codes only (guide §7.3).
             let st = health.status
             let reasons = st.rejectionReasons.sorted { $0.key < $1.key }

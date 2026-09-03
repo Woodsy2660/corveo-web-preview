@@ -231,6 +231,13 @@ enum AppCopy {
             static let title = "Development"
             static let resetCta = "Reset synthetic data"
             static let note = "Development build only. Restores the synthetic dataset."
+            static let seedCta = "Seed six weeks of demo readings"
+            static let seedBusy = "Seeding…"
+            static let seedNote = "Development build only. Synthetic manual readings over the last six weeks, tagged demo- so they can be removed later. Running it again adds nothing."
+            static let seedFailed = "The demo readings could not be sent. Check sign-in and consent, then try again."
+            static func seedDone(inserted: Int, duplicates: Int, rejected: Int) -> String {
+                "Demo readings: \(inserted) added, \(duplicates) already there, \(rejected) not accepted."
+            }
         }
     }
 }

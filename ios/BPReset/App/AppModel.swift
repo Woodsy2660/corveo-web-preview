@@ -67,6 +67,22 @@ final class AppModel {
         return res
     }
 
+    #if DEBUG
+    /// Development builds: a six-week synthetic record through the ordinary ingest path,
+    /// batch by batch, then the record reloads. Nil when a batch could not be sent.
+    func seedDemoReadings() async -> (inserted: Int, duplicates: Int, rejected: Int)? {
+        var inserted = 0, duplicates = 0, rejected = 0
+        for payload in DemoSeed.payloads(DemoSeed.observations()) {
+            guard let res = try? await api.ingestObservations(payload) else { return nil }
+            inserted += res.inserted
+            duplicates += res.duplicates
+            rejected += res.rejected.count
+        }
+        await invalidateReadings()
+        return (inserted, duplicates, rejected)
+    }
+    #endif
+
     // MARK: Consent
 
     func loadConsent() async {
