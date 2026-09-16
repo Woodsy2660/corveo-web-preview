@@ -41,7 +41,7 @@ export function InFocusArticle() {
   }
 
   return (
-    <Screen overline={c.overline} title={article.title} withTabBar>
+    <Screen overline={c.overline} title={article.title} className="step-enter" withTabBar>
       {article.deck ? (
         <p
           className="pb-[var(--spacing-sm)] text-ink-secondary"

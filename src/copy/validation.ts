@@ -10,3 +10,5 @@
 export const VALIDATION_PLEASE_CHECK = "Please check this value.";
 
 export const VALIDATION_SYSTOLIC_GREATER = "Systolic should be higher than diastolic.";
+
+export const VALIDATION_AUTH_FAILED = "Please check your email and password.";

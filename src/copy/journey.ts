@@ -19,19 +19,22 @@ export const JOURNEY = {
     eyebrow: "Six-week program",
     title: "Understand your blood pressure.",
     intro:
-      "A clearer way to understand your blood pressure. Track your readings and learn week by week, alongside the care of your own doctor.",
-    cards: [
+      "Track your readings and learn week by week, alongside the care of your own doctor.",
+    highlights: [
       {
-        title: "Why home readings matter",
-        body: "Readings taken quietly at home, over weeks, build a fuller picture than any single measurement can. That picture is what you and your doctor can talk about.",
+        icon: "home",
+        title: "Home readings",
+        sub: "Build a fuller picture over weeks, not a single visit.",
       },
       {
-        title: "How to measure well",
-        body: "Seated, rested, arm supported at heart level. Same times each day. The program walks you through this in week one.",
+        icon: "technique",
+        title: "Measuring well",
+        sub: "Simple technique the program walks you through.",
       },
       {
-        title: "What this program is",
-        body: "Six weeks of short, evidence-based education about blood pressure, minus the wellness hype, with your own readings organised alongside it. Corveo displays your readings and their history. It does not diagnose or replace your doctor.",
+        icon: "education",
+        title: "Six weeks of education",
+        sub: "Evidence-based, no wellness hype, your readings alongside.",
       },
     ],
     cta: "Begin",
@@ -46,6 +49,12 @@ export const JOURNEY = {
     passwordLabel: "Password",
     adultAttestation: "I am 18 years or older.",
     cta: "Create account",
+    signInTitle: "Sign in to your record.",
+    signInIntro:
+      "Welcome back. Sign in to pick up where you left off.",
+    signInCta: "Sign in",
+    signInToggle: "Already have an account? Sign in",
+    createToggle: "Create account instead",
   },
 
   connect: {

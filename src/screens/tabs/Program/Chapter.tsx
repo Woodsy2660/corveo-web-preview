@@ -60,6 +60,7 @@ export function Chapter() {
     <Screen
       overline={`${program.unitLabel} ${chapter.week}`}
       title={chapter.title}
+      className="step-enter"
       withTabBar
       footer={
         done ? (

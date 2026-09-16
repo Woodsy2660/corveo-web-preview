@@ -1,3 +1,4 @@
+import React from "react";
 import { useNavigate } from "react-router";
 import { Screen } from "@/components/ui/Screen";
 import { Button } from "@/components/ui/Button";
@@ -29,6 +30,7 @@ export function Cadence() {
     <Screen
       overline={c.eyebrow}
       title={c.title}
+      className="step-enter"
       footer={
         <Button disabled={!cadence || updateProgress.isPending} onClick={finish}>
           {c.cta}
@@ -36,10 +38,15 @@ export function Cadence() {
       }
     >
       <StepDots total={5} current={5} />
-      <p className="pb-[var(--spacing-md)] text-ink-secondary">{c.intro}</p>
+      <p
+        className="pb-[var(--spacing-lg)] text-ink-secondary"
+        style={{ fontSize: "var(--text-body-lg)", lineHeight: "var(--leading-body-relaxed)" }}
+      >
+        {c.intro}
+      </p>
 
-      <div className="flex flex-col gap-[var(--spacing-xs)]" role="radiogroup" aria-label={c.title}>
-        {ORDER.map((key) => {
+      <div className="flex flex-col" role="radiogroup" aria-label={c.title}>
+        {ORDER.map((key, i) => {
           const opt = c.options[key];
           const selected = cadence === key;
           return (
@@ -48,16 +55,44 @@ export function Cadence() {
               role="radio"
               aria-checked={selected}
               onClick={() => setCadence(key)}
-              className={`rounded-lg bg-card p-[var(--spacing-sm)] text-left ${
-                selected ? "ring-2 ring-heading" : "ring-1 ring-transparent"
+              className={`card-enter flex items-start gap-[var(--spacing-sm)] border-b border-hairline py-[var(--spacing-sm)] text-left ${
+                i === 0 ? "border-t" : ""
               }`}
+              style={{ "--stagger-index": i } as React.CSSProperties}
             >
-              <span className="block pb-[var(--spacing-3xs)]" style={{ fontSize: "var(--text-body-base)", fontWeight: 500 }}>
-                {opt.title}
+              {/* Radio dot */}
+              <span
+                className="mt-[3px] flex size-[20px] flex-none items-center justify-center rounded-round border-2"
+                style={{
+                  borderColor: selected ? "var(--app-heading)" : "var(--app-hairline)",
+                  transitionProperty: "border-color",
+                  transitionDuration: "var(--duration-fast)",
+                }}
+              >
+                {selected ? (
+                  <span
+                    className="block size-[10px] rounded-round bg-heading"
+                  />
+                ) : null}
               </span>
-              <span className="block text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
-                {opt.body}
-              </span>
+
+              <div className="min-w-0">
+                <span
+                  className={selected ? "text-heading" : ""}
+                  style={{ fontSize: "var(--text-body-base)", fontWeight: 500 }}
+                >
+                  {opt.title}
+                </span>
+                {/* Body text reveals only on selection — progressive disclosure */}
+                {selected ? (
+                  <p
+                    className="expand-enter pt-[var(--spacing-3xs)] text-ink-secondary"
+                    style={{ fontSize: "var(--text-body-sm)", lineHeight: "var(--leading-body)" }}
+                  >
+                    {opt.body}
+                  </p>
+                ) : null}
+              </div>
             </button>
           );
         })}

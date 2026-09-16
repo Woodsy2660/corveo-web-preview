@@ -1,17 +1,20 @@
 import { useState } from "react";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useNavigate } from "react-router";
 import { Screen, ProfileLink } from "@/components/ui/Screen";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { CheckIcon, PlusIcon, SyncIcon } from "@/components/ui/icons";
+import { ReadingRowSkeleton } from "@/components/ui/Skeleton";
+import { useDelayedLoading } from "@/lib/useDelayedLoading";
 import { Segmented } from "@/components/ui/Segmented";
-import { BpChart } from "@/components/ui/BpChart";
+import { BpChart, type TimeFilter } from "@/components/ui/BpChart";
 import { APP } from "@/copy/app";
 import { HEALTH_SYNC } from "@/copy/health-sync";
 import { useReadings, useTrend } from "@/lib/api/hooks";
 import { useAppleHealthSync } from "@/lib/health/useAppleHealthSync";
 import { dayNDaysAgo, fmtDateTime } from "@/lib/format";
-import type { BpTrendRow } from "@/lib/api/types";
+
 
 type Range = "1w" | "6w" | "all";
 
@@ -21,16 +24,7 @@ const LEAD_DAYS: Record<Range, number> = { "1w": 0, "6w": 0, all: 0 };
 
 /** Chart dimensions — fits within content margins, not edge-to-edge. */
 const CHART_WIDTH = 358;
-const CHART_HEIGHT = 220;
-
-/** Mean of the readings behind the daily rows, weighted by how many each day holds. */
-function periodAverage(rows: BpTrendRow[]): { systolic: number; diastolic: number } | null {
-  const n = rows.reduce((sum, r) => sum + r.reading_count, 0);
-  if (n === 0) return null;
-  const sys = rows.reduce((sum, r) => sum + r.mean_systolic * r.reading_count, 0) / n;
-  const dia = rows.reduce((sum, r) => sum + r.mean_diastolic * r.reading_count, 0) / n;
-  return { systolic: Math.round(sys), diastolic: Math.round(dia) };
-}
+const CHART_HEIGHT = 260;
 
 /**
  * My Heart Record (Deliverables 4 and 6) — the trend and the history on one
@@ -46,25 +40,40 @@ function periodAverage(rows: BpTrendRow[]): { systolic: number; diastolic: numbe
 export function Record() {
   const navigate = useNavigate();
   const [range, setRange] = useState<Range>("1w");
+  const [timeFilter, setTimeFilter] = useState<TimeFilter>("all");
   const [showAll, setShowAll] = useState(false);
+  // AutoAnimate: smooth insert/reorder when readings arrive or the
+  // list expands. 2.2 kB, MIT, no network (UI animation research.md §3).
+  const [listParent] = useAutoAnimate({ duration: 200 });
   const days = RANGE_DAYS[range];
   const since = days ? dayNDaysAgo(days) : undefined;
   const fetchSince = days ? dayNDaysAgo(days + LEAD_DAYS[range]) : undefined;
 
-  const { data: fetched, isLoading: trendLoading } = useTrend(fetchSince);
-  // Daily rows arrive oldest first; the lead is whatever falls before the period.
-  const rows = fetched ?? [];
-  const periodRows = since ? rows.filter((row) => row.day >= since) : rows;
-  const leadCount = rows.length - periodRows.length;
-  const { data: readings, isLoading: readingsLoading } = useReadings(30);
+  // Trend data is still fetched for the legend/period context but the
+  // chart and average now derive from raw readings directly.
+  useTrend(fetchSince);
+  // Fetch enough readings to cover the chart period + the history list
+  const { data: readings, isLoading: readingsLoading } = useReadings(200);
+  const showReadingSkeleton = useDelayedLoading(readingsLoading);
   const health = useAppleHealthSync();
+
+  // Filter readings to the chart's date range
+  const chartReadings = (readings ?? []).filter((r) => {
+    if (!since) return true; // "All" range
+    return r.effective_time >= `${since}T00:00:00`;
+  });
 
   const c = APP.record;
   const r = APP.readings;
   const t = APP.trend;
 
-  const average = periodAverage(periodRows);
-  const chartEmpty = periodRows.length === 0;
+  // Average from the filtered raw readings (matches the chart's dashed lines)
+  const average = chartReadings.length > 0
+    ? {
+        systolic: Math.round(chartReadings.reduce((s, r) => s + r.systolic, 0) / chartReadings.length),
+        diastolic: Math.round(chartReadings.reduce((s, r) => s + r.diastolic, 0) / chartReadings.length),
+      }
+    : null;
 
   return (
     <Screen title={c.title} withTabBar action={<ProfileLink />}>
@@ -92,8 +101,8 @@ export function Record() {
         </p>
       </div>
 
-      {/* — Period, above the chart: outlined pills, flush with the number. — */}
-      <div className="pb-[var(--spacing-xs)]">
+      {/* — Period + Day/Night filter on the same line — */}
+      <div className="flex items-center justify-between gap-[var(--spacing-xs)] pb-[var(--spacing-xs)]">
         <Segmented
           ariaLabel={t.rangeAria}
           value={range}
@@ -104,23 +113,56 @@ export function Record() {
             { value: "all", label: t.ranges.all },
           ]}
         />
+        <select
+          value={timeFilter}
+          onChange={(e) => setTimeFilter(e.target.value as TimeFilter)}
+          aria-label="Filter readings by time of day"
+          className="rounded-round border border-hairline bg-transparent px-[var(--spacing-xs)] py-[var(--spacing-3xs)] text-ink-secondary"
+          style={{
+            fontSize: "var(--text-body-sm)",
+            minHeight: 36,
+            fontFamily: "var(--font-body)",
+            fontWeight: 500,
+            letterSpacing: "-0.01em",
+            WebkitAppearance: "none",
+            appearance: "none",
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23666' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "right 10px center",
+            paddingRight: "var(--spacing-md)",
+          }}
+        >
+          <option value="all">All</option>
+          <option value="day">Day</option>
+          <option value="night">Night</option>
+        </select>
       </div>
 
-      {/* — Chart — scale in a gutter on the right by the newest point. The days
-          before the period sit faded at the left edge, so the unfaded plot
-          is exactly the period chosen; on All nothing comes before. */}
-      {trendLoading ? (
-        <div style={{ height: CHART_HEIGHT }} aria-hidden />
-      ) : chartEmpty ? (
+      {/* — Chart — connected lines through every raw reading — */}
+      {readingsLoading ? (
+        <div
+          className="flex items-center justify-center rounded-md"
+          style={{ height: CHART_HEIGHT, background: "var(--app-card)" }}
+        >
+          <div className="flex flex-col items-center gap-[var(--spacing-2xs)]">
+            <span className="skeleton" style={{ width: 200, height: 6, borderRadius: "var(--radius-round)" }} />
+            <span className="skeleton" style={{ width: 140, height: 6, borderRadius: "var(--radius-round)" }} />
+          </div>
+        </div>
+      ) : chartReadings.length === 0 ? (
         <Card>
           <p className="text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
-            {t.empty}
+            {timeFilter === "day"
+              ? "No daytime readings in this period. Take a reading between 6 am and 10 pm to see your daytime trend."
+              : timeFilter === "night"
+                ? "No night-time readings in this period. Take a reading between 10 pm and 6 am to see your night-time trend."
+                : t.empty}
           </p>
         </Card>
       ) : (
         <BpChart
-          rows={rows}
-          leadCount={leadCount}
+          readings={chartReadings}
+          timeFilter={timeFilter}
           ariaLabel={t.chartAria}
           width={CHART_WIDTH}
           height={CHART_HEIGHT}
@@ -175,7 +217,7 @@ export function Record() {
               onClick={health.sync}
               disabled={health.phase === "busy"}
               aria-label={HEALTH_SYNC.card.sync.aria}
-              className="inline-flex flex-none items-center gap-[var(--spacing-3xs)] rounded-round border border-hairline px-[var(--spacing-xs)] py-[var(--spacing-3xs)] active:opacity-70 disabled:opacity-70"
+              className="inline-flex flex-none items-center gap-[var(--spacing-3xs)] rounded-round border border-hairline px-[var(--spacing-xs)] py-[var(--spacing-2xs)] min-h-[48px] active:opacity-70 disabled:opacity-70"
               style={{
                 fontSize: "var(--text-body-sm)",
                 lineHeight: "var(--leading-label)",
@@ -198,7 +240,13 @@ export function Record() {
         ) : null}
       </div>
 
-      {readingsLoading ? null : !readings || readings.length === 0 ? (
+      {showReadingSkeleton ? (
+        <div className="flex flex-col">
+          <ReadingRowSkeleton />
+          <ReadingRowSkeleton />
+          <ReadingRowSkeleton />
+        </div>
+      ) : readingsLoading ? null : !readings || readings.length === 0 ? (
         <Card>
           <p className="text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
             {r.empty}
@@ -213,11 +261,11 @@ export function Record() {
           ) : null}
           {/* Quiet rows on the page ground, a hairline between: the record is
               a list, not a stack of cards. */}
-          <ul className="flex flex-col">
+          <ul ref={listParent} className="flex flex-col">
             {(showAll ? readings : readings.slice(0, 3)).map((reading) => (
               <li
                 key={reading.id}
-                className="flex items-baseline justify-between gap-[var(--spacing-sm)] border-b border-hairline py-[var(--spacing-xs)]"
+                className="row-enter flex items-baseline justify-between gap-[var(--spacing-sm)] border-b border-hairline py-[var(--spacing-xs)]"
               >
                 <div className="flex items-baseline gap-[var(--spacing-2xs)]">
                   <span style={{ fontSize: "var(--text-body-base)", fontWeight: 500 }}>

@@ -31,13 +31,14 @@ import {
  * A Pulse card: a photograph with the title over it. One even scrim, no
  * gradient, keeps the white serif legible on any picture.
  */
-function PulseCard({ item }: { item: PulseItem }) {
+function PulseCard({ item, index }: { item: PulseItem; index: number }) {
   const c = APP.education;
   return (
     <Link
       to={`/app/education/pulse/${item.slug}`}
       aria-label={c.openPulseAria(item.title)}
-      className="relative flex h-[152px] w-[112px] flex-none flex-col justify-end overflow-hidden rounded-md p-[var(--spacing-xs)]"
+      className="card-enter relative flex h-[152px] w-[112px] flex-none flex-col justify-end overflow-hidden rounded-md p-[var(--spacing-xs)]"
+      style={{ "--stagger-index": Math.min(index, 4) } as React.CSSProperties}
     >
       <img
         src={PULSE_ART[item.slug]}
@@ -45,7 +46,7 @@ function PulseCard({ item }: { item: PulseItem }) {
         aria-hidden
         className="absolute inset-0 h-full w-full object-cover"
       />
-      <span aria-hidden className="absolute inset-0" style={{ background: "rgba(0, 0, 0, 0.4)" }} />
+      <span aria-hidden className="absolute inset-0" style={{ background: "rgba(0, 0, 0, 0.55)" }} />
       <span
         className="relative"
         style={{
@@ -69,9 +70,9 @@ function PulseCard({ item }: { item: PulseItem }) {
  * a Corveo asset that has not been supplied; a placeholder photograph
  * stands in.
  */
-function InFocusRow({ article }: { article: InFocusArticle }) {
+function InFocusRow({ article, index }: { article: InFocusArticle; index: number }) {
   return (
-    <li className="border-b border-hairline last:border-b-0">
+    <li className="card-enter border-b border-hairline last:border-b-0" style={{ "--stagger-index": Math.min(index, 4) } as React.CSSProperties}>
       <Link
         to={`/app/education/in-focus/${article.slug}`}
         className="flex h-[112px] gap-[var(--spacing-xs)] py-[var(--spacing-xs)]"
@@ -131,8 +132,8 @@ export function Education() {
         </div>
         {/* Full-bleed rail: escapes the screen padding so cards run to the edge. */}
         <div className="no-scrollbar -mx-[var(--spacing-md)] flex gap-[var(--spacing-2xs)] overflow-x-auto px-[var(--spacing-md)] pb-[var(--spacing-md)]">
-          {PULSE_ITEMS.map((item) => (
-            <PulseCard key={item.slug} item={item} />
+          {PULSE_ITEMS.map((item, i) => (
+            <PulseCard key={item.slug} item={item} index={i} />
           ))}
         </div>
       </section>
@@ -143,8 +144,8 @@ export function Education() {
           <span className="eyebrow">{c.inFocusSub}</span>
         </div>
         <ul className="flex list-none flex-col p-0">
-          {IN_FOCUS_ARTICLES.map((article) => (
-            <InFocusRow key={article.slug} article={article} />
+          {IN_FOCUS_ARTICLES.map((article, i) => (
+            <InFocusRow key={article.slug} article={article} index={i} />
           ))}
         </ul>
       </section>

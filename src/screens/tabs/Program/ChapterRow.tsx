@@ -16,8 +16,8 @@ export function ChapterList({
 }) {
   return (
     <ul className="flex list-none flex-col p-0">
-      {program.chapters.map((chapter) => (
-        <li key={chapter.week} className="border-b border-hairline last:border-b-0">
+      {program.chapters.map((chapter, i) => (
+        <li key={chapter.week} className="card-enter border-b border-hairline last:border-b-0" style={{ "--stagger-index": Math.min(i, 4) } as React.CSSProperties}>
           <ChapterRow
             program={program}
             chapter={chapter}

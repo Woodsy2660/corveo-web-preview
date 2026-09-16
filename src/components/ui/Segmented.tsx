@@ -27,7 +27,7 @@ export function Segmented<T extends string>({
           role="radio"
           aria-checked={value === opt.value}
           onClick={() => onChange(opt.value)}
-          className={`rounded-round px-[var(--spacing-sm)] py-[var(--spacing-3xs)] transition-colors ${
+          className={`rounded-round px-[var(--spacing-xs)] py-[var(--spacing-3xs)] min-h-[36px] transition-colors ${
             value === opt.value ? "bg-action text-action-ink" : "text-ink-secondary"
           }`}
           style={{ fontSize: "var(--text-body-sm)" }}

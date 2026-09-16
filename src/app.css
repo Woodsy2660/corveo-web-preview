@@ -96,6 +96,39 @@
     font: inherit;
     color: inherit;
   }
+
+  /*
+   * Micro-interactions (docs/UI animation research.md §2).
+   * Button press: subtle scale on :active, fast enough to feel
+   * responsive, gentle enough not to read as playful.
+   */
+  button:active:not(:disabled) {
+    transform: scale(0.97);
+    transition: transform var(--duration-micro) var(--ease-brand);
+  }
+
+  /*
+   * Form focus: border colour transition so the focus ring doesn't
+   * snap-on abruptly. The colour itself comes from the component
+   * (focus:border-heading); this just makes the change feel considered.
+   */
+  input,
+  select,
+  textarea {
+    transition: border-color var(--duration-micro) var(--ease-brand);
+  }
+
+  /*
+   * Checkbox and toggle state transitions (docs/UI animation research.md §2).
+   * The accent colour change snaps without this; 150ms makes it feel
+   * deliberate rather than broken.
+   */
+  input[type="checkbox"],
+  input[type="radio"] {
+    transition: background-color var(--duration-micro) var(--ease-brand),
+                border-color var(--duration-micro) var(--ease-brand),
+                box-shadow var(--duration-micro) var(--ease-brand);
+  }
 }
 
 /*
@@ -229,10 +262,16 @@
  * a short scale and fade anchored top right. Entrance only; the route
  * unmounts on close.
  */
+/*
+ * Settings emergence — pure translate + fade, no scale.
+ * The do-not list (UI animation research.md §4) says "no zoom /
+ * scale-from-zero"; 0.96 was borderline so replaced with a position-
+ * only entrance that reads the same way without any scale.
+ */
 @keyframes emerge-top-right {
   from {
     opacity: 0;
-    transform: translate(12px, -12px) scale(0.96);
+    transform: translate(12px, -12px);
   }
   to {
     opacity: 1;
@@ -245,10 +284,133 @@
   animation: emerge-top-right var(--duration-base) var(--ease-brand) both;
 }
 
+/*
+ * Journey step transition: directional slide + crossfade.
+ * Content slides in from the right on forward navigation, aiding
+ * orientation in the wizard (docs/UI animation research.md §2).
+ */
+@keyframes step-enter {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.step-enter {
+  animation: step-enter var(--duration-move) var(--ease-motion) both;
+}
+
+/*
+ * View Transitions API — progressive enhancement for route changes.
+ * Safari 18+ (iOS 18+) supports same-document view transitions. When
+ * available, the browser handles the crossfade; when not, the step-enter
+ * CSS animation above provides the fallback (docs/UI animation research.md §3).
+ *
+ * The default crossfade is 250ms opacity — restrained and appropriate.
+ * Under reduced motion the browser respects the user preference natively.
+ */
+@supports (view-transition-name: none) {
+  ::view-transition-old(root) {
+    animation-duration: var(--duration-base);
+    animation-timing-function: var(--ease-motion);
+  }
+  ::view-transition-new(root) {
+    animation-duration: var(--duration-base);
+    animation-timing-function: var(--ease-motion);
+  }
+}
+
+/*
+ * Staggered card entrance for lists — education cards, program rows.
+ * Each card fades up with a small stagger set via --stagger-index.
+ * Capped at 5 items to protect INP (docs/UI animation research.md §2).
+ */
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-enter {
+  animation: card-enter var(--duration-move) var(--ease-motion) both;
+  animation-delay: calc(var(--stagger-index, 0) * 50ms);
+}
+
+/*
+ * Skeleton pulse — a gentle shimmer for loading placeholders.
+ * Single cycle, subtle enough not to trigger vestibular response
+ * (WCAG 2.2 SC 2.2.2). Uses opacity only, never layout properties.
+ */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.7; }
+}
+
+.skeleton {
+  background: var(--app-hairline);
+  border-radius: var(--radius-sm);
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+/*
+ * Expandable open/close — height is not animated (layout property,
+ * causes jank in WKWebView). Instead the content fades in with a
+ * short slide, matching the restrained aesthetic.
+ */
+@keyframes expand-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.expand-enter {
+  animation: expand-enter var(--duration-fast) var(--ease-motion) both;
+}
+
+/*
+ * Reading row entrance — a subtle fade when data lands, so the list
+ * doesn't pop into existence (docs/UI animation research.md §2).
+ */
+@keyframes row-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.row-enter {
+  animation: row-enter var(--duration-base) var(--ease-motion) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .fade-up,
   .spin,
-  .emerge-top-right {
+  .emerge-top-right,
+  .step-enter,
+  .card-enter,
+  .expand-enter,
+  .row-enter {
     animation: none;
+  }
+
+  .skeleton {
+    animation: none;
+    opacity: 0.45;
+  }
+
+  button:active:not(:disabled) {
+    transform: none;
   }
 }

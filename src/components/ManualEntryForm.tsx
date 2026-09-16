@@ -5,6 +5,7 @@ import { APP } from "@/copy/app";
 import { JOURNEY } from "@/copy/journey";
 import { VALIDATION_PLEASE_CHECK, VALIDATION_SYSTOLIC_GREATER } from "@/copy/validation";
 import { BP_PANEL_CODE, BOUNDS, validateManualEntry } from "@/lib/api";
+import { confirmHaptic } from "@/lib/haptics";
 import { useIngestObservations } from "@/lib/api/hooks";
 import { localTzInfo, nowLocalInputValue } from "@/lib/format";
 import type { IngestResponse } from "@/lib/api/types";
@@ -105,6 +106,9 @@ export function ManualEntryForm({
       setFormError(VALIDATION_PLEASE_CHECK);
       return;
     }
+
+    // Value-neutral confirmation: same haptic for every reading.
+    confirmHaptic();
 
     onSaved(result, {
       systolic: Number(systolic),

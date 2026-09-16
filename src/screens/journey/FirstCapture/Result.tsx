@@ -28,6 +28,7 @@ export function Result() {
     <Screen
       overline={c.eyebrow}
       title={c.title}
+      className="step-enter"
       footer={<Button onClick={() => navigate("/journey/cadence")}>{c.cta}</Button>}
     >
       <StepDots total={5} current={4} />

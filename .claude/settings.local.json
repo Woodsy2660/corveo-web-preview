@@ -1,7 +1,39 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(curl:*)",
+      "Bash(find:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(gh pr view:*)",
+      "Bash(pip3 install:*)",
+      "Bash(python3:*)",
+      "Bash(ls:*)",
+      "Bash(git fetch:*)",
+      "Bash(git pull:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs:*)",
+      "Bash(pkill:*)",
+      "Bash(npm run dev)",
+      "Bash(git add:*)",
+      "mcp__plugin_figma_figma__get_libraries",
+      "mcp__plugin_figma_figma__get_metadata",
+      "mcp__plugin_figma_figma__search_design_system",
+      "Bash(npx tsc:*)",
+      "Bash(netstat -ano | grep 5184 | head -5)",
+      "Bash(taskkill //PID 3096 //F)",
+      "Bash(grep -rn \"## 9\\\\|graph\\\\|Graph\\\\|chart.*design\\\\|Chart.*design\" /c/Users/bwood/OneDrive/Desktop/Corveo-IOS-App/docs/*.md /c/Users/bwood/OneDrive/Desktop/Corveo-IOS-App/docs/**/*.md 2>/dev/null | grep -i \"## 9\\\\|graph.*redesign\\\\|redesign.*graph\\\\|chart.*redesign\\\\|redesign.*chart\")",
+      "Bash(npm install:*)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill //PID 7432 //F)",
+      "Bash(taskkill //PID 17684 //F && sleep 1 && npm run dev 2>&1)",
+      "Bash(pgrep:*)",
+      "Bash(npm cache clean:*)",
+      "Bash(git checkout:*)",
+      "Bash(supabase migration:*)",
+      "Bash(npx supabase:*)",
+      "Bash(claude plugins list:*)",
+      "Bash(supabase --version:*)"
     ]
   }
 }

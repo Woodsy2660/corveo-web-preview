@@ -50,6 +50,7 @@ export function HealthAuth() {
       <Screen
         overline={c.eyebrow}
         title={c.title}
+        className="step-enter"
         footer={
           <div className="flex flex-col gap-[var(--spacing-xs)]">
             <Button disabled={requesting} onClick={() => setSheetOpen(true)}>
