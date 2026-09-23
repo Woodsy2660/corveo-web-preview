@@ -42,20 +42,20 @@ export const PROGRAM_ART: Record<string, string> = {
   nutrition,
 };
 
-/** In Focus article tiles by slug. */
+/** In Focus article tiles by prototype key from the education package. */
 export const ARTICLE_ART: Record<string, string> = {
-  "the-home-record-explained": homeRecord,
-  "how-a-monitor-works": monitorWorks,
-  "what-a-clinician-looks-at": clinician,
-  "a-short-history-of-measurement": history,
+  "demo-editorial-07": homeRecord,
+  "demo-editorial-08": monitorWorks,
+  "demo-editorial-09": clinician,
+  "demo-editorial-10": history,
 };
 
-/** Pulse card backgrounds by slug. Some reuse a chapter or article photograph. */
+/** Pulse card backgrounds by prototype key from the education package. */
 export const PULSE_ART: Record<string, string> = {
-  "why-readings-vary": alarmClock,
-  "what-mmhg-measures": history,
-  "the-white-coat-effect": whiteCoat,
-  "cuff-size-and-fit": week2,
-  "morning-and-evening": week6,
-  "home-records-in-clinic": clinician,
+  "demo-editorial-01": alarmClock,
+  "demo-editorial-02": history,
+  "demo-editorial-03": whiteCoat,
+  "demo-editorial-04": week2,
+  "demo-editorial-05": week6,
+  "demo-editorial-06": clinician,
 };

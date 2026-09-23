@@ -4,6 +4,7 @@ import { HEALTH_SYNC } from "@/copy/health-sync";
 import { queryKeys } from "@/lib/api/hooks";
 import { getHealthPlugin, type AuthorizationState, type SyncResult } from "@/lib/health";
 import { subscribeDemoHealth, takeCuffReading, unreadCount } from "@/lib/health/demo";
+import { useJourney } from "@/lib/journey/state";
 import { fmtTime } from "@/lib/format";
 
 export type SyncPhase = "idle" | "busy" | "done";
@@ -25,6 +26,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
  */
 export function useAppleHealthSync() {
   const qc = useQueryClient();
+  const { connectChoice } = useJourney();
   const c = HEALTH_SYNC.card;
   const [auth, setAuth] = useState<AuthorizationState | null>(null);
   const [phase, setPhase] = useState<SyncPhase>("idle");
@@ -53,12 +55,13 @@ export function useAppleHealthSync() {
   }, [qc]);
 
   const active = auth?.state === "requested";
+  const looking = active && connectChoice === "healthkit";
 
   useEffect(() => {
-    if (!active || openedCheck.current) return;
+    if (!looking || openedCheck.current) return;
     openedCheck.current = true;
     void check();
-  }, [active, check]);
+  }, [looking, check]);
 
   const sync = async () => {
     setPhase("busy");

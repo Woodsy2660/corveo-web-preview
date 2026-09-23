@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Field } from "@/components/ui/Field";
 import { StepDots } from "@/components/ui/StepDots";
 import { JOURNEY } from "@/copy/journey";
+import { useJourney } from "@/lib/journey/state";
 
 /**
  * Account creation and sign-in. MOCK — real auth (email+password and Sign in
@@ -15,6 +16,7 @@ import { JOURNEY } from "@/copy/journey";
  */
 export function Signup() {
   const navigate = useNavigate();
+  const { setEmail: persistEmail } = useJourney();
   const c = JOURNEY.signup;
   const [mode, setMode] = useState<"create" | "signin">("create");
   const [email, setEmail] = useState("");
@@ -34,7 +36,13 @@ export function Signup() {
       className="step-enter"
       footer={
         <div className="flex flex-col gap-[var(--spacing-xs)]">
-          <Button disabled={!canContinue} onClick={() => navigate("/journey/consent")}>
+          <Button
+            disabled={!canContinue}
+            onClick={() => {
+              persistEmail(email.trim());
+              navigate("/journey/consent");
+            }}
+          >
             {creating ? c.cta : c.signInCta}
           </Button>
           <Button variant="ghost" onClick={() => setMode(creating ? "signin" : "create")}>

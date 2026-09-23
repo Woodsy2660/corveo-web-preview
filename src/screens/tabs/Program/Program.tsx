@@ -1,6 +1,7 @@
 import { Screen, ProfileLink } from "@/components/ui/Screen";
 import { SegmentedProgress } from "@/components/ui/SegmentedProgress";
 import { APP } from "@/copy/app";
+import { EDUCATION_PROGRAM, HAS_DRAFT_CONTENT } from "@/lib/education-content";
 import { useProgramProgress } from "@/lib/api/hooks";
 import { findProgram, readCount } from "@/lib/programs";
 import { useFollowedPrograms } from "@/lib/useFollowedPrograms";
@@ -44,6 +45,14 @@ export function Program() {
 
   return (
     <Screen title={c.title} withTabBar action={<ProfileLink />} scrollKey={program.slug}>
+      {HAS_DRAFT_CONTENT ? (
+        <p
+          className="mb-[var(--spacing-sm)] rounded-sm px-[var(--spacing-xs)] py-[var(--spacing-2xs)] text-ink-secondary"
+          style={{ fontSize: "var(--text-body-sm)", background: "var(--color-surface-neutral-lightest)" }}
+        >
+          {EDUCATION_PROGRAM.previewBanner}
+        </p>
+      ) : null}
       <SegmentedProgress read={read} total={total} label={c.progressAria(read, total)} />
 
       <h2

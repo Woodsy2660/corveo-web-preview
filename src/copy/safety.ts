@@ -8,7 +8,7 @@
  */
 
 export const SAFETY = {
-  eyebrow: "About this app",
+  eyebrow: "About Corveo",
   title: "What Corveo does, and doesn't do.",
   does: {
     title: "Corveo BP Reset:",

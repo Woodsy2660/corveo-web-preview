@@ -1,0 +1,19 @@
+{
+  "00_PASTE_INTO_LOVABLE.txt": "3a75f92b6f882d6fd148cd7f06f0beb7c9aa57823bd1f0f7ced13fe40ceaa9e6",
+  "00_START_HERE.md": "3e843fd16812b40d5925cc1c4d64bc2d1d229b98eae2d45b68358c9fd5631b3f",
+  "01_LOVABLE_MASTER_PROMPT.md": "6f21bd95ac82bbff08da035ab127a431a6c1acb2af8d5558a5fe319066c51d9c",
+  "02_CONTENT_ALL_SIX_WEEKS.json": "97de4917f0de62de86fded772ba771762585bbb9fb0efcc257c38a882d242116",
+  "03_SIX_WEEK_COPY_READABLE.md": "3bdec5bec1b54771291ba9ab9fa1a9b153aee240946dc02262b2a2439672cce5",
+  "04_FICTIONAL_READINGS.json": "ddd624e36a9df890ba01d0a9d53867ea71f822d9795812bc42ae7c140ea47b59",
+  "05_IMPLEMENTATION_AND_REVIEW_HANDOFF.md": "d2459533c96a230d49031c74d72966230934bb3ddc95aae44e9d6b7c4a011ff9",
+  "06_TYPOGRAPHY_REFERENCE.css": "860b9d832c099dcd8b9622f6d82fb2ab9aed767f534d76d1255c3151ebfbde3f",
+  "07_PACKAGE_VALIDATION.md": "f57a11379d81bf9f4d2da2bda43d11b295b64da18ad3245cc8cc8a9c31e32ec8",
+  "reference_screens/README.md": "b8aef67ea0020890a0ba632c26e8c6ae23da36947e7208c7b699b04b7a3aff49",
+  "reference_screens/manifest.json": "93a501b58a042090b485e7d4e8f63977a24adc53208f187867dedfad5243763a",
+  "reference_screens/reference-01-program-index.jpg": "8e13dec8047c59473bdbd69c5c491869b233ef07815fd89eb44af8f7c3e1cdc0",
+  "reference_screens/reference-02-learn-overview.jpg": "147596cb3ef4b39914e3e59b651c17ed407a00f7b89d969c2e5e930915e19195",
+  "reference_screens/reference-03-learn-overview-wider.jpg": "cb3364613b040e316764b33e3192a40b264ef7a370b513969e28e88507af3290",
+  "reference_screens/reference-04-in-focus-list.jpg": "0f31414c830303e6249292bc8b04f5ed4c6abbad1e0385b80e6a5fde223324f3",
+  "reference_screens/reference-05-in-focus-footer.jpg": "1f46f9a78b5fc2f386602773c5f127f8c15b4a68a4a48e4ff486c7be437a6c64",
+  "reference_screens/reference-06-other-programs-context.jpg": "f11513679fbe6cf910d15a5fde33fc2a56979d658963a5b4391a9ec7bb52815b"
+}

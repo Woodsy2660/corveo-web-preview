@@ -42,7 +42,7 @@ export function InFocusArticle() {
 
   return (
     <Screen overline={c.overline} title={article.title} className="step-enter" withTabBar>
-      {article.deck ? (
+      {article.excerpt ? (
         <p
           className="pb-[var(--spacing-sm)] text-ink-secondary"
           style={{
@@ -50,44 +50,25 @@ export function InFocusArticle() {
             lineHeight: "var(--leading-body-relaxed)",
           }}
         >
-          {article.deck}
+          {article.excerpt}
         </p>
       ) : null}
 
       <div className="flex flex-wrap gap-x-[var(--spacing-lg)] gap-y-[var(--spacing-xs)] border-y border-hairline py-[var(--spacing-sm)]">
-        <MetaPair
-          label={APP.chapter.metaReadTime}
-          value={APP.chapter.metaReadTimeValue(article.readMinutes)}
-        />
+        {article.displayReadingTime ? (
+          <MetaPair
+            label={APP.chapter.metaReadTime}
+            value={APP.chapter.metaReadTimeValue(article.readMinutes)}
+          />
+        ) : null}
         <MetaPair label={APP.chapter.metaReview} value={article.reviewStatus} />
       </div>
 
-      {article.sections ? null : (
-        <Card className="mt-[var(--spacing-md)]">
-          <p className="text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)" }}>
-            {APP.education.contentPendingNotice}
-          </p>
-        </Card>
-      )}
-
-      <article className="flex flex-col gap-[var(--spacing-md)] pt-[var(--spacing-md)]">
-        {(article.sections ?? []).map((section) => (
-          <section key={section.heading} className="flex flex-col gap-[var(--spacing-2xs)]">
-            <h2 style={{ fontSize: "var(--text-heading-xl)" }}>{section.heading}</h2>
-            {section.body.map((paragraph) => (
-              <p
-                key={paragraph.slice(0, 32)}
-                style={{
-                  fontSize: "var(--text-body-lg)",
-                  lineHeight: "var(--leading-body-relaxed)",
-                }}
-              >
-                {paragraph}
-              </p>
-            ))}
-          </section>
-        ))}
-      </article>
+      <Card className="mt-[var(--spacing-md)]">
+        <p className="text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)" }}>
+          {article.emptyReaderMessage}
+        </p>
+      </Card>
 
       <p
         className="mt-[var(--spacing-md)] border-t border-hairline pt-[var(--spacing-sm)] text-ink-tertiary"

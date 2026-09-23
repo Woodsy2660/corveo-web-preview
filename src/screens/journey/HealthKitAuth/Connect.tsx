@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { StepDots } from "@/components/ui/StepDots";
 import { ChevronDownIcon } from "@/components/ui/icons";
 import { JOURNEY } from "@/copy/journey";
-import { VALIDATED_CUFFS } from "@/copy/safety";
+import { ValidatedCuffList } from "@/components/ui/ValidatedCuffList";
 import { useJourney, type ConnectChoice } from "@/lib/journey/state";
 
 const ORDER: ConnectChoice[] = ["healthkit", "manual", "none"];
@@ -127,25 +127,7 @@ export function Connect() {
           </button>
           {cuffsOpen ? (
             <div className="expand-enter pb-[var(--spacing-xs)]">
-              <p className="pb-[var(--spacing-xs)] text-ink-secondary" style={{ fontSize: "var(--text-body-sm)" }}>
-                {VALIDATED_CUFFS.intro}
-              </p>
-              {VALIDATED_CUFFS.devices.map((d) => (
-                <div
-                  key={d.model}
-                  className="border-b border-hairline py-[var(--spacing-xs)] last:border-b-0"
-                >
-                  <span style={{ fontSize: "var(--text-body-sm)", fontWeight: 500 }}>
-                    {d.brand} {d.model}
-                  </span>
-                  <span className="block text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)" }}>
-                    {d.connectivity}
-                  </span>
-                </div>
-              ))}
-              <p className="pt-[var(--spacing-xs)] text-ink-tertiary" style={{ fontSize: "var(--text-label)" }}>
-                {VALIDATED_CUFFS.sourceNote}
-              </p>
+              <ValidatedCuffList />
             </div>
           ) : null}
         </div>

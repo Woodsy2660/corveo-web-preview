@@ -26,12 +26,21 @@ struct MainTabsView: View {
                     case .settingsReminders: RemindersView()
                     case .settingsAccount: AccountView()
                     case .cuffs: ValidatedCuffsView()
-                case .addReading: ManualEntryView()
-                case .chapter(let slug, let week): ChapterView(slug: slug, week: week)
-                case .programBrowse: ProgramBrowseView()
-                case .programDetail(let slug): ProgramDetailView(slug: slug)
+                    case .addReading: ManualEntryView()
+                    case .chapter(let slug, let week):
+                        // Use new education content reader for bp-reset program
+                        if slug == coreProgramSlug {
+                            EducationChapterReader(slug: slug, week: week)
+                        } else {
+                            ChapterView(slug: slug, week: week)
+                        }
+                    case .programBrowse: ProgramBrowseView()
+                    case .programDetail(let slug): ProgramDetailView(slug: slug)
                     case .inFocus(let slug): InFocusArticleView(slug: slug)
                     case .pulse(let slug): PulseViewerView(slug: slug)
+                    // Editorial content routes (Task 7/8)
+                    case .editorialPulse(let key): EditorialPulseViewer(startKey: key)
+                    case .editorialInFocus(let key): EditorialInFocusReader(key: key)
                     }
                 }
             }

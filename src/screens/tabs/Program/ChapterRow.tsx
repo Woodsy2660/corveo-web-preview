@@ -31,14 +31,9 @@ export function ChapterList({
 }
 
 /**
- * One chapter row, on the same pattern as corveo.vercel.app/programs:
- * thumbnail, title, excerpt, then the unit and duration as one quiet line.
- * Every row is the same height, so the list reads as a rhythm; the title
- * and excerpt clamp rather than push the row taller. The whole row is the
- * tap target — no CTA pill inside it.
- *
- * Chapter artwork is a Corveo asset that has not been supplied; the tile
- * shows a placeholder photograph from src/assets/photos until it is.
+ * One chapter row: thumbnail, title, excerpt, then week and duration.
+ * Height follows the copy so excerpt and meta never sit on top of each other.
+ * The whole row is the tap target.
  */
 export function ChapterRow({
   program,
@@ -53,63 +48,47 @@ export function ChapterRow({
 }) {
   const c = APP.program;
   const medium = chapter.medium ?? "read";
-  const pending = !chapter.sections;
 
   const body = (
-    <div className="flex h-[112px] gap-[var(--spacing-xs)] py-[var(--spacing-xs)]">
+    <div className="flex gap-[var(--spacing-xs)] py-[var(--spacing-sm)]">
       <img
         src={CHAPTER_ART[chapter.week]}
         alt=""
         aria-hidden
-        className="h-full w-[66px] flex-none rounded-sm object-cover"
+        className="h-[96px] w-[66px] flex-none rounded-sm object-cover self-start"
       />
 
-      {/* Locked chapters say so in words; they are not dimmed, so the list
-          holds one weight top to bottom. */}
-      <div className="flex min-w-0 flex-1 flex-col justify-between">
-        <div className="min-w-0">
-          <h2
-            className="line-clamp-1"
-            style={{ fontSize: "var(--text-body-lg)", lineHeight: "var(--leading-heading)" }}
-          >
-            {chapter.title}
-          </h2>
-          <p
-            className="line-clamp-2 text-ink-secondary"
-            style={{ fontSize: "var(--text-body-sm)" }}
-          >
-            {open ? chapter.excerpt : c.lockedNote}
-          </p>
-        </div>
-
+      <div className="flex min-w-0 flex-1 flex-col gap-[var(--spacing-3xs)]">
+        <h2
+          className="line-clamp-2"
+          style={{ fontSize: "var(--text-body-lg)", lineHeight: "var(--leading-heading)" }}
+        >
+          {chapter.title}
+        </h2>
+        <p
+          className="line-clamp-2 text-ink-secondary"
+          style={{ fontSize: "var(--text-body-sm)", lineHeight: "var(--leading-body)" }}
+        >
+          {open ? chapter.excerpt : c.lockedNote}
+        </p>
         <div
-          className="flex items-center gap-[var(--spacing-2xs)] text-ink-tertiary"
+          className="flex flex-wrap items-center gap-x-[var(--spacing-2xs)] gap-y-[var(--spacing-3xs)] text-ink-tertiary"
           style={{ fontSize: "var(--text-label)", lineHeight: "var(--leading-label)" }}
         >
           <span>{`${program.unitLabel} ${chapter.week}`}</span>
           {open ? (
-            <>
+            <span className="inline-flex items-center gap-[var(--spacing-3xs)]">
               <span aria-hidden>·</span>
-              <span className="flex items-center gap-[var(--spacing-3xs)]">
-                <ClockIcon />
-                {c.duration(chapter.readMinutes, medium)}
-              </span>
-            </>
+              <ClockIcon />
+              {c.duration(chapter.readMinutes, medium)}
+            </span>
           ) : null}
           {done ? (
-            <>
+            <span className="inline-flex items-center gap-[var(--spacing-3xs)]">
               <span aria-hidden>·</span>
-              <span className="flex items-center gap-[var(--spacing-3xs)]">
-                <CheckIcon />
-                {c.readLabel}
-              </span>
-            </>
-          ) : null}
-          {open && pending ? (
-            <>
-              <span aria-hidden>·</span>
-              <span style={{ fontWeight: 500 }}>{c.contentPending}</span>
-            </>
+              <CheckIcon />
+              {c.readLabel}
+            </span>
           ) : null}
         </div>
       </div>

@@ -16,6 +16,7 @@ enum CIcon {
     static let close = "xmark"
     static let chevronUp = "chevron.up"
     static let plus = "plus"
+    static let info = "info.circle"
 }
 
 // MARK: - Button

@@ -105,7 +105,10 @@ export function isAvailable(
   n: number,
 ): boolean {
   if (!program.core) return true;
-  return n <= (progress?.current_week ?? 1);
+  if (n <= 1) return true;
+  if (n <= (progress?.current_week ?? 1)) return true;
+  // Next week opens once the previous chapter has been read.
+  return isRead(progress, program.slug, n - 1);
 }
 
 export function readCount(

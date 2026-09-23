@@ -33,7 +33,8 @@
       "Bash(supabase migration:*)",
       "Bash(npx supabase:*)",
       "Bash(claude plugins list:*)",
-      "Bash(supabase --version:*)"
+      "Bash(supabase --version:*)",
+      "Bash(xcodebuild:*)"
     ]
   }
 }

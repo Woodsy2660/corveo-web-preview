@@ -8,11 +8,13 @@ import { CheckIcon, PlusIcon, SyncIcon } from "@/components/ui/icons";
 import { ReadingRowSkeleton } from "@/components/ui/Skeleton";
 import { useDelayedLoading } from "@/lib/useDelayedLoading";
 import { Segmented } from "@/components/ui/Segmented";
+import { Select } from "@/components/ui/Select";
 import { BpChart, type TimeFilter } from "@/components/ui/BpChart";
 import { APP } from "@/copy/app";
 import { HEALTH_SYNC } from "@/copy/health-sync";
 import { useReadings, useTrend } from "@/lib/api/hooks";
 import { useAppleHealthSync } from "@/lib/health/useAppleHealthSync";
+import { useJourney } from "@/lib/journey/state";
 import { dayNDaysAgo, fmtDateTime } from "@/lib/format";
 
 
@@ -39,6 +41,7 @@ const CHART_HEIGHT = 260;
  */
 export function Record() {
   const navigate = useNavigate();
+  const { connectChoice } = useJourney();
   const [range, setRange] = useState<Range>("1w");
   const [timeFilter, setTimeFilter] = useState<TimeFilter>("all");
   const [showAll, setShowAll] = useState(false);
@@ -113,29 +116,16 @@ export function Record() {
             { value: "all", label: t.ranges.all },
           ]}
         />
-        <select
+        <Select
+          ariaLabel={t.timeFilterAria}
           value={timeFilter}
-          onChange={(e) => setTimeFilter(e.target.value as TimeFilter)}
-          aria-label="Filter readings by time of day"
-          className="rounded-round border border-hairline bg-transparent px-[var(--spacing-xs)] py-[var(--spacing-3xs)] text-ink-secondary"
-          style={{
-            fontSize: "var(--text-body-sm)",
-            minHeight: 36,
-            fontFamily: "var(--font-body)",
-            fontWeight: 500,
-            letterSpacing: "-0.01em",
-            WebkitAppearance: "none",
-            appearance: "none",
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23666' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "right 10px center",
-            paddingRight: "var(--spacing-md)",
-          }}
-        >
-          <option value="all">All</option>
-          <option value="day">Day</option>
-          <option value="night">Night</option>
-        </select>
+          onChange={setTimeFilter}
+          options={[
+            { value: "all", label: t.timeFilters.all },
+            { value: "day", label: t.timeFilters.day },
+            { value: "night", label: t.timeFilters.night },
+          ]}
+        />
       </div>
 
       {/* — Chart — connected lines through every raw reading — */}
@@ -201,7 +191,7 @@ export function Record() {
           app last looked, and a way to look now. Health users only. */}
       <div className="flex items-end justify-between pt-[var(--spacing-lg)] pb-[var(--spacing-2xs)]">
         <h2 style={{ fontSize: "var(--text-heading-xl)" }}>{c.historyHeading}</h2>
-        {health.active ? (
+        {health.active && connectChoice === "healthkit" ? (
           <div className="flex items-center gap-[var(--spacing-2xs)]">
             <span
               aria-live="polite"

@@ -27,8 +27,6 @@ import { PULSE_ITEMS, type PulseItem } from "@/copy/library-placeholder";
  */
 
 function PulseSlide({ item }: { item: PulseItem }) {
-  const pending = !item.body;
-
   return (
     <section
       className="flex h-full w-full snap-start flex-col justify-between px-[var(--spacing-md)]"
@@ -52,20 +50,15 @@ function PulseSlide({ item }: { item: PulseItem }) {
           {item.title}
         </h2>
 
-        {(item.body ?? [APP.pulse.pendingBody]).map((paragraph) => (
-          <p
-            key={paragraph.slice(0, 32)}
-            style={{
-              fontSize: "var(--text-body-lg)",
-              lineHeight: "var(--leading-body-relaxed)",
-              color: pending
-                ? "var(--color-text-tertiary)"
-                : "var(--color-text-secondary-inverse)",
-            }}
-          >
-            {paragraph}
-          </p>
-        ))}
+        <p
+          style={{
+            fontSize: "var(--text-body-lg)",
+            lineHeight: "var(--leading-body-relaxed)",
+            color: "var(--color-text-tertiary)",
+          }}
+        >
+          {item.emptyReaderMessage}
+        </p>
       </div>
 
       <p style={{ fontSize: "var(--text-label)", color: "var(--color-text-tertiary)" }}>

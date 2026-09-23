@@ -17,7 +17,7 @@
  * `sections` renders as content pending.
  */
 
-import { PROGRAM_PLACEHOLDER_WEEKS, type ProgramChapter } from "./program-placeholder";
+import { PROGRAM, PROGRAM_PLACEHOLDER_WEEKS, type ProgramChapter } from "./program-placeholder";
 
 export interface ProgramSummary {
   slug: string;
@@ -49,9 +49,8 @@ function card(
 export const PROGRAMS: readonly ProgramSummary[] = [
   {
     slug: "bp-reset",
-    title: "The six-week program",
-    description:
-      "Short, practical education about blood pressure, alongside the record you build yourself.",
+    title: PROGRAM.title,
+    description: PROGRAM.description,
     unitLabel: "Week",
     core: true,
     chapters: PROGRAM_PLACEHOLDER_WEEKS,

@@ -11,7 +11,7 @@ import { fmtFullDate } from "@/lib/format";
 import { useQueryClient } from "@tanstack/react-query";
 
 /**
- * Your data: export and deletion (Deliverable 12) and the consent receipt,
+ * Your record: export and deletion (Deliverable 12) and the consent receipt,
  * on their own page under Settings. Deletion is deletion-with-logging
  * against the retention floor (SOW A.12.6), never an unconditional wipe.
  */

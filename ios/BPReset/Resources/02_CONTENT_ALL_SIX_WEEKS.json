@@ -1,0 +1,956 @@
+{
+  "packageName": "Corveo BP Basics - Lovable prototype content",
+  "packageVersion": "0.1",
+  "preparedDate": "2026-09-16",
+  "status": "Private prototype handoff; all educational material remains draft; not approved for release",
+  "schemaStatus": "Proposed presentation model for this mock-up only; not a Payload schema or production data contract",
+  "sourceHierarchy": [
+    "Latest owner request: six-week website/app mock-up with readings, Apple Health flow and graphs.",
+    "Five-week draft response in this chat supplies Weeks 1, 2, 3, 5, 6.",
+    "CORV-EDU-001 v0.7 Appendix A supplies Week 4 and v0.7 supplies the six-week pathway and editorial links.",
+    "Screenshots supply observed layout, not exact current code or approval.",
+    "Earlier engineering brief is legacy context only; current technical caveats are documented separately."
+  ],
+  "program": {
+    "title": "Blood Pressure Basics",
+    "shortName": "BP Basics",
+    "chapterCount": 6,
+    "description": "Six weeks of blood pressure education, alongside your own care.",
+    "descriptionStatus": "New concise prototype framing proposed for layout; not a previously approved programme description",
+    "primaryEntry": "Program",
+    "allChaptersAccessibleInPreview": true,
+    "releaseUnlockSchedule": null,
+    "previewBanner": "Design preview. Draft education and fictional readings. Not for clinical use.",
+    "week4Notice": "Editorial review hold. This source draft contains unresolved reassurance wording and is shown only for layout review. It is not guidance for interpreting a reading or a symptom.",
+    "byline": "A/Prof Andrew Roy, Cardiologist",
+    "clinicalReviewStatus": "Pending"
+  },
+  "typography": {
+    "fontStatus": "Explicit prior Corveo HTML precedent recovered; current app font identity not established by screenshots",
+    "priorSource": "Corveo-Content-Architecture-Framework.html, v1.0, prepared 28 July 2026; CSS head and :root declarations",
+    "serif": "Spectral",
+    "sans": "Hanken Grotesk",
+    "mono": "IBM Plex Mono",
+    "application": "Reuse actual existing project fonts when available. Otherwise use this recovered prior pair as a clearly identified starting point. Mono is optional for reviewer metadata, not required for body text.",
+    "fontFilesIncluded": false
+  },
+  "chapters": [
+    {
+      "prototypeKey": "bpb-week-1",
+      "canonicalAssetId": null,
+      "week": 1,
+      "title": "Understanding blood pressure",
+      "verb": "Learn",
+      "cardSummary": "What the two numbers describe, and why readings vary through the day.",
+      "standfirst": "The two figures in a blood pressure reading describe different points in each heartbeat. Understanding the terms is a starting point for the conversation with your doctor.",
+      "readingTimeMinutes": 5,
+      "readingTimeStatus": "Provisional estimate carried from working draft; not measured or approved",
+      "byline": "A/Prof Andrew Roy, Cardiologist",
+      "bylineStatus": "Owner-requested draft attribution; not evidence of author approval",
+      "clinicalReviewStatus": "Pending",
+      "clinicalReviewer": null,
+      "clinicalReviewDate": null,
+      "source": "Chat draft in this conversation: five-week article response. Based on the supplied five-week generation prompt and CORV-EDU-001 v0.7. Repackaged, not newly clinically reviewed.",
+      "sections": [
+        {
+          "heading": "What the two numbers describe",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Blood pressure is usually spoken as two numbers, one \"over\" the other. What do those two figures actually describe?"
+            },
+            {
+              "type": "paragraph",
+              "text": "They are measurements of pressure in the arteries, the blood vessels carrying blood away from the heart. The first figure is the systolic pressure: the pressure as the heart contracts and pushes blood into the arteries. The second is the diastolic pressure: the pressure between beats, while the heart muscle relaxes."
+            },
+            {
+              "type": "paragraph",
+              "text": "Both belong to the same reading. Systolic and diastolic are simply the names for these different parts of the heartbeat. On a written record, the systolic figure comes first and the diastolic figure second."
+            },
+            {
+              "type": "paragraph",
+              "text": "The unit is mmHg, short for millimetres of mercury. It is a unit of pressure, not a percentage or a score. The Pulse article *What mmHg actually measures* covers the meaning of that unit in more detail."
+            }
+          ]
+        },
+        {
+          "heading": "Why readings change through the day",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Blood pressure changes as the body moves between sleep, rest and activity. Walking to the shops, sitting quietly and being asleep are different circumstances in which to take a measurement."
+            },
+            {
+              "type": "paragraph",
+              "text": "Across groups of people, blood pressure commonly falls during sleep and rises around waking and daytime activity. This is a general pattern, not a description of every person or every night. Ordinary morning and evening cuff readings also do not describe what happened during sleep."
+            },
+            {
+              "type": "paragraph",
+              "text": "The Pulse article *Why readings vary through the day* explores this daily variation. Knowing that variation occurs is useful background, but it cannot explain a particular result on its own."
+            },
+            {
+              "type": "paragraph",
+              "text": "Time matters for another reason: a reading taken after activity and one taken after seated rest were not taken in the same circumstances. Recording when measurements were taken gives your doctor information that a remembered number cannot provide."
+            }
+          ]
+        },
+        {
+          "heading": "Where reference figures fit",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Australian blood pressure guidance includes reference figures for measurements taken in a clinic and for a series taken at home. These figures are used in a defined setting, with attention to how the measurements were made. They are not interchangeable instructions for every situation."
+            },
+            {
+              "type": "paragraph",
+              "text": "A reference figure in an educational article is general information about clinical practice. It is not a personal target, and it does not tell you what a number in your own record means. That discussion belongs with your GP or cardiologist, who can consider the measurements alongside your medical history and the reason they were requested."
+            },
+            {
+              "type": "paragraph",
+              "text": "For now, the useful distinction is between understanding a reading and interpreting it. Learning the words systolic, diastolic and mmHg makes the record less unfamiliar. Deciding what the record means for your care is your doctor's role."
+            },
+            {
+              "type": "paragraph",
+              "text": "There is no need to arrive at an appointment with your own conclusion. Bring the record and the questions it has raised. The two figures are information for that conversation, not a conclusion you have to reach alone."
+            }
+          ]
+        }
+      ],
+      "keyTakeaway": "Two numbers, read over time — not a verdict in the moment.",
+      "nextWeekTitle": "Measuring well",
+      "imageBrief": {
+        "primary": "Soft morning light crossing a plain wall and timber tabletop. Quiet, natural and non-clinical. No text or numbers in the image.",
+        "alternative": "Two simple ceramic vessels beside a window, with shape and texture rather than symbolism or medical diagrams.",
+        "thumbnail": "Keep a simple focal object recognisable in a near-square or portrait crop.",
+        "wide": "Leave open space around the object for a wider crop; put all title text outside the image.",
+        "altDraft": "Morning light across a timber tabletop."
+      },
+      "imageStatus": "Proposed concept; final asset, licence and review not supplied",
+      "referenceStatus": "Pending claim-matched evidence checks; no verified reference list supplied in this package",
+      "claimsNeedingCitation": [
+        "Systolic and diastolic definitions, ordering and mmHg terminology.",
+        "General sleep-wake variation; ordinary home cuff readings do not establish a nocturnal pattern.",
+        "Clinic versus home reference contexts; no threshold is applied to a personal value."
+      ],
+      "reviewHolds": [
+        "Week 1 reading time is 3 minutes in the reference screen and about 5 minutes in this expanded draft. Use 5 consistently for this mock-up only; reconcile after the text is selected."
+      ],
+      "publishable": false,
+      "crossLinks": [
+        {
+          "title": "Why readings vary through the day",
+          "collection": "pulse",
+          "prototypeTargetKey": "demo-editorial-01"
+        },
+        {
+          "title": "What mmHg actually measures",
+          "collection": "pulse",
+          "prototypeTargetKey": "demo-editorial-02"
+        }
+      ],
+      "sourceTextNormalisation": "Headings and paragraphs structured for rendering; quotation marks normalised for text storage. No intended substantive rewrite.",
+      "bodyWordCount": 459,
+      "bodySHA256": "8930de3a9a143168a2c3634da7af24d7ebcf59105a150ee9c71f45180af944ed"
+    },
+    {
+      "prototypeKey": "bpb-week-2",
+      "canonicalAssetId": null,
+      "week": 2,
+      "title": "Measuring well",
+      "verb": "Learn",
+      "cardSummary": "What goes into a home blood pressure measurement, from fitting the cuff to recording two readings.",
+      "standfirst": "The cuff, your position and the preparation beforehand all matter. A consistent technique gives your doctor a record taken under comparable conditions.",
+      "readingTimeMinutes": 5,
+      "readingTimeStatus": "Provisional estimate carried from working draft; not measured or approved",
+      "byline": "A/Prof Andrew Roy, Cardiologist",
+      "bylineStatus": "Owner-requested draft attribution; not evidence of author approval",
+      "clinicalReviewStatus": "Pending",
+      "clinicalReviewer": null,
+      "clinicalReviewDate": null,
+      "source": "Chat draft in this conversation: five-week article response. Based on the supplied five-week generation prompt and CORV-EDU-001 v0.7. Repackaged, not newly clinically reviewed.",
+      "sections": [
+        {
+          "heading": "Before the cuff goes on",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "A measurement begins before the cuff inflates. Where you sit, how the cuff fits and what happened beforehand all matter when taking a resting blood pressure reading."
+            },
+            {
+              "type": "paragraph",
+              "text": "Set aside a time when you can sit without interruption. For the half-hour beforehand, avoid caffeine and exercise. Empty your bladder before settling into the chair. Then allow five minutes of quiet, seated rest."
+            },
+            {
+              "type": "paragraph",
+              "text": "During that rest and while the readings are being taken, leave conversation and other distractions until afterwards. There is a difference between sitting down after rushing around and having spent several minutes at rest. The preparation is part of the measurement, rather than something to squeeze in while answering a message or finishing a phone call."
+            },
+            {
+              "type": "paragraph",
+              "text": "These are general instructions for a seated home measurement. Your own clinician may have given you a particular schedule or a different measurement plan; follow that advice."
+            }
+          ]
+        },
+        {
+          "heading": "Getting the cuff and chair right",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Use a cuff intended for the upper arm, in the size specified for the arm it will fit. An adjustable fastening does not mean that every cuff fits every arm. Check the size markings and the device instructions. The Pulse article *Cuff size and fit* covers this part of the preparation."
+            },
+            {
+              "type": "paragraph",
+              "text": "Place the cuff on bare skin around the upper arm, with its centre approximately midway between the shoulder and elbow. Follow the device instructions for its precise position. The cuff should be at about heart height during the measurement."
+            },
+            {
+              "type": "paragraph",
+              "text": "Sit with your back supported and both feet resting flat on the floor. Keep your legs uncrossed. Rest the arm on a table or another suitable support so it can stay relaxed, rather than holding it up yourself."
+            },
+            {
+              "type": "paragraph",
+              "text": "Arrange the chair and arm support before beginning the quiet rest. A position that needs constant adjustment makes the sequence harder to repeat. This is a seated reading, not one taken standing at a kitchen bench or while talking across the room."
+            },
+            {
+              "type": "paragraph",
+              "text": "The relationship between the cuff and the measurement is explored in the In Focus article *How a blood pressure monitor works*."
+            }
+          ]
+        },
+        {
+          "heading": "Taking the pair of readings",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "After the quiet rest, take the first reading without talking or moving around. Remain seated, wait about a minute, then take the second. Record both, with the date and time."
+            },
+            {
+              "type": "paragraph",
+              "text": "The second reading is part of the sequence; it is not a reason to choose one result and leave the other out. The record should reflect the measurements that were taken."
+            },
+            {
+              "type": "paragraph",
+              "text": "If the cuff position or the instructions are unclear, ask your doctor, practice nurse or pharmacist to go through the setup with you. A practical demonstration can address questions that are difficult to settle from a written description."
+            },
+            {
+              "type": "paragraph",
+              "text": "Once the sequence is familiar, keep the same attention to preparation each time. The purpose is to make the circumstances of measurement consistent enough for your own doctor to use the record. Technique comes before any discussion of what the numbers mean."
+            }
+          ]
+        }
+      ],
+      "keyTakeaway": "A home reading is only as trustworthy as the technique behind it.",
+      "nextWeekTitle": "Reading your record",
+      "imageBrief": {
+        "primary": "An ordinary chair beside a clear table at home, with soft daylight and room to sit comfortably. No medical equipment.",
+        "alternative": "A folded linen cloth and an empty tabletop beside a lightly curtained window; quiet and unhurried.",
+        "thumbnail": "Keep the chair-and-table relationship legible at small size.",
+        "wide": "Use the same setting in a wider crop without filling the frame with unrelated objects.",
+        "altDraft": "A chair beside a clear table in a quiet room."
+      },
+      "imageStatus": "Proposed concept; final asset, licence and review not supplied",
+      "referenceStatus": "Pending claim-matched evidence checks; no verified reference list supplied in this package",
+      "claimsNeedingCitation": [
+        "Preparation intervals for caffeine and exercise, seated rest, bladder emptying and silence.",
+        "Cuff selection and positioning, bare skin, heart height and supported posture.",
+        "Two readings about one minute apart; record both."
+      ],
+      "reviewHolds": [
+        "The earlier five-week draft explicitly separated 30-minute caffeine/exercise preparation from quiet rest, conversation and bladder-emptying instructions. Preserve that documented draft clarification, but obtain G2 review; do not silently revert to the bundled source wording.",
+        "The detailed cuff-placement wording still needs claim-matched clinical verification against device instructions and current Australian guidance."
+      ],
+      "publishable": false,
+      "crossLinks": [
+        {
+          "title": "Cuff size and fit",
+          "collection": "pulse",
+          "prototypeTargetKey": "demo-editorial-04"
+        },
+        {
+          "title": "How a blood pressure monitor works",
+          "collection": "in-focus",
+          "prototypeTargetKey": "demo-editorial-08"
+        }
+      ],
+      "sourceTextNormalisation": "Headings and paragraphs structured for rendering; quotation marks normalised for text storage. No intended substantive rewrite.",
+      "bodyWordCount": 476,
+      "bodySHA256": "487d765a158a26b6faef737a0d0cee336f658bfe0ef99fe089ae56ef67029ac8"
+    },
+    {
+      "prototypeKey": "bpb-week-3",
+      "canonicalAssetId": null,
+      "week": 3,
+      "title": "Reading your record",
+      "verb": "Review",
+      "cardSummary": "Why readings are considered together, and what an average can and cannot tell you.",
+      "standfirst": "Dates, circumstances and measurement technique all belong alongside the numbers. Reviewing them together is preparation for a discussion with your own doctor.",
+      "readingTimeMinutes": 5,
+      "readingTimeStatus": "Provisional estimate carried from working draft; not measured or approved",
+      "byline": "A/Prof Andrew Roy, Cardiologist",
+      "bylineStatus": "Owner-requested draft attribution; not evidence of author approval",
+      "clinicalReviewStatus": "Pending",
+      "clinicalReviewer": null,
+      "clinicalReviewDate": null,
+      "source": "Chat draft in this conversation: five-week article response. Based on the supplied five-week generation prompt and CORV-EDU-001 v0.7. Repackaged, not newly clinically reviewed.",
+      "sections": [
+        {
+          "heading": "The circumstances belong with the numbers",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "A list of readings can look uneven even when each entry has been carefully recorded. Blood pressure varies, and the circumstances of one measurement are not always the same as those of the next."
+            },
+            {
+              "type": "paragraph",
+              "text": "Stress, room temperature, conversation and a full bladder can affect a measurement. Some variation reflects a change in blood pressure itself; some differences arise from the way a measurement was taken. Neither can be sorted out simply by looking at an isolated number."
+            },
+            {
+              "type": "paragraph",
+              "text": "This is one reason home readings are usually considered as a series taken with consistent technique. Dates, times and relevant notes give the series context. They allow your doctor to consider how the record was made, rather than relying on a few figures recalled during an appointment."
+            },
+            {
+              "type": "paragraph",
+              "text": "Knowing that these influences exist does not establish why any particular reading occurred. They are context for a clinical conversation, not explanations to assign to your own results."
+            }
+          ]
+        },
+        {
+          "heading": "The white-coat effect",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Blood pressure can rise in a medical setting compared with measurements taken outside it. This is known as the white-coat effect. It is a recognised phenomenon involving a measurable difference between settings."
+            },
+            {
+              "type": "paragraph",
+              "text": "The Pulse article *The white-coat effect* explains the term in more detail. The name does not mean that every difference between clinic and home readings has the same cause. Nor does it mean that a clinic measurement can simply be dismissed."
+            },
+            {
+              "type": "paragraph",
+              "text": "Your doctor can consider both settings and decide whether further measurements are needed. A home record adds information to that discussion; it does not replace what happens at the appointment."
+            }
+          ]
+        },
+        {
+          "heading": "What an average can and cannot say",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "An average brings several readings into a summary. It can make a set of measurements easier to consider together, rather than giving most attention to the one that happens to be remembered."
+            },
+            {
+              "type": "paragraph",
+              "text": "The quality of the measurements still matters. Repeating the same cuff or posture error does not make it disappear, and averaging a series cannot correct every problem in how it was collected. More entries are not automatically more reliable entries."
+            },
+            {
+              "type": "paragraph",
+              "text": "Keep the individual measurements as well as the summary. The dates, timing and circumstances remain relevant even when an average is available."
+            }
+          ]
+        },
+        {
+          "heading": "Reviewing the record in Corveo",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "The averages and trend view is where you can review the record over time alongside your own care. It is where the pattern lives: the entries considered together, rather than one at a time."
+            },
+            {
+              "type": "paragraph",
+              "text": "Reviewing that view does not require you to decide whether an average means anything particular for your health. Questions about meaning belong with your GP or cardiologist. Corveo is for recording, organising and reviewing the information alongside that care."
+            },
+            {
+              "type": "paragraph",
+              "text": "A record also does not have to be complete before you seek advice. Do not postpone a conversation about symptoms or concerns simply to finish a week of readings."
+            },
+            {
+              "type": "paragraph",
+              "text": "The aim is to arrive with an honest account of what was measured and when, including any practical difficulties. Your doctor can then consider the series and its limitations with you."
+            }
+          ]
+        }
+      ],
+      "keyTakeaway": "A single number can be wrong for a dozen reasons. A week of them is hard to argue with.",
+      "nextWeekTitle": "Everyday influences",
+      "imageBrief": {
+        "primary": "Several notebook pages on a wooden desk, with page edges and texture visible but no readable entries.",
+        "alternative": "Smooth stones arranged loosely along a shelf in natural light. No graph, scale or implied assessment.",
+        "thumbnail": "Use an uncluttered notebook detail rather than small writing.",
+        "wide": "Keep the pages visible in a wider view; no overlaid data or number graphics.",
+        "altDraft": "An open notebook on a wooden desk."
+      },
+      "imageStatus": "Proposed concept; final asset, licence and review not supplied",
+      "referenceStatus": "Pending claim-matched evidence checks; no verified reference list supplied in this package",
+      "claimsNeedingCitation": [
+        "Factors affecting readings and the value and limitations of multi-day measurements.",
+        "White-coat effect and the limits of attributing a clinic-home difference to it.",
+        "The supplied locked takeaway is a wording issue, not a source-supported measurement-quality guarantee."
+      ],
+      "reviewHolds": [
+        "Locked takeaway retained for source fidelity. \"A dozen\" is not a verified count; \"A week of them is hard to argue with\" overstates reliability. Place a visible editorial-review note beside the takeaway in the private prototype. Do not resolve by silently rewriting or by marking it clinically approved."
+      ],
+      "publishable": false,
+      "crossLinks": [
+        {
+          "title": "The white-coat effect",
+          "collection": "pulse",
+          "prototypeTargetKey": "demo-editorial-03"
+        }
+      ],
+      "sourceTextNormalisation": "Headings and paragraphs structured for rendering; quotation marks normalised for text storage. No intended substantive rewrite.",
+      "bodyWordCount": 482,
+      "bodySHA256": "40240a17fc352769b1c45c9fd8eec537ebf65034b238b26e74e7f0b34312dee7"
+    },
+    {
+      "prototypeKey": "bpb-week-4",
+      "canonicalAssetId": null,
+      "week": 4,
+      "title": "Everyday influences",
+      "verb": "Learn",
+      "cardSummary": "The ordinary things that move a reading, day to day — and why none of them is something to fix.",
+      "standfirst": "Your blood pressure moves for reasons that have nothing to do with anyone's heart being unwell. Knowing what's ordinary stops you over-reading any single number.",
+      "readingTimeMinutes": 5,
+      "readingTimeStatus": "Provisional estimate carried from working draft; not measured or approved",
+      "byline": "A/Prof Andrew Roy, Cardiologist",
+      "bylineStatus": "Owner-requested draft attribution; not evidence of author approval",
+      "clinicalReviewStatus": "Pending",
+      "clinicalReviewer": null,
+      "clinicalReviewDate": null,
+      "source": "CORV-EDU-001_BPB-6wk-nav-map-and-GPT-brief_v0.7.docx, Appendix A, pp. 7-8; document dated 15 September 2026; source byline draft dated 9 September 2026. Source wording retained, including unresolved review concerns.",
+      "sections": [
+        {
+          "heading": "The same person, a different number",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Have you noticed your blood pressure can look different from one reading to the next, even when nothing feels different? That's completely expected. Blood pressure isn't a fixed value waiting to be discovered — it adjusts constantly, in response to what you're doing, what you've had to eat or drink, how you're sitting, and what's going on around you. A reading is a snapshot of one moment, not a verdict on your health. Variation like this is a normal feature of blood pressure, not a sign that something has gone wrong."
+            }
+          ]
+        },
+        {
+          "heading": "What's happening in the background",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Some of the biggest day-to-day swings come from ordinary things happening in the background. None of them need fixing — they're simply worth knowing about. A reading can run higher than usual because of:"
+            },
+            {
+              "type": "list",
+              "items": [
+                "Recent physical exertion — climbing stairs, a brisk walk, or exercise shortly before measuring.",
+                "Caffeine — coffee, tea or energy drinks in the hour or so beforehand.",
+                "Nicotine — smoking or vaping shortly before measuring.",
+                "Pain — even mild or short-lived pain.",
+                "Stress or a tense conversation — including talking during the reading itself.",
+                "A cold room or cold weather.",
+                "A full bladder.",
+                "A poor night's sleep.",
+                "Being unwell — a cold, the flu, or any infection.",
+                "A recent alcoholic drink — the effect varies by timing and amount, but it's a common contributor worth being aware of."
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Any one of these can explain a single higher reading without anything being wrong. That's the whole reason the pattern over time — not any one number — is what your record is for."
+            }
+          ]
+        },
+        {
+          "heading": "Why this matters for your record",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "This is exactly why Reading your record (Week 3) points you toward the pattern over time rather than any single number. If you know a reading was taken after a coffee, a stressful call, or a rough night, that context is useful — it's why the app asks for a time-of-day tag when you log a reading. Over time, those everyday influences matter less than the overall pattern — one your own doctor can make sense of, alongside everything else they know about you."
+            }
+          ]
+        }
+      ],
+      "keyTakeaway": "One reading is a moment. A series of readings becomes a pattern.",
+      "nextWeekTitle": "Talking with your doctor",
+      "imageBrief": {
+        "primary": "A quiet kitchen with a plain kettle, a ceramic cup and soft morning light. Everyday context, not a demonstration of measuring after coffee.",
+        "alternative": "A simple clock and notebook on a side table; no legible blood-pressure readings.",
+        "thumbnail": "Choose one object as the focal point; avoid a collage of ten influences.",
+        "wide": "Allow a wider kitchen context while retaining the same primary object.",
+        "altDraft": "A kettle and ceramic cup on a kitchen bench."
+      },
+      "imageStatus": "Proposed concept; final asset, licence and review not supplied",
+      "referenceStatus": "Pending claim-matched evidence checks; no verified reference list supplied in this package",
+      "claimsNeedingCitation": [
+        "Each named influence and any implied duration or direction of its effect.",
+        "Claims that particular variation is expected, harmless or unrelated to illness.",
+        "The claim that influences matter less over time; repeated contextual effects need review.",
+        "Alcohol qualification by timing and amount; do not simplify further."
+      ],
+      "reviewHolds": [
+        "EDITORIAL REVIEW HOLD: the card summary, standfirst and body contain blanket-reassurance language, including \"None of them need fixing\" and \"without anything being wrong\". This conflicts with the existing instruction not to imply unexpected readings or symptoms may be ignored. Preserve as labelled source draft, not approved patient advice.",
+        "Before this chapter opens, show an explicit review-only notice. Retain a visible notice while reading. Do not export or publish this article as patient-facing content.",
+        "Do not place personal/demo readings beside this chapter or use it as a contextual explanation of a selected value.",
+        "The draft mentions a time-of-day tag; the mock-up proposes the field, but its historical implementation has not been verified."
+      ],
+      "publishable": false,
+      "crossLinks": [],
+      "sourceTextNormalisation": "Headings and paragraphs structured for rendering; quotation marks normalised for text storage. No intended substantive rewrite.",
+      "bodyWordCount": 328,
+      "bodySHA256": "69348c87374bb383d409e407230231325486fb4a2904bd210f6f0547c879f6c0"
+    },
+    {
+      "prototypeKey": "bpb-week-5",
+      "canonicalAssetId": null,
+      "week": 5,
+      "title": "Talking with your doctor",
+      "verb": "Organise / Share",
+      "cardSummary": "How to organise your record and bring the questions that matter to your next appointment.",
+      "standfirst": "You do not need to interpret the record before you share it. Your GP or cardiologist can discuss what it means alongside the rest of your care.",
+      "readingTimeMinutes": 5,
+      "readingTimeStatus": "Provisional estimate carried from working draft; not measured or approved",
+      "byline": "A/Prof Andrew Roy, Cardiologist",
+      "bylineStatus": "Owner-requested draft attribution; not evidence of author approval",
+      "clinicalReviewStatus": "Pending",
+      "clinicalReviewer": null,
+      "clinicalReviewDate": null,
+      "source": "Chat draft in this conversation: five-week article response. Based on the supplied five-week generation prompt and CORV-EDU-001 v0.7. Repackaged, not newly clinically reviewed.",
+      "sections": [
+        {
+          "heading": "Before the appointment",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "It is easy to remember a question on the way home from an appointment. A few notes made beforehand can give that question a place in the conversation while you are still in the room."
+            },
+            {
+              "type": "paragraph",
+              "text": "Start with the period your doctor asked you to record. Have the dates, times and individual readings available together. Keep both measurements from each session, and leave gaps visible where a session was missed. There is no need to fill a gap with a guess."
+            },
+            {
+              "type": "paragraph",
+              "text": "Add any questions about the process itself. Perhaps the cuff was difficult to position, the timing did not fit your day, or the instructions were unclear. Your doctor needs to know how the record was made as well as what it contains."
+            },
+            {
+              "type": "paragraph",
+              "text": "Corveo is for you to record, organise, review and share information alongside your own care. Check how your practice would like to receive the record, and have it available during the appointment. Do not assume that recording information in an app means your clinician has already received or read it."
+            }
+          ]
+        },
+        {
+          "heading": "Questions worth bringing",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Choose the questions that matter to you rather than working through a long list. These are useful starting points:"
+            },
+            {
+              "type": "list",
+              "items": [
+                "\"What do you make of this record alongside the rest of my health?\"",
+                "\"Can we check that I am using the cuff and taking the readings correctly?\"",
+                "\"When, and for how many days, would you like me to record before we next speak?\"",
+                "\"What should prompt me to contact you before that appointment, and how should I do that?\""
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "You might also want to ask about a word or abbreviation used in a previous conversation. It is reasonable to ask for an explanation in everyday language."
+            },
+            {
+              "type": "paragraph",
+              "text": "The In Focus article *What a clinician looks at in a record* provides background to this discussion. The purpose of bringing questions is not to arrive with an interpretation already decided, but to make room for the things you need explained."
+            }
+          ]
+        },
+        {
+          "heading": "During the conversation",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Tell your doctor what you found straightforward and what was difficult. A practical problem with the cuff or recording routine is worth mentioning, even if it seems small."
+            },
+            {
+              "type": "paragraph",
+              "text": "The record is only part of the appointment. Your clinician will consider it alongside your medical history, medicines and any symptoms or concerns. The Pulse article *How clinicians use home records* looks at that role."
+            },
+            {
+              "type": "paragraph",
+              "text": "Corveo complements your existing clinicians. It does not replace their advice or their interpretation of your blood pressure."
+            },
+            {
+              "type": "paragraph",
+              "text": "Before leaving, check that you know what has been agreed. You can ask your doctor to repeat an instruction, write it down, or explain who to contact with a question afterwards. In particular, be clear about whether further home readings are wanted and when the record will next be discussed."
+            },
+            {
+              "type": "paragraph",
+              "text": "There is no requirement to make the record look tidy or complete before showing it. The useful record is the one that accurately reflects what happened and can be discussed with the doctor who knows your care."
+            }
+          ]
+        }
+      ],
+      "keyTakeaway": "Your record is most useful in the room with your doctor — that's what it's for.",
+      "nextWeekTitle": "Keeping the rhythm",
+      "imageBrief": {
+        "primary": "A notebook, reading glasses and a plain canvas bag on a table near the front door. Everyday preparation, not a consultation scene.",
+        "alternative": "A pen beside an open notebook, with the pages out of focus and no personal information visible.",
+        "thumbnail": "Focus on the notebook and glasses rather than fine page details.",
+        "wide": "Retain the same objects with natural space around them.",
+        "altDraft": "A notebook and reading glasses beside a canvas bag."
+      },
+      "imageStatus": "Proposed concept; final asset, licence and review not supplied",
+      "referenceStatus": "Pending claim-matched evidence checks; no verified reference list supplied in this package",
+      "claimsNeedingCitation": [
+        "Bringing dated individual readings to an appointment and confirming the requested schedule.",
+        "Considering home measurements alongside history, medicines, symptoms and other clinical information.",
+        "The example questions are proposed educational wording, not a validated questionnaire."
+      ],
+      "reviewHolds": [],
+      "publishable": false,
+      "crossLinks": [
+        {
+          "title": "How clinicians use home records",
+          "collection": "pulse",
+          "prototypeTargetKey": "demo-editorial-06"
+        },
+        {
+          "title": "What a clinician looks at in a record",
+          "collection": "in-focus",
+          "prototypeTargetKey": "demo-editorial-09"
+        }
+      ],
+      "sourceTextNormalisation": "Headings and paragraphs structured for rendering; quotation marks normalised for text storage. No intended substantive rewrite.",
+      "bodyWordCount": 486,
+      "bodySHA256": "db1a9f3e659776fccf32f7c92073737d5a87b5f76b47e46718af126d9ac08005"
+    },
+    {
+      "prototypeKey": "bpb-week-6",
+      "canonicalAssetId": null,
+      "week": 6,
+      "title": "Keeping the rhythm",
+      "verb": "Build a habit",
+      "cardSummary": "A recording routine that fits your day and leaves room to resume after a missed session.",
+      "standfirst": "A familiar reminder can make the practical side of recording less demanding. Keep the routine within the days and times agreed with your own clinician.",
+      "readingTimeMinutes": 5,
+      "readingTimeStatus": "Provisional estimate carried from working draft; not measured or approved",
+      "byline": "A/Prof Andrew Roy, Cardiologist",
+      "bylineStatus": "Owner-requested draft attribution; not evidence of author approval",
+      "clinicalReviewStatus": "Pending",
+      "clinicalReviewer": null,
+      "clinicalReviewDate": null,
+      "source": "Chat draft in this conversation: five-week article response. Based on the supplied five-week generation prompt and CORV-EDU-001 v0.7. Repackaged, not newly clinically reviewed.",
+      "sections": [
+        {
+          "heading": "Choose a familiar moment",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Some parts of the day already happen with little planning: brushing your teeth, setting out breakfast things or putting the kettle on. A familiar moment can serve as a reminder for a recording routine."
+            },
+            {
+              "type": "paragraph",
+              "text": "Start with the days and times agreed with your own clinician. Then choose an existing part of the day that sits comfortably alongside that plan. This is sometimes called habit-stacking: attaching a new task to something already familiar."
+            },
+            {
+              "type": "paragraph",
+              "text": "For example, putting the toothbrush away might be the reminder to prepare the chair and cuff. Setting out an empty mug might serve the same purpose before breakfast. These are reminders to begin the preparation, not occasions to take a reading while standing, moving or drinking coffee."
+            },
+            {
+              "type": "paragraph",
+              "text": "Leave room for the quiet seated rest and the measurement technique described in Measuring well. The familiar cue should fit around those steps, rather than crowding them out."
+            }
+          ]
+        },
+        {
+          "heading": "Make the routine practical",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Choose somewhere the equipment can be kept together and is easy to find. Think through the part of the day that is usually rushed and the part where a few quiet minutes are more realistic."
+            },
+            {
+              "type": "paragraph",
+              "text": "The Pulse article *Morning and evening* considers the timing of a recording routine. Your own doctor's instructions take precedence over a general example. The programme does not set a permanent measurement schedule."
+            },
+            {
+              "type": "paragraph",
+              "text": "A reminder can be quite ordinary. It might be the sight of the notebook beside the chair or a note where you put the mug away. There is no need for a complicated system if a simple one suits the circumstances."
+            },
+            {
+              "type": "paragraph",
+              "text": "If the routine repeatedly clashes with work, caring responsibilities or other parts of daily life, discuss that with your clinician. A practical plan needs to fit the measurement instructions as well as the day in which it will happen."
+            }
+          ]
+        },
+        {
+          "heading": "After a missed day",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Leave the gap as it is and return at the next scheduled session, following your clinician's instructions. Do not add extra sessions to make up the total or enter a reading that was never taken."
+            },
+            {
+              "type": "paragraph",
+              "text": "You do not need to repeat the programme from the beginning because one day was missed. The question is simply where the agreed routine next fits. A missing entry is something to acknowledge, not something to conceal."
+            },
+            {
+              "type": "paragraph",
+              "text": "If your doctor requested a particular number of days, mention the gap when you share the record. They can tell you whether anything further is needed. That decision does not have to be worked out from the app."
+            }
+          ]
+        },
+        {
+          "heading": "What continues after this week",
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Further recording, when agreed with your clinician, adds dated entries to the record you can review and share at later appointments. It does not require a conclusion about what those entries mean."
+            },
+            {
+              "type": "paragraph",
+              "text": "As circumstances change, the practical routine may need another conversation too. The lasting part of this week is a familiar place to begin again: prepare, take the agreed measurements and record what happened, alongside your own care."
+            }
+          ]
+        }
+      ],
+      "keyTakeaway": "Consistency beats perfection — a habit that survives a missed day is the only kind worth building.",
+      "nextWeekTitle": null,
+      "imageBrief": {
+        "primary": "An empty ceramic mug beside a kettle in a quiet kitchen, with soft morning light and no measurement equipment.",
+        "alternative": "A closed notebook beside an ordinary chair and reading lamp. Familiarity rather than achievement.",
+        "thumbnail": "Keep one recognisable object; no streaks, badges, stars or heart-rhythm graphics.",
+        "wide": "Use a wider version of the same quiet setting without inserting measurement instructions into the artwork.",
+        "altDraft": "An empty ceramic mug beside a kettle in morning light."
+      },
+      "imageStatus": "Proposed concept; final asset, licence and review not supplied",
+      "referenceStatus": "Pending claim-matched evidence checks; no verified reference list supplied in this package",
+      "claimsNeedingCitation": [
+        "Consistent contextual cues and repetition in general habit research; BPB itself has not been shown effective by these sources.",
+        "Distinguish missed habit opportunities from the sufficiency of a clinician-requested BP record.",
+        "Individual measurement frequency and duration remain matters for the clinician."
+      ],
+      "reviewHolds": [
+        "The title and takeaway are retained as supplied. This week is about routines, not cardiac electrical rhythm. The absolute phrase \"the only kind worth building\" remains source wording, not a verified outcome claim."
+      ],
+      "publishable": false,
+      "crossLinks": [
+        {
+          "title": "Morning and evening",
+          "collection": "pulse",
+          "prototypeTargetKey": "demo-editorial-05"
+        }
+      ],
+      "sourceTextNormalisation": "Headings and paragraphs structured for rendering; quotation marks normalised for text storage. No intended substantive rewrite.",
+      "bodyWordCount": 473,
+      "bodySHA256": "cc301ee9e1cd1586375615d2fcee2dca95da5a6867af9bbe8ed90b726f3165cd"
+    }
+  ],
+  "editorialCatalogue": [
+    {
+      "prototypeKey": "demo-editorial-01",
+      "canonicalAssetId": null,
+      "collection": "pulse",
+      "title": "Why readings vary through the day",
+      "linkedFromWeeks": [
+        1
+      ],
+      "sourceStatus": "Reported existing in supplied brief; complete body not supplied here",
+      "cardSummary": null,
+      "summaryProvenance": null,
+      "referenceScreenReadingTimeMinutes": null,
+      "displayReadingTime": false,
+      "body": null,
+      "bodyAvailability": "not_supplied",
+      "byline": null,
+      "clinicalReviewStatus": "Not established from supplied body",
+      "emptyReaderMessage": "The article text is not included in this design preview. This is a layout placeholder, not an approved article.",
+      "doNotGenerateBody": true,
+      "publishable": false
+    },
+    {
+      "prototypeKey": "demo-editorial-02",
+      "canonicalAssetId": null,
+      "collection": "pulse",
+      "title": "What mmHg actually measures",
+      "linkedFromWeeks": [
+        1
+      ],
+      "sourceStatus": "Reported existing in supplied brief; complete body not supplied here",
+      "cardSummary": null,
+      "summaryProvenance": null,
+      "referenceScreenReadingTimeMinutes": null,
+      "displayReadingTime": false,
+      "body": null,
+      "bodyAvailability": "not_supplied",
+      "byline": null,
+      "clinicalReviewStatus": "Not established from supplied body",
+      "emptyReaderMessage": "The article text is not included in this design preview. This is a layout placeholder, not an approved article.",
+      "doNotGenerateBody": true,
+      "publishable": false
+    },
+    {
+      "prototypeKey": "demo-editorial-03",
+      "canonicalAssetId": null,
+      "collection": "pulse",
+      "title": "The white-coat effect",
+      "linkedFromWeeks": [
+        3
+      ],
+      "sourceStatus": "Reported existing in supplied brief; complete body not supplied here",
+      "cardSummary": null,
+      "summaryProvenance": null,
+      "referenceScreenReadingTimeMinutes": null,
+      "displayReadingTime": false,
+      "body": null,
+      "bodyAvailability": "not_supplied",
+      "byline": null,
+      "clinicalReviewStatus": "Not established from supplied body",
+      "emptyReaderMessage": "The article text is not included in this design preview. This is a layout placeholder, not an approved article.",
+      "doNotGenerateBody": true,
+      "publishable": false
+    },
+    {
+      "prototypeKey": "demo-editorial-04",
+      "canonicalAssetId": null,
+      "collection": "pulse",
+      "title": "Cuff size and fit",
+      "linkedFromWeeks": [
+        2
+      ],
+      "sourceStatus": "Planned; body not supplied",
+      "cardSummary": null,
+      "summaryProvenance": null,
+      "referenceScreenReadingTimeMinutes": null,
+      "displayReadingTime": false,
+      "body": null,
+      "bodyAvailability": "not_supplied",
+      "byline": null,
+      "clinicalReviewStatus": "Not established from supplied body",
+      "emptyReaderMessage": "The article text is not included in this design preview. This is a layout placeholder, not an approved article.",
+      "doNotGenerateBody": true,
+      "publishable": false
+    },
+    {
+      "prototypeKey": "demo-editorial-05",
+      "canonicalAssetId": null,
+      "collection": "pulse",
+      "title": "Morning and evening",
+      "linkedFromWeeks": [
+        6
+      ],
+      "sourceStatus": "Planned; body not supplied",
+      "cardSummary": null,
+      "summaryProvenance": null,
+      "referenceScreenReadingTimeMinutes": null,
+      "displayReadingTime": false,
+      "body": null,
+      "bodyAvailability": "not_supplied",
+      "byline": null,
+      "clinicalReviewStatus": "Not established from supplied body",
+      "emptyReaderMessage": "The article text is not included in this design preview. This is a layout placeholder, not an approved article.",
+      "doNotGenerateBody": true,
+      "publishable": false
+    },
+    {
+      "prototypeKey": "demo-editorial-06",
+      "canonicalAssetId": null,
+      "collection": "pulse",
+      "title": "How clinicians use home records",
+      "linkedFromWeeks": [
+        5
+      ],
+      "sourceStatus": "Planned; body not supplied",
+      "cardSummary": null,
+      "summaryProvenance": null,
+      "referenceScreenReadingTimeMinutes": null,
+      "displayReadingTime": false,
+      "body": null,
+      "bodyAvailability": "not_supplied",
+      "byline": null,
+      "clinicalReviewStatus": "Not established from supplied body",
+      "emptyReaderMessage": "The article text is not included in this design preview. This is a layout placeholder, not an approved article.",
+      "doNotGenerateBody": true,
+      "publishable": false
+    },
+    {
+      "prototypeKey": "demo-editorial-07",
+      "canonicalAssetId": null,
+      "collection": "in-focus",
+      "title": "The home record, explained",
+      "linkedFromWeeks": [],
+      "sourceStatus": "Reported existing; confirm or rewrite; complete body not supplied here",
+      "cardSummary": "What a record built at home contains, and why it is kept exactly as measured.",
+      "summaryProvenance": "Visible reference screenshot copy; draft/unverified",
+      "referenceScreenReadingTimeMinutes": 6,
+      "displayReadingTime": false,
+      "body": null,
+      "bodyAvailability": "not_supplied",
+      "byline": null,
+      "clinicalReviewStatus": "Not established from supplied body",
+      "emptyReaderMessage": "The article text is not included in this design preview. This is a layout placeholder, not an approved article.",
+      "doNotGenerateBody": true,
+      "publishable": false
+    },
+    {
+      "prototypeKey": "demo-editorial-08",
+      "canonicalAssetId": null,
+      "collection": "in-focus",
+      "title": "How a blood pressure monitor works",
+      "linkedFromWeeks": [
+        2
+      ],
+      "sourceStatus": "Planned; body not supplied",
+      "cardSummary": "What happens between the cuff inflating and the numbers appearing.",
+      "summaryProvenance": "Visible reference screenshot copy; draft/unverified",
+      "referenceScreenReadingTimeMinutes": 7,
+      "displayReadingTime": false,
+      "body": null,
+      "bodyAvailability": "not_supplied",
+      "byline": null,
+      "clinicalReviewStatus": "Not established from supplied body",
+      "emptyReaderMessage": "The article text is not included in this design preview. This is a layout placeholder, not an approved article.",
+      "doNotGenerateBody": true,
+      "publishable": false
+    },
+    {
+      "prototypeKey": "demo-editorial-09",
+      "canonicalAssetId": null,
+      "collection": "in-focus",
+      "title": "What a clinician looks at in a record",
+      "linkedFromWeeks": [
+        5
+      ],
+      "sourceStatus": "Planned; body not supplied",
+      "cardSummary": "How home readings are read in clinic, and what makes a record useful.",
+      "summaryProvenance": "Visible reference screenshot copy; draft/unverified",
+      "referenceScreenReadingTimeMinutes": 8,
+      "displayReadingTime": false,
+      "body": null,
+      "bodyAvailability": "not_supplied",
+      "byline": null,
+      "clinicalReviewStatus": "Not established from supplied body",
+      "emptyReaderMessage": "The article text is not included in this design preview. This is a layout placeholder, not an approved article.",
+      "doNotGenerateBody": true,
+      "publishable": false
+    },
+    {
+      "prototypeKey": "demo-editorial-10",
+      "canonicalAssetId": null,
+      "collection": "in-focus",
+      "title": "A short history of measuring blood pressure",
+      "linkedFromWeeks": [],
+      "sourceStatus": "Planned; body not supplied",
+      "cardSummary": "From a column of mercury to the cuff on your kitchen table.",
+      "summaryProvenance": "Visible reference screenshot copy; draft/unverified",
+      "referenceScreenReadingTimeMinutes": 5,
+      "displayReadingTime": false,
+      "body": null,
+      "bodyAvailability": "not_supplied",
+      "byline": null,
+      "clinicalReviewStatus": "Not established from supplied body",
+      "emptyReaderMessage": "The article text is not included in this design preview. This is a layout placeholder, not an approved article.",
+      "doNotGenerateBody": true,
+      "publishable": false
+    }
+  ],
+  "knownGaps": [
+    "Actual font/theme CSS for the photographed app is not supplied. Prior HTML typography is a reference, not proof of the current app font.",
+    "The opened article template is not shown in the six screenshots.",
+    "Complete bodies of the six Pulse and four In Focus articles are not supplied here. Do not fabricate them.",
+    "Current approved intended purpose, release approval and production privacy/security design are not established by these draft sources.",
+    "Actual Payload collections and API contracts are not supplied."
+  ]
+}

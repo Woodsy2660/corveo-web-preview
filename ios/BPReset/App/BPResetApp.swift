@@ -157,6 +157,9 @@ enum AppRoute: Hashable {
     case programDetail(slug: String)
     case inFocus(slug: String)
     case pulse(slug: String)
+    // Editorial content routes (Task 7/8)
+    case editorialPulse(key: String)
+    case editorialInFocus(key: String)
 }
 
 @MainActor
@@ -170,7 +173,8 @@ final class Router {
     var showsTabBar: Bool {
         guard let last = path.last else { return true }
         switch last {
-        case .chapter, .programBrowse, .programDetail, .inFocus: return true
+        case .chapter, .programBrowse, .programDetail, .inFocus, .editorialInFocus: return true
+        case .editorialPulse: return false  // Full-screen viewer
         default: return false
         }
     }

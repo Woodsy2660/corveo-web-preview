@@ -12,7 +12,7 @@ export const APP = {
     unitMmHg: "mmHg",
     settingsLink: "Settings",
     /** Accessible name for the header profile icon — no visible label. */
-    profileAria: "Profile and settings",
+    profileAria: "Settings",
     profileCloseAria: "Close settings",
     cancel: "Cancel",
     back: "Back",
@@ -37,7 +37,8 @@ export const APP = {
     inFocusSub: "Long reads",
     openPulseAria: (title: string) => `Open short read: ${title}`,
     contentPendingNotice:
-      "Education content is being prepared and clinically reviewed by the Corveo team. Placeholder content is shown during development.",
+      "The article text is not included in this design preview. This is a layout placeholder, not an approved article.",
+    reviewHoldMarker: "Editorial review pending",
   },
 
   pulse: {
@@ -46,7 +47,7 @@ export const APP = {
     closeAria: "Close",
     swipeHint: "Swipe up for the next read",
     pendingBody:
-      "This read is being prepared and clinically reviewed by the Corveo team.",
+      "The article text is not included in this design preview. This is a layout placeholder, not an approved article.",
   },
 
   inFocus: {
@@ -83,6 +84,8 @@ export const APP = {
       "Each point is a daily summary of your readings, shown exactly as recorded. The pattern across weeks is what's worth discussing with your doctor.",
     ranges: { oneWeek: "1W", sixWeeks: "6W", all: "All" },
     rangeAria: "Trend range",
+    timeFilters: { all: "All", day: "Day", night: "Night" },
+    timeFilterAria: "Filter readings by time of day",
     /** The mean of the readings on screen. A summary, never a threshold or a target. */
     averageLabel: {
       "1w": "Average of this week",
@@ -146,6 +149,14 @@ export const APP = {
     previous: "Previous chapter",
     next: "Next chapter",
     notFound: "That chapter isn't available.",
+    keyTakeaway: "Key takeaway",
+    nextWeek: "Next week",
+    related: "Related reads",
+    takeawayReview: "This takeaway is under editorial review",
+    draftNotice: "This chapter is in draft. Clinical review is pending.",
+    week4Title: "Before you continue",
+    week4Continue: "Continue",
+    week4Back: "Go back",
   },
 
   manualEntry: {
@@ -157,36 +168,55 @@ export const APP = {
   },
 
   settings: {
-    title: "Profile and settings",
-    /** The page opens on the patient: where they are, how readings arrive, the rhythm chosen. */
+    title: "Settings",
+    /** Short labels for how readings arrive — shown as trailing values on the Settings list. */
     profile: {
-      title: "You",
-      programLabel: "Program",
-      program: (week: number, total: number) => `Week ${week} of ${total}`,
-      followingLabel: "Following",
-      followingNone: "The six-week program only",
-      readingsLabel: "Readings",
       readings: {
         healthkit: "Apple Health",
         manual: "Entered by hand",
         none: "No monitor yet",
       },
-      readingCount: (n: number) => (n === 1 ? "1 reading" : `${n} readings`),
-      beganLabel: "Record began",
-      beganNone: "With your first reading",
-      rhythmLabel: "Rhythm",
-      rhythmUnset: "Not chosen yet",
-      consentLabel: "Consent",
-      consentGiven: (date: string, version: string) => `Given ${date} (v${version})`,
-      consentNone: "Not recorded",
+    },
+    account: {
+      title: "Account",
+      pageTitle: "Account",
+      signedInAs: (email: string) => `Signed in as ${email}.`,
+      emailLabel: "Email",
+      statusLabel: "Status",
+      signedIn: "Signed in",
+      none: "Not recorded",
+      signOutCta: "Sign out",
+      signOutNote:
+        "Readings waiting on this phone stay here, encrypted, until you sign in again.",
+      signOutConfirmTitle: "Sign out?",
+      signOutConfirmBody:
+        "You'll need to sign in again to see your record on this phone. Readings waiting here stay, encrypted, until you do.",
+      signOutConfirmCta: "Sign out",
+      signOutCancelCta: "Stay signed in",
     },
     /** The menu: each row is a page of its own. */
     menuAria: "Settings",
     menu: {
-      appleHealth: "Apple Health",
-      about: "About this app",
-      data: "Your data",
-      monitors: "Arm monitors",
+      account: "Account",
+      readingsGroup: "Readings",
+      readingsArrive: "How readings arrive",
+      reminder: "Reminder",
+      reminderUnset: "Not chosen yet",
+      monitors: "Validated monitors",
+      record: "Your record",
+      about: "About Corveo",
+    },
+    readingsArrive: {
+      title: "How readings arrive",
+      intro:
+        "Corveo organises readings from a validated upper-arm cuff. Choose how yours will come in. You can change this at any time.",
+      leavingHealth:
+        "Corveo will stop looking for new readings from Apple Health. Readings already in your record stay, and you can add new ones by hand. This does not change Apple Health permissions — those stay in Settings › Health › Data Access & Devices.",
+    },
+    reminder: {
+      title: "Reminder",
+      intro:
+        "A steady rhythm of readings builds the clearest record. Choose whatever fits your days. You can change this at any time.",
     },
     appleHealth: {
       title: "Apple Health",
@@ -202,9 +232,11 @@ export const APP = {
       resumeCta: "Resume syncing",
       pauseNote:
         "Paused means Corveo stops looking for new readings. Nothing already in your record changes, and you can resume at any time.",
+      notLooking:
+        "Corveo is not looking for new readings from Apple Health, because you chose to enter readings yourself. Readings already in your record stay. Access in iOS Settings is unchanged. To start looking again, choose Apple Health under How readings arrive.",
     },
     yourData: {
-      title: "Your data",
+      title: "Your record",
       body: "Your readings are yours. Export or request deletion at any time.",
       exportCta: "Export my record",
       exportNote: "Your full record as a file you can keep or share yourself.",

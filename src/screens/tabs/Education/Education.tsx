@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { Screen, ProfileLink } from "@/components/ui/Screen";
 import { ClockIcon } from "@/components/ui/icons";
 import { APP } from "@/copy/app";
+import { EDUCATION_PROGRAM, HAS_DRAFT_CONTENT } from "@/lib/education-content";
 import { ARTICLE_ART, PULSE_ART } from "@/assets/photos";
 import {
   IN_FOCUS_ARTICLES,
@@ -41,7 +42,7 @@ function PulseCard({ item, index }: { item: PulseItem; index: number }) {
       style={{ "--stagger-index": Math.min(index, 4) } as React.CSSProperties}
     >
       <img
-        src={PULSE_ART[item.slug]}
+        src={PULSE_ART[item.slug] ?? ""}
         alt=""
         aria-hidden
         className="absolute inset-0 h-full w-full object-cover"
@@ -78,7 +79,7 @@ function InFocusRow({ article, index }: { article: InFocusArticle; index: number
         className="flex h-[112px] gap-[var(--spacing-xs)] py-[var(--spacing-xs)]"
       >
         <img
-          src={ARTICLE_ART[article.slug]}
+          src={ARTICLE_ART[article.slug] ?? ""}
           alt=""
           aria-hidden
           className="h-full w-[66px] flex-none rounded-sm object-cover"
@@ -93,20 +94,31 @@ function InFocusRow({ article, index }: { article: InFocusArticle; index: number
             >
               {article.title}
             </h2>
-            <p
-              className="line-clamp-1 text-ink-secondary"
-              style={{ fontSize: "var(--text-body-sm)" }}
-            >
-              {article.excerpt}
-            </p>
+            {article.excerpt ? (
+              <p
+                className="line-clamp-1 text-ink-secondary"
+                style={{ fontSize: "var(--text-body-sm)" }}
+              >
+                {article.excerpt}
+              </p>
+            ) : null}
           </div>
-          <span
-            className="flex items-center gap-[var(--spacing-3xs)] text-ink-tertiary"
-            style={{ fontSize: "var(--text-label)", lineHeight: "var(--leading-label)" }}
-          >
-            <ClockIcon />
-            {APP.program.duration(article.readMinutes, "read")}
-          </span>
+          {article.displayReadingTime ? (
+            <span
+              className="flex items-center gap-[var(--spacing-3xs)] text-ink-tertiary"
+              style={{ fontSize: "var(--text-label)", lineHeight: "var(--leading-label)" }}
+            >
+              <ClockIcon />
+              {APP.program.duration(article.readMinutes, "read")}
+            </span>
+          ) : (
+            <span
+              className="text-ink-tertiary"
+              style={{ fontSize: "var(--text-label)", lineHeight: "var(--leading-label)" }}
+            >
+              {APP.education.reviewHoldMarker}
+            </span>
+          )}
         </div>
       </Link>
     </li>
@@ -118,6 +130,14 @@ export function Education() {
 
   return (
     <Screen title={c.title} withTabBar action={<ProfileLink />}>
+      {HAS_DRAFT_CONTENT ? (
+        <p
+          className="mb-[var(--spacing-sm)] rounded-sm px-[var(--spacing-xs)] py-[var(--spacing-2xs)] text-ink-secondary"
+          style={{ fontSize: "var(--text-body-sm)", background: "var(--color-surface-neutral-lightest)" }}
+        >
+          {EDUCATION_PROGRAM.previewBanner}
+        </p>
+      ) : null}
       <p
         className="pb-[var(--spacing-md)] text-ink-secondary"
         style={{ fontSize: "var(--text-body-sm)" }}

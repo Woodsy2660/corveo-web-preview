@@ -5,7 +5,7 @@ import { APP } from "@/copy/app";
 import { SAFETY } from "@/copy/safety";
 
 /**
- * About this app: the safety surface (Deliverable 12), what Corveo does
+ * About Corveo: the safety surface (Deliverable 12), what Corveo does
  * and does not do, on its own page under Settings. Reached from the
  * Settings menu; the back button returns to Settings.
  */

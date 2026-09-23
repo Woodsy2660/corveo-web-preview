@@ -22,11 +22,14 @@ export interface JourneyState {
   journeyComplete: boolean;
   connectChoice: ConnectChoice | null;
   cadence: CadenceChoice | null;
+  /** Email captured at signup/sign-in. Mock auth — no password stored. */
+  email: string | null;
 }
 
 interface JourneyContextValue extends JourneyState {
   setConnectChoice: (c: ConnectChoice) => void;
   setCadence: (c: CadenceChoice) => void;
+  setEmail: (email: string) => void;
   completeJourney: () => void;
   resetJourney: () => void;
 }
@@ -37,6 +40,7 @@ const DEFAULT_STATE: JourneyState = {
   journeyComplete: false,
   connectChoice: null,
   cadence: null,
+  email: null,
 };
 
 function load(): JourneyState {
@@ -67,6 +71,7 @@ export function JourneyProvider({ children }: { children: ReactNode }) {
       ...state,
       setConnectChoice: (connectChoice) => update({ connectChoice }),
       setCadence: (cadence) => update({ cadence }),
+      setEmail: (email) => update({ email }),
       completeJourney: () => update({ journeyComplete: true }),
       resetJourney: () => {
         localStorage.removeItem(KEY);
