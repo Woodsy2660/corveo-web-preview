@@ -62,7 +62,7 @@ export function Intro() {
 
       <div className="flex flex-col gap-[var(--spacing-md)]">
         {c.cards.map((card, i) => {
-          const Icon = INTRO_ICONS[i];
+          const Icon = INTRO_ICONS[i] ?? HomeIcon;
           return (
             <div key={card.title} className="flex items-start gap-[var(--spacing-sm)]">
               <span className="mt-[2px] flex-none text-heading">
