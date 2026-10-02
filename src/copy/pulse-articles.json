@@ -1,0 +1,369 @@
+{
+  "packageVersion": "pulse-0.1",
+  "sourceDocument": "CORV-EDU-002 v0.4, 24 September 2026",
+  "preparedDate": "2026-09-28",
+  "status": "Clinically signed off; not gate-passed (G1/G2/G3 outstanding)",
+  "collection": "pulse",
+  "articles": [
+    {
+      "prototypeKey": "demo-editorial-01",
+      "canonicalAssetId": null,
+      "collection": "pulse",
+      "title": "Why readings vary through the day",
+      "programmeLink": "Week 1 — Understanding blood pressure",
+      "linkedFromWeeks": [
+        1,
+        4
+      ],
+      "setupAccess": false,
+      "sourceStatus": "Body supplied and clinically signed off (CORV-EDU-002 v0.4, 24 Sep 2026)",
+      "originCheck": "candidate_replacement",
+      "cardSummary": "Why blood pressure changes, and why the circumstances of a reading matter.",
+      "standfirst": "Blood pressure responds to sleep, activity and the circumstances of measurement. Variation alone cannot explain a particular result.",
+      "body": [
+        "Blood pressure changes as the body moves between sleep, rest and activity. It usually falls during sleep and rises around waking, although the timing and size of that change vary between people. [S04]",
+        "Recent activity, stress, pain, caffeine or nicotine can affect a reading. Talking, an unsupported arm or a cuff that does not fit can also alter the measurement. A difference may reflect a change in blood pressure, a difference in technique, or both. [S01, S02, S06]",
+        "For a home record, comparable conditions matter. Follow the agreed measurement routine and record what was actually measured. A brief note about unusual circumstances can be useful, but it cannot establish the cause of a particular result. [S01]",
+        "Variation does not mean that persistent hypertension is harmless. People with hypertension often feel well. Do not discard an unexpected reading or delay seeking advice simply because readings can vary. [S14]",
+        "Morning and evening cuff readings also cannot show what happened during sleep. When that information is needed, a clinician may arrange ambulatory measurement, using a device that takes readings through the day and night. [S05]"
+      ],
+      "keyTakeaway": "Knowing that blood pressure varies does not explain an individual reading.",
+      "sharedFooter": "General information, not personal medical advice. Follow your own clinician's instructions. In a medical emergency, call 000. [S14]",
+      "references": [
+        "S01",
+        "S02",
+        "S04",
+        "S05",
+        "S06",
+        "S14"
+      ],
+      "byline": "A/Prof Andrew Roy, Cardiologist",
+      "bylineStatus": "Clinical sign-off recorded 24 September 2026",
+      "clinicalReviewStatus": "Bodies clinically accepted 24 Sep 2026; G1/G2/G3 gates not passed",
+      "clinicalReviewer": "A/Prof Andrew Roy",
+      "clinicalReviewDate": "2026-09-24",
+      "bodyAvailability": "supplied",
+      "displayReadingTime": false,
+      "referenceScreenReadingTimeMinutes": null,
+      "doNotGenerateBody": false,
+      "publishable": false,
+      "reviewHolds": [],
+      "bodyWordCount": 182,
+      "bodySHA256": "52e5f833270f8912fc3690141018cc80528f9679a3333ab36e9a9987d1b6ee92"
+    },
+    {
+      "prototypeKey": "demo-editorial-02",
+      "canonicalAssetId": null,
+      "collection": "pulse",
+      "title": "What mmHg actually measures",
+      "programmeLink": "Week 1 — Understanding blood pressure",
+      "linkedFromWeeks": [
+        1
+      ],
+      "setupAccess": false,
+      "sourceStatus": "Body supplied and clinically signed off (CORV-EDU-002 v0.4, 24 Sep 2026)",
+      "originCheck": "candidate_replacement",
+      "cardSummary": "The unit beside a blood pressure reading, and how it differs from pulse.",
+      "standfirst": "mmHg is a unit of pressure. It applies to both blood pressure numbers, not to the pulse displayed beside them.",
+      "body": [
+        "mmHg stands for millimetres of mercury, the unit used to express blood pressure. The name comes from instruments that measured pressure using a column of mercury. Electronic blood pressure devices still report in this unit. [S05, S12]",
+        "Blood pressure describes the pressure of blood against artery walls. It is recorded as two figures because pressure changes during each heartbeat. Systolic pressure comes first: the pressure as the heart contracts. Diastolic pressure comes second: the pressure between beats, while the heart relaxes. Both are expressed in mmHg. [S03, S05]",
+        "Pulse is different. It is recorded in beats per minute. A pulse number appearing beside a blood pressure reading is a separate measurement, not a third blood pressure value. [S11]",
+        "The unit does not describe the volume of blood in the body, the percentage of an artery that is narrowed, or a heart-health score. It tells you what kind of measurement is being reported. [S05]",
+        "Keep the systolic and diastolic figures together when recording a measurement. Understanding the labels makes the record easier to read; deciding what the figures mean for your care also requires the measurement method and your clinical circumstances. [S01, S09]"
+      ],
+      "keyTakeaway": "Both blood pressure numbers describe pressure; pulse is a separate measurement.",
+      "sharedFooter": "General information, not personal medical advice. Follow your own clinician's instructions. In a medical emergency, call 000. [S14]",
+      "references": [
+        "S01",
+        "S03",
+        "S05",
+        "S09",
+        "S11",
+        "S12",
+        "S14"
+      ],
+      "byline": "A/Prof Andrew Roy, Cardiologist",
+      "bylineStatus": "Clinical sign-off recorded 24 September 2026",
+      "clinicalReviewStatus": "Bodies clinically accepted 24 Sep 2026; G1/G2/G3 gates not passed",
+      "clinicalReviewer": "A/Prof Andrew Roy",
+      "clinicalReviewDate": "2026-09-24",
+      "bodyAvailability": "supplied",
+      "displayReadingTime": false,
+      "referenceScreenReadingTimeMinutes": null,
+      "doNotGenerateBody": false,
+      "publishable": false,
+      "reviewHolds": [],
+      "bodyWordCount": 192,
+      "bodySHA256": "c80d3353c8bbe12abbe7669ed6649c04b8479a8f16ae1a2f127cd6dde807a7c4"
+    },
+    {
+      "prototypeKey": "demo-editorial-03",
+      "canonicalAssetId": null,
+      "collection": "pulse",
+      "title": "The white-coat effect",
+      "programmeLink": "Week 3 — Reading your record",
+      "linkedFromWeeks": [
+        3
+      ],
+      "setupAccess": false,
+      "sourceStatus": "Body supplied and clinically signed off (CORV-EDU-002 v0.4, 24 Sep 2026)",
+      "originCheck": "candidate_replacement",
+      "cardSummary": "Why clinic and home measurements can differ, and why both need context.",
+      "standfirst": "A medical appointment can affect blood pressure. A difference between settings needs to be checked, not assumed to be just nerves.",
+      "body": [
+        "Blood pressure can rise in a healthcare setting, sometimes as part of the body's response to an appointment. A difference in which clinic measurements are higher than those taken outside the clinic is called the white-coat effect. [S06, S10]",
+        "White-coat hypertension is a more specific term. In someone not taking blood pressure medicine, measurements meet the criteria for hypertension in the clinic but not on properly collected home or ambulatory measurements. That pattern needs clinical confirmation; it cannot be assumed from one clinic visit and one home reading. [S06, S07]",
+        "Your clinician may request a home record or a 24-hour ambulatory recording to investigate the difference. Ambulatory equipment takes readings during daily activities and sleep, which ordinary morning and evening home measurements do not capture. [S05]",
+        "The opposite pattern is called masked hypertension: clinic measurements do not meet the criteria for hypertension, but measurements outside the clinic do. This is another reason not to rely on one setting alone. [S07]",
+        "White-coat hypertension still needs follow-up because sustained hypertension can develop. Keep the review arrangement agreed with your clinician, and do not change prescribed medicines on the basis of this explanation. [S10, S09]"
+      ],
+      "keyTakeaway": "Clinic and out-of-clinic readings need to be considered together.",
+      "sharedFooter": "General information, not personal medical advice. Follow your own clinician's instructions. In a medical emergency, call 000. [S14]",
+      "references": [
+        "S05",
+        "S06",
+        "S07",
+        "S09",
+        "S10",
+        "S14"
+      ],
+      "byline": "A/Prof Andrew Roy, Cardiologist",
+      "bylineStatus": "Clinical sign-off recorded 24 September 2026",
+      "clinicalReviewStatus": "Bodies clinically accepted 24 Sep 2026; G1/G2/G3 gates not passed",
+      "clinicalReviewer": "A/Prof Andrew Roy",
+      "clinicalReviewDate": "2026-09-24",
+      "bodyAvailability": "supplied",
+      "displayReadingTime": false,
+      "referenceScreenReadingTimeMinutes": null,
+      "doNotGenerateBody": false,
+      "publishable": false,
+      "reviewHolds": [],
+      "bodyWordCount": 192,
+      "bodySHA256": "43e2089d2111f72000199ecbf8c33084d1b98e34fae51f35d892e5c9a014a8bd"
+    },
+    {
+      "prototypeKey": "demo-editorial-04",
+      "canonicalAssetId": null,
+      "collection": "pulse",
+      "title": "Cuff size and fit",
+      "programmeLink": "Week 2 — Measuring well",
+      "linkedFromWeeks": [
+        2
+      ],
+      "setupAccess": true,
+      "sourceStatus": "Body supplied and clinically signed off (CORV-EDU-002 v0.4, 24 Sep 2026)",
+      "originCheck": "new_commission",
+      "cardSummary": "Why the cuff must match both the arm and the blood pressure device.",
+      "standfirst": "A cuff can fasten around an arm and still be the wrong size. Check its stated arm-size range and its match to the device.",
+      "body": [
+        "The cuff is part of the measuring equipment, not simply a strap. Its stated size range should include the distance around the middle of the upper arm. A cuff that closes comfortably is not necessarily the right size. [S01, S13]",
+        "Measure around the midpoint of the upper arm with a tape measure, then compare that measurement with the range on the cuff or in the device instructions. A pharmacist or clinician can help. Use a cuff specified for that device; a replacement is not suitable just because its connector fits. [S13]",
+        "A cuff that is too small tends to overestimate blood pressure. A cuff that is too large can underestimate it. The size of the error varies, so there is no reliable number to add or subtract to correct an individual reading at home. [S08]",
+        "Place the cuff on bare skin and follow its positioning instructions. Sit with your back and feet supported, and rest the arm so the cuff is at heart height. Avoid a tightly rolled sleeve above it. [S02, S09]",
+        "A validated device has passed accuracy testing, but it still needs the appropriate cuff and technique. A connection to a phone does not check either of those things. [S03, S13]"
+      ],
+      "keyTakeaway": "Check the arm-size range and the device match, not just whether the cuff fastens.",
+      "sharedFooter": "General information, not personal medical advice. Follow your own clinician's instructions. In a medical emergency, call 000. [S14]",
+      "references": [
+        "S01",
+        "S02",
+        "S03",
+        "S08",
+        "S09",
+        "S13",
+        "S14"
+      ],
+      "byline": "A/Prof Andrew Roy, Cardiologist",
+      "bylineStatus": "Clinical sign-off recorded 24 September 2026",
+      "clinicalReviewStatus": "Bodies clinically accepted 24 Sep 2026; G1/G2/G3 gates not passed",
+      "clinicalReviewer": "A/Prof Andrew Roy",
+      "clinicalReviewDate": "2026-09-24",
+      "bodyAvailability": "supplied",
+      "displayReadingTime": false,
+      "referenceScreenReadingTimeMinutes": null,
+      "doNotGenerateBody": false,
+      "publishable": false,
+      "reviewHolds": [],
+      "bodyWordCount": 203,
+      "bodySHA256": "b951d5594c73fbdabd49cff5e476cd918ba962c1d0136fb07969627fdc37f758"
+    },
+    {
+      "prototypeKey": "demo-editorial-05",
+      "canonicalAssetId": null,
+      "collection": "pulse",
+      "title": "Morning and evening",
+      "programmeLink": "Week 6 — Keeping the rhythm",
+      "linkedFromWeeks": [
+        6
+      ],
+      "setupAccess": true,
+      "sourceStatus": "Body supplied and clinically signed off (CORV-EDU-002 v0.4, 24 Sep 2026)",
+      "originCheck": "new_commission",
+      "cardSummary": "How timing and preparation make a home record easier to compare.",
+      "standfirst": "Morning and evening readings sample two parts of the day. The useful routine is the one agreed with your clinician and repeated under similar conditions.",
+      "body": [
+        "There is no single clock time that suits everyone. The aim is to collect readings at comparable times and under similar resting conditions. [S01, S09]",
+        "One commonly used home-measurement plan is two readings, about a minute apart, each morning and evening for seven days. It is an example of a clinical protocol, not an instruction to keep measuring indefinitely. Your clinician should confirm the frequency, duration and review date for your record. [S01, S03]",
+        "Before each session, empty your bladder and sit quietly for five minutes. Avoid smoking, caffeine and exercise for at least 30 minutes beforehand. Keep your back, feet and arm supported, and do not talk while measuring. [S02, S09]",
+        "Morning measurements are often taken before breakfast and usual medicines, where this fits the agreed plan. Do not skip, delay or change prescribed medicines to fit a recording routine. Ask how to arrange the timing if your medicines, sleep or shift work make the usual schedule difficult. [S01, S09]",
+        "Record both readings with the actual date and time. If a session is missed, leave the gap visible and return to the agreed plan. A later entry should retain the time the measurement was taken, not the time it was typed in. [S01, S03]"
+      ],
+      "keyTakeaway": "Use an agreed schedule and keep the actual measurement time with each reading.",
+      "sharedFooter": "General information, not personal medical advice. Follow your own clinician's instructions. In a medical emergency, call 000. [S14]",
+      "references": [
+        "S01",
+        "S02",
+        "S03",
+        "S09",
+        "S14"
+      ],
+      "byline": "A/Prof Andrew Roy, Cardiologist",
+      "bylineStatus": "Clinical sign-off recorded 24 September 2026",
+      "clinicalReviewStatus": "Bodies clinically accepted 24 Sep 2026; G1/G2/G3 gates not passed",
+      "clinicalReviewer": "A/Prof Andrew Roy",
+      "clinicalReviewDate": "2026-09-24",
+      "bodyAvailability": "supplied",
+      "displayReadingTime": false,
+      "referenceScreenReadingTimeMinutes": null,
+      "doNotGenerateBody": false,
+      "publishable": false,
+      "reviewHolds": [],
+      "bodyWordCount": 205,
+      "bodySHA256": "79aa77a8d0457d6f91284801cd7d1c53d3a6fced32bad9e4e25b4d94853cf68b"
+    },
+    {
+      "prototypeKey": "demo-editorial-06",
+      "canonicalAssetId": null,
+      "collection": "pulse",
+      "title": "How clinicians use home records",
+      "programmeLink": "Week 5 — Talking with your doctor",
+      "linkedFromWeeks": [
+        5
+      ],
+      "setupAccess": true,
+      "sourceStatus": "Body supplied and clinically signed off (CORV-EDU-002 v0.4, 24 Sep 2026)",
+      "originCheck": "new_commission",
+      "cardSummary": "What a clinician needs alongside the numbers, and why a complete record matters.",
+      "standfirst": "A home record is most useful when it shows when and how measurements were taken, alongside the individual readings.",
+      "body": [
+        "A home record gives a clinician measurements from outside the appointment. Before interpreting them, they need to know how the readings were taken, whether the cuff was appropriate and whether the record follows the agreed schedule. [S01, S03]",
+        "An average can summarise repeated measurements, but it does not replace the individual readings or correct a repeated technique error. Dates, times, missed sessions and relevant notes remain part of the record. [S01, S08]",
+        "The clinician considers this information alongside clinic measurements, symptoms, prescribed medicines and other health conditions. It can inform the assessment of hypertension and a review of existing care. A graph alone cannot make those decisions. [S09, S15]",
+        "Bring the complete record, including readings that surprised you. Mention difficulties with the cuff, changes in routine, symptoms or medicine changes agreed with your clinician. You do not need to arrive with your own diagnosis. [S03, S09]",
+        "Ask the practice how to share the record and when it will be reviewed. Saving a reading in an app does not, by itself, mean a clinician has received or reviewed it. Paper records, manual entries and imported measurements all need clear dates and the values actually measured. Corveo complements your existing clinicians; it does not replace their advice or interpretation. [S03]"
+      ],
+      "keyTakeaway": "A useful record shows what was measured, when and how, for discussion with your clinician.",
+      "sharedFooter": "General information, not personal medical advice. Follow your own clinician's instructions. In a medical emergency, call 000. [S14]",
+      "references": [
+        "S01",
+        "S03",
+        "S08",
+        "S09",
+        "S14",
+        "S15"
+      ],
+      "byline": "A/Prof Andrew Roy, Cardiologist",
+      "bylineStatus": "Clinical sign-off recorded 24 September 2026",
+      "clinicalReviewStatus": "Bodies clinically accepted 24 Sep 2026; G1/G2/G3 gates not passed",
+      "clinicalReviewer": "A/Prof Andrew Roy",
+      "clinicalReviewDate": "2026-09-24",
+      "bodyAvailability": "supplied",
+      "displayReadingTime": false,
+      "referenceScreenReadingTimeMinutes": null,
+      "doNotGenerateBody": false,
+      "publishable": false,
+      "reviewHolds": [],
+      "bodyWordCount": 208,
+      "bodySHA256": "68f753e310ab504f0f1d872fd8253a1d4fb13d16d90d1b85dc24e5da5e8be719"
+    }
+  ],
+  "references": [
+    {
+      "id": "S01",
+      "citation": "Sharman JE, Howes FS, Head GA, et al. How to measure home blood pressure: Recommendations for healthcare professionals and patients. Australian Family Physician / RACGP; 2016;45(1-2):31-34.",
+      "verificationStatus": "supplied_unverified"
+    },
+    {
+      "id": "S02",
+      "citation": "National Heart Foundation of Australia. Blood pressure and heart health. Heart Foundation; undated live patient page.",
+      "verificationStatus": "supplied_unverified"
+    },
+    {
+      "id": "S03",
+      "citation": "healthdirect Australia. Blood pressure monitoring at home. healthdirect; undated live patient page.",
+      "verificationStatus": "supplied_unverified"
+    },
+    {
+      "id": "S04",
+      "citation": "Mayo Clinic Staff. Blood pressure: Does it have a daily pattern? Mayo Clinic; 22 May 2024.",
+      "verificationStatus": "supplied_unverified"
+    },
+    {
+      "id": "S05",
+      "citation": "Hypertension Australia. Blood Pressure & You. Hypertension Australia; undated live patient page.",
+      "verificationStatus": "supplied_unverified"
+    },
+    {
+      "id": "S06",
+      "citation": "Muntner P, Shimbo D, Carey RM, et al. Measurement of Blood Pressure in Humans: A Scientific Statement From the American Heart Association. Hypertension; 2019;73:e35-e66. Partial access — verify in full.",
+      "verificationStatus": "partial_access_verify_in_full"
+    },
+    {
+      "id": "S07",
+      "citation": "McEvoy JW, et al. 2024 ESC Guidelines for the management of elevated blood pressure and hypertension. European Heart Journal; 2024;45:3912-4018. Partial access — verify in full.",
+      "verificationStatus": "partial_access_verify_in_full"
+    },
+    {
+      "id": "S08",
+      "citation": "Ishigami J, Charleston J, Miller ER III, Matsushita K, Appel LJ, Brady TM. Effects of Cuff Size on the Accuracy of Blood Pressure Readings: The Cuff(SZ) Randomized Crossover Trial. JAMA Internal Medicine; 2023;183(10):1061-1068.",
+      "verificationStatus": "supplied_unverified"
+    },
+    {
+      "id": "S09",
+      "citation": "Mayo Clinic Staff. Get the most out of home blood pressure monitoring. Mayo Clinic; 21 January 2026.",
+      "verificationStatus": "supplied_unverified"
+    },
+    {
+      "id": "S10",
+      "citation": "Mayo Clinic Staff. White coat hypertension: When blood pressure rises in a medical setting. Mayo Clinic; 13 June 2024.",
+      "verificationStatus": "supplied_unverified"
+    },
+    {
+      "id": "S11",
+      "citation": "American Heart Association. All About Heart Rate. Reviewed 13 May 2024.",
+      "verificationStatus": "supplied_unverified"
+    },
+    {
+      "id": "S12",
+      "citation": "American Heart Association / Professional Heart Daily. Blood Pressure Measurement — a Call to Action to Improve Reliability and Enhance Awareness of Underlying Mechanisms. 2019 commentary.",
+      "verificationStatus": "supplied_unverified"
+    },
+    {
+      "id": "S13",
+      "citation": "University of Sydney research team. Home blood pressure monitors may be giving inaccurate readings. University of Sydney; 22 August 2025.",
+      "verificationStatus": "supplied_unverified"
+    },
+    {
+      "id": "S14",
+      "citation": "healthdirect Australia. High blood pressure (hypertension). healthdirect; undated live patient page.",
+      "verificationStatus": "supplied_unverified"
+    },
+    {
+      "id": "S15",
+      "citation": "American College of Cardiology / CardioSmart. High Blood Pressure. Last edited 12 August 2025.",
+      "verificationStatus": "supplied_unverified"
+    },
+    {
+      "id": "S16",
+      "citation": "Therapeutic Goods Administration. Understanding the general health or wellness software exclusion. TGA; current live guidance — priority read for Andrew.",
+      "verificationStatus": "priority_read_outstanding"
+    }
+  ],
+  "outstanding": [
+    "S16 (TGA general health/wellness exclusion) — priority read, bears on the core regulatory claim",
+    "S06 and S07 — partial access, verify in full",
+    "CMS-original check for the three candidate-replacement pieces before anything is overwritten",
+    "In Focus collection — 4 titles, no bodies supplied"
+  ]
+}

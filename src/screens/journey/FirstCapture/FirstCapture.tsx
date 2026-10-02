@@ -8,20 +8,39 @@ import { JOURNEY } from "@/copy/journey";
 import { useJourney } from "@/lib/journey/state";
 
 /**
- * Journey step 4 — first capture. A Health user may skip the form: the app
- * cannot know whether permission was granted (docs/03 §4), so the choice is
- * theirs, and it lands on the rhythm step rather than the result, which
- * would have nothing to show until the first sync runs.
+ * Journey step 4 — first capture.
+ *
+ * Synced from ios/BPReset/Features/Journey/JourneyViews.swift FirstCaptureView.
+ * A visible way past this step: a reading is never required to finish onboarding,
+ * so nobody without a monitor has to invent one (rulebook 5.1.1; the record holds
+ * only what was measured).
  */
 export function FirstCapture() {
   const navigate = useNavigate();
   const { connectChoice } = useJourney();
   const c = JOURNEY.firstCapture;
 
+  // Skip text differs by connect choice
+  const skipText = connectChoice === "healthkit" ? c.skipHealth : c.skip;
+
   return (
-    <Screen overline={c.eyebrow} title={c.title} className="step-enter">
+    <Screen
+      overline={c.eyebrow}
+      title={c.title}
+      className="step-enter"
+      footer={
+        <Button variant="ghost" onClick={() => navigate("/journey/cadence")}>
+          {skipText}
+        </Button>
+      }
+    >
       <StepDots total={5} current={4} />
-      <p className="pb-[var(--spacing-md)] text-ink-secondary">{c.intro}</p>
+      <p
+        className="pb-[var(--spacing-md)] text-ink-secondary"
+        style={{ fontSize: "var(--text-body-base)", lineHeight: "var(--leading-body)" }}
+      >
+        {c.intro}
+      </p>
 
       {connectChoice === "healthkit" ? (
         <Card className="mb-[var(--spacing-sm)]">
@@ -37,16 +56,6 @@ export function FirstCapture() {
           navigate("/journey/result", { state: { reading: submitted } })
         }
       />
-
-      {connectChoice === "healthkit" ? (
-        <Button
-          variant="ghost"
-          className="mt-[var(--spacing-xs)]"
-          onClick={() => navigate("/journey/cadence")}
-        >
-          {c.skipHealth}
-        </Button>
-      ) : null}
     </Screen>
   );
 }

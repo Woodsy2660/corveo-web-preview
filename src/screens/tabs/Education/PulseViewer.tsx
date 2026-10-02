@@ -1,154 +1,172 @@
-import { useLayoutEffect, useRef, useState } from "react";
-import { Navigate, useNavigate, useParams } from "react-router";
-import { ChevronUpIcon, CloseIcon } from "@/components/ui/icons";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router";
+import { Screen } from "@/components/ui/Screen";
+import { Button } from "@/components/ui/Button";
 import { APP } from "@/copy/app";
-import { SAFETY } from "@/copy/safety";
-import { PULSE_ITEMS, type PulseItem } from "@/copy/library-placeholder";
+import { PULSE_ITEMS, findPulseItem } from "@/copy/library-placeholder";
 
 /**
- * The Pulse — full-screen swipe-through viewer for the short reads.
- *
- * One read per screen, swiped vertically, on the model of short-form video
- * feeds: the page is a scroll-snap container and each read is one snap stop.
- * Native momentum scrolling does the gesture work; no gesture library.
- *
- * Deliberately a destination you enter from the Learn rail, not the tab
- * itself — the tab stays a calm library and this is the immersive mode.
- * Close returns to the rail.
- *
- * `position: fixed` anchors to #root on the desktop preview (the frame sets
- * a transform, making it the containing block), so the viewer fills the
- * phone frame there and the real viewport on device.
- *
- * Content register: each read is display-only education. The education
- * disclaimer travels on every screen, exactly as it does at the foot of a
- * chapter — the format invites punchy copy, which is exactly where the
- * IPS discipline matters most.
+ * Pulse article reader. Body copy is CORV-EDU-002, rendered verbatim.
+ * Navigation matches Your program: Next read / Back fade in at the bottom
+ * in the last quarter of the page. No CTA back into the Program.
  */
-
-function PulseSlide({ item }: { item: PulseItem }) {
-  return (
-    <section
-      className="flex h-full w-full snap-start flex-col justify-between px-[var(--spacing-md)]"
-      style={{
-        paddingTop: "calc(var(--safe-top) + 72px)",
-        paddingBottom: "calc(var(--safe-bottom) + 64px)",
-      }}
-      aria-label={item.title}
-    >
-      <div className="flex flex-1 flex-col justify-center gap-[var(--spacing-sm)]">
-        <h2
-          style={{
-            fontFamily: "var(--font-display)",
-            fontWeight: 400,
-            fontSize: "var(--text-heading-2xl)",
-            lineHeight: "var(--leading-heading)",
-            letterSpacing: "-0.02em",
-            color: "var(--color-text-heading-inverse)",
-          }}
-        >
-          {item.title}
-        </h2>
-
-        <p
-          style={{
-            fontSize: "var(--text-body-lg)",
-            lineHeight: "var(--leading-body-relaxed)",
-            color: "var(--color-text-tertiary)",
-          }}
-        >
-          {item.emptyReaderMessage}
-        </p>
-      </div>
-
-      <p style={{ fontSize: "var(--text-label)", color: "var(--color-text-tertiary)" }}>
-        {SAFETY.educationNote}
-      </p>
-    </section>
-  );
-}
-
 export function PulseViewer() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const containerRef = useRef<HTMLDivElement>(null);
-  const startIndex = PULSE_ITEMS.findIndex((p) => p.slug === slug);
-  const [index, setIndex] = useState(Math.max(startIndex, 0));
+  const location = useLocation();
+  const item = findPulseItem(slug);
   const c = APP.pulse;
+  const inJourney = location.pathname.startsWith("/journey");
+  const listRoot = inJourney ? "/journey/pulse" : "/app/education/pulse";
 
-  // Jump (not smooth-scroll) to the tapped read before first paint. If the
-  // container has no height yet (layout not settled), wait for it — a jump
-  // computed against zero height silently lands on slide one.
-  useLayoutEffect(() => {
-    const el = containerRef.current;
-    if (!el || startIndex <= 0) return;
-    if (el.clientHeight > 0) {
-      el.scrollTop = startIndex * el.clientHeight;
-      return;
-    }
-    const ro = new ResizeObserver(() => {
-      if (el.clientHeight > 0) {
-        el.scrollTop = startIndex * el.clientHeight;
-        ro.disconnect();
+  const [fade, setFade] = useState(0);
+  const endRef = useRef<HTMLDivElement>(null);
+
+  const index = item ? PULSE_ITEMS.findIndex((p) => p.slug === item.slug) : -1;
+  const next = index >= 0 ? PULSE_ITEMS[index + 1] : undefined;
+
+  useEffect(() => {
+    setFade(0);
+  }, [slug]);
+
+  useEffect(() => {
+    if (!endRef.current) return;
+    const root = endRef.current.closest("main");
+    if (!(root instanceof HTMLElement)) return;
+
+    const onScroll = () => {
+      const max = root.scrollHeight - root.clientHeight;
+      if (max <= 0) {
+        setFade(1);
+        return;
       }
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-    // Run once on mount only — later scrollTop changes are the user's swipes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      const progress = root.scrollTop / max;
+      setFade(Math.min(1, Math.max(0, (progress - 0.75) / 0.25)));
+    };
+    onScroll();
+    root.addEventListener("scroll", onScroll, { passive: true });
+    return () => root.removeEventListener("scroll", onScroll);
+  }, [slug]);
 
-  if (startIndex === -1) return <Navigate to="/app/education" replace />;
+  if (!item) {
+    return (
+      <Screen title={APP.education.pulseHeading}>
+        <Button onClick={() => (inJourney ? navigate(-1) : navigate("/app/education"))}>{APP.inFocus.back}</Button>
+      </Screen>
+    );
+  }
 
-  const onScroll = () => {
-    const el = containerRef.current;
-    if (!el || el.clientHeight === 0) return;
-    setIndex(Math.round(el.scrollTop / el.clientHeight));
-  };
+  const paragraphs = item.body;
+  const goBack = () => (inJourney ? navigate(-1) : navigate("/app/education"));
 
-  return (
-    <div className="fixed inset-0 z-20 bg-action">
-      <div
-        className="absolute inset-x-0 z-10 flex items-center justify-between px-[var(--spacing-md)]"
-        style={{ top: "calc(var(--safe-top) + var(--spacing-sm))" }}
-      >
-        <span className="eyebrow" style={{ color: "var(--color-text-secondary-inverse)" }}>
-          {`${APP.education.pulseHeading} · ${c.counter(index + 1, PULSE_ITEMS.length)}`}
-        </span>
-        <button
-          type="button"
-          aria-label={c.closeAria}
-          onClick={() => navigate("/app/education")}
-          className="flex size-[44px] items-center justify-center text-action-ink"
-          style={{ fontSize: "var(--text-body-lg)" }}
-        >
-          <CloseIcon />
-        </button>
-      </div>
-
-      <div
-        ref={containerRef}
-        onScroll={onScroll}
-        className="h-full snap-y snap-mandatory overflow-y-auto overscroll-contain"
-      >
-        {PULSE_ITEMS.map((item) => (
-          <PulseSlide key={item.slug} item={item} />
-        ))}
-      </div>
-
-      {index < PULSE_ITEMS.length - 1 ? (
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 flex flex-col items-center gap-[var(--spacing-3xs)]"
-          style={{
-            bottom: "calc(var(--safe-bottom) + var(--spacing-sm))",
-            color: "var(--color-text-tertiary)",
-          }}
-        >
-          <ChevronUpIcon />
-          <span style={{ fontSize: "var(--text-label)" }}>{c.swipeHint}</span>
-        </div>
+  const actions = (
+    <div className="flex flex-col gap-[var(--spacing-2xs)]">
+      {next ? (
+        <Button onClick={() => navigate(`${listRoot}/${next.slug}`)}>{c.next}</Button>
+      ) : (
+        <Button onClick={goBack}>{APP.inFocus.back}</Button>
+      )}
+      {next ? (
+        <Button variant="ghost" onClick={goBack}>
+          {APP.common.back}
+        </Button>
       ) : null}
     </div>
+  );
+
+  return (
+    <>
+      <Screen
+        overline={c.overline}
+        title={item.title}
+        className="step-enter"
+        scrollKey={item.slug}
+      >
+        {item.standfirst ? (
+          <p
+            className="pb-[var(--spacing-sm)]"
+            style={{
+              fontSize: "var(--text-body-lg)",
+              lineHeight: "var(--leading-body-relaxed)",
+            }}
+          >
+            {item.standfirst}
+          </p>
+        ) : null}
+
+        {paragraphs && paragraphs.length > 0 ? (
+          <article className="flex flex-col gap-[var(--spacing-sm)]">
+            {paragraphs.map((paragraph) => (
+              <p
+                key={paragraph.slice(0, 48)}
+                style={{
+                  fontSize: "var(--text-body-lg)",
+                  lineHeight: "var(--leading-body-relaxed)",
+                  color: "var(--app-ink)",
+                }}
+              >
+                {paragraph}
+              </p>
+            ))}
+          </article>
+        ) : (
+          <p className="text-ink-secondary" style={{ fontSize: "var(--text-body-lg)" }}>
+            {item.emptyReaderMessage}
+          </p>
+        )}
+
+        {item.keyTakeaway ? (
+          <div className="mt-[var(--spacing-md)] border-t border-hairline pt-[var(--spacing-sm)]">
+            <p className="text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)", fontWeight: 500 }}>
+              {APP.chapter.keyTakeaway}
+            </p>
+            <p
+              className="pt-[var(--spacing-2xs)]"
+              style={{
+                fontSize: "var(--text-body-lg)",
+                lineHeight: "var(--leading-body-relaxed)",
+              }}
+            >
+              {item.keyTakeaway}
+            </p>
+          </div>
+        ) : null}
+
+        {item.byline ? (
+          <p
+            className="mt-[var(--spacing-md)] border-t border-hairline pt-[var(--spacing-sm)] text-ink-secondary"
+            style={{ fontSize: "var(--text-body-sm)" }}
+          >
+            {item.byline}
+            {item.bylineStatus ? ` · ${item.bylineStatus}` : null}
+          </p>
+        ) : null}
+
+        {item.sharedFooter ? (
+          <p
+            className="mt-[var(--spacing-sm)] text-ink-tertiary"
+            style={{ fontSize: "var(--text-body-sm)", lineHeight: "var(--leading-body)" }}
+          >
+            {item.sharedFooter}
+          </p>
+        ) : null}
+
+        <div ref={endRef} aria-hidden />
+        <div aria-hidden className="h-[7.5rem]" />
+      </Screen>
+      {fade > 0 ? (
+        <div
+          className="fixed inset-x-0 bottom-0 z-[15] bg-page px-[var(--spacing-md)] pt-[var(--spacing-xs)]"
+          style={{
+            paddingBottom: "calc(var(--spacing-md) + var(--safe-bottom))",
+            opacity: fade,
+            pointerEvents: fade > 0.2 ? "auto" : "none",
+            transition: "opacity var(--duration-slow) var(--ease-brand)",
+          }}
+        >
+          {actions}
+        </div>
+      ) : null}
+    </>
   );
 }

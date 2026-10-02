@@ -4,8 +4,9 @@
  * Copy discipline (Intended Purpose Statement §2–3): only the verbs
  * understand · learn · track · organise, qualified with "alongside your
  * care". No outcome verbs (lower, reduce, control, manage, improve). No
- * interpretation of readings, ever. Mechanical validation copy lives in
- * validation.ts and is fixed verbatim.
+ * interpretation of readings, ever.
+ *
+ * SYNCED FROM: ios/BPReset/Copy/Copy.swift — JourneyCopy enum
  */
 
 export const JOURNEY = {
@@ -19,22 +20,19 @@ export const JOURNEY = {
     eyebrow: "Six-week program",
     title: "Understand your blood pressure.",
     intro:
-      "Track your readings and learn week by week, alongside the care of your own doctor.",
-    highlights: [
+      "A calm, structured way to track your readings and learn about blood pressure, alongside the care of your own doctor.",
+    cards: [
       {
-        icon: "home",
-        title: "Home readings",
-        sub: "Build a fuller picture over weeks, not a single visit.",
+        title: "Why home readings matter",
+        body: "Readings taken quietly at home, over weeks, build a fuller picture than any single measurement can. That picture is what you and your doctor can talk about.",
       },
       {
-        icon: "technique",
-        title: "Measuring well",
-        sub: "Simple technique the program walks you through.",
+        title: "How to measure well",
+        body: "Seated, rested, arm supported at heart level. Same times each day. The program walks you through this in week one.",
       },
       {
-        icon: "education",
-        title: "Six weeks of education",
-        sub: "Evidence-based, no wellness hype, your readings alongside.",
+        title: "What this program is",
+        body: "Six weeks of short, practical education about blood pressure, with your own readings organised alongside it. Corveo displays your readings and their history. It does not diagnose or replace your doctor.",
       },
     ],
     cta: "Begin",
@@ -44,17 +42,19 @@ export const JOURNEY = {
     eyebrow: "Your account",
     title: "A place for your record.",
     intro:
-      "Your readings are stored securely in Australia and stay yours. You can export or delete them whenever you like.",
+      "Your readings are stored securely in your own record, in Australia, and stay yours. You can export or delete them at any time.",
     emailLabel: "Email address",
     passwordLabel: "Password",
     adultAttestation: "I am 18 years or older.",
     cta: "Create account",
-    signInTitle: "Sign in to your record.",
-    signInIntro:
-      "Welcome back. Sign in to pick up where you left off.",
+    signInTitle: "Welcome back.",
+    signInIntro: "Sign in to your record.",
     signInCta: "Sign in",
-    signInToggle: "Already have an account? Sign in",
-    createToggle: "Create account instead",
+    haveAccount: "I already have an account",
+    needAccount: "I need to create an account",
+    attestIntro: "One thing before your record begins.",
+    confirmIntro: (email: string) =>
+      `We've sent a confirmation link to ${email}. Open it, then come back and sign in.`,
   },
 
   connect: {
@@ -67,7 +67,7 @@ export const JOURNEY = {
     options: {
       healthkit: {
         title: "My monitor's app connects to Apple Health",
-        body: "Your monitor's own app writes readings to Apple Health, and Corveo reads them from there. It reads blood pressure only, and it never writes.",
+        body: "Your monitor's own app writes readings to Apple Health. Corveo reads them from there. It reads blood pressure only, and it never writes.",
       },
       manual: {
         title: "I'll enter readings myself",
@@ -75,7 +75,7 @@ export const JOURNEY = {
       },
       none: {
         title: "I don't have a monitor yet",
-        body: "No worries. The education program starts either way, and we'll show you a list of validated upper-arm cuffs worth a look.",
+        body: "That's fine. The education program starts either way. We'll show you a list of validated upper-arm cuffs worth considering.",
       },
     },
     cta: "Continue",
@@ -85,15 +85,19 @@ export const JOURNEY = {
     eyebrow: "Apple Health",
     title: "Connect Apple Health.",
     intro:
-      "Corveo asks Apple Health for permission to read blood pressure readings. Apple will show you exactly what is shared. Corveo only ever reads, and it never writes to Apple Health.",
-    cta: "Connect Apple Health",
-    skip: "Not now, I'll enter readings myself",
-    /** Neutral nudge — verbatim from docs/03-plugin-bridge-spec.md §4. Never imply denial. */
+      "Corveo asks Apple Health for permission to read blood pressure readings. Apple will show you exactly what is shared. Corveo reads only. It never writes to Apple Health.",
+    cta: "Continue",
+    skip: "Not now. I'll enter readings myself",
+    /** Neutral nudge. Never imply denial. */
     noSamplesNudge:
       "We haven't seen any readings yet. You can check Corveo's access in Settings › Health › Data Access & Devices.",
+    unavailable: "Apple Health isn't available on this device. You can still enter readings yourself.",
   },
 
   firstCapture: {
+    skip: "Skip for now",
+    /** Health users: the record begins when the sync does. */
+    skipHealth: "My readings come from Apple Health",
     eyebrow: "First reading",
     title: "A starting point.",
     intro:
@@ -107,14 +111,12 @@ export const JOURNEY = {
     cta: "Save reading",
     healthkitWaiting:
       "Once your monitor's app syncs with Apple Health, readings will appear here on their own. You can also add one yourself now.",
-    /** Health users only. Goes to the rhythm step; the record begins when the sync does. */
-    skipHealth: "My readings come from Apple Health",
   },
 
   result: {
     eyebrow: "Your record",
     title: "Your record has begun.",
-    body: "One reading is a starting point. What matters is how your readings sit over the coming weeks. That pattern is what you and your doctor can talk about, alongside your care.",
+    body: "One reading is a starting point. The picture that matters is how your readings sit over the coming weeks. That pattern is what you and your doctor can talk about, alongside your care.",
     cta: "Choose your rhythm",
   },
 
@@ -122,7 +124,7 @@ export const JOURNEY = {
     eyebrow: "Your rhythm",
     title: "A light rhythm.",
     intro:
-      "A steady rhythm of readings builds the clearest record. Choose whatever fits your days. You can change this at any time.",
+      "A steady rhythm of readings builds the clearest record. Choose what fits your days. You can change this anytime.",
     options: {
       twice_daily: {
         title: "Morning and evening",
@@ -134,8 +136,9 @@ export const JOURNEY = {
         body: "A lighter rhythm that still builds your picture.",
       },
     },
+    reminderToggle: "Remind me at these times",
     reminderNote:
-      "Corveo can remind you at your chosen times. Reminders follow the rhythm you choose and are never triggered by a reading.",
+      "Corveo can remind you at your chosen times. Reminders follow your rhythm only. They are never triggered by a reading.",
     cta: "Go to My Heart Record",
   },
 } as const;

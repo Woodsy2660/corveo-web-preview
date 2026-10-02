@@ -34,14 +34,14 @@ export function InFocusArticle() {
 
   if (!article) {
     return (
-      <Screen title={c.notFound} withTabBar>
+      <Screen title={c.notFound}>
         <Button onClick={() => navigate("/app/education")}>{c.back}</Button>
       </Screen>
     );
   }
 
   return (
-    <Screen overline={c.overline} title={article.title} className="step-enter" withTabBar>
+    <Screen overline={c.overline} title={article.title} className="step-enter">
       {article.excerpt ? (
         <p
           className="pb-[var(--spacing-sm)] text-ink-secondary"

@@ -1,27 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router";
 import { Screen } from "@/components/ui/Screen";
 import { Button } from "@/components/ui/Button";
 import { StepDots } from "@/components/ui/StepDots";
-import { ChevronDownIcon } from "@/components/ui/icons";
+import { Card } from "@/components/ui/Card";
 import { JOURNEY } from "@/copy/journey";
-import { ValidatedCuffList } from "@/components/ui/ValidatedCuffList";
 import { useJourney, type ConnectChoice } from "@/lib/journey/state";
+import { VALIDATED_CUFFS } from "@/copy/validated-cuffs";
 
 const ORDER: ConnectChoice[] = ["healthkit", "manual", "none"];
 
 /**
  * Journey step 3 — connect: cuff / manual / none branch.
  *
- * Minimal buttons: just the title, a radio dot on the left, and
- * the body text appears only under the selected option. Clean,
- * quiet, no icons, no card containers. The cuff list uses the
- * same hairline-separated, radio-dot aesthetic.
+ * Circular radio buttons with title + body text.
  */
 export function Connect() {
   const navigate = useNavigate();
   const { connectChoice, setConnectChoice } = useJourney();
-  const [cuffsOpen, setCuffsOpen] = useState(false);
   const c = JOURNEY.connect;
 
   const next = () =>
@@ -41,8 +37,8 @@ export function Connect() {
       <StepDots total={5} current={3} />
 
       <p
-        className="pb-[var(--spacing-lg)] text-ink-secondary"
-        style={{ fontSize: "var(--text-body-lg)", lineHeight: "var(--leading-body-relaxed)" }}
+        className="pb-[var(--spacing-md)] text-ink-secondary"
+        style={{ fontSize: "var(--text-body-base)", lineHeight: "var(--leading-body)" }}
       >
         {c.intro}
       </p>
@@ -54,6 +50,7 @@ export function Connect() {
           return (
             <button
               key={key}
+              type="button"
               role="radio"
               aria-checked={selected}
               onClick={() => setConnectChoice(key)}
@@ -62,9 +59,9 @@ export function Connect() {
               }`}
               style={{ "--stagger-index": i } as React.CSSProperties}
             >
-              {/* Radio dot */}
+              {/* Circular radio button */}
               <span
-                className="mt-[3px] flex size-[20px] flex-none items-center justify-center rounded-round border-2"
+                className="mt-[3px] flex size-[20px] flex-none items-center justify-center rounded-full border-2"
                 style={{
                   borderColor: selected ? "var(--app-heading)" : "var(--app-hairline)",
                   transitionProperty: "border-color",
@@ -72,9 +69,7 @@ export function Connect() {
                 }}
               >
                 {selected ? (
-                  <span
-                    className="block size-[10px] rounded-round bg-heading"
-                  />
+                  <span className="block size-[10px] rounded-full bg-heading" />
                 ) : null}
               </span>
 
@@ -85,52 +80,49 @@ export function Connect() {
                 >
                   {opt.title}
                 </span>
-                {/* Body text reveals only on selection — progressive disclosure */}
-                {selected ? (
-                  <p
-                    className="expand-enter pt-[var(--spacing-3xs)] text-ink-secondary"
-                    style={{ fontSize: "var(--text-body-sm)", lineHeight: "var(--leading-body)" }}
-                  >
-                    {opt.body}
-                  </p>
-                ) : null}
+                <p
+                  className="pt-[var(--spacing-3xs)] text-ink-secondary"
+                  style={{ fontSize: "var(--text-body-sm)", lineHeight: "var(--leading-body)" }}
+                >
+                  {opt.body}
+                </p>
               </div>
             </button>
           );
         })}
       </div>
 
+      {/* Validated cuffs card shown when "none" is selected */}
       {connectChoice === "none" ? (
-        <div className="expand-enter pt-[var(--spacing-sm)]">
-          <button
-            type="button"
-            onClick={() => setCuffsOpen((v) => !v)}
-            aria-expanded={cuffsOpen}
-            className="flex w-full items-center justify-between py-[var(--spacing-xs)] text-left"
+        <Card label={c.cuffsLink} className="expand-enter mt-[var(--spacing-sm)]">
+          <p
+            className="pb-[var(--spacing-xs)] text-ink-secondary"
+            style={{ fontSize: "var(--text-body-sm)" }}
           >
-            <span
-              className="text-ink-secondary underline underline-offset-4"
-              style={{ fontSize: "var(--text-body-sm)", fontWeight: 500 }}
-            >
-              {c.cuffsLink}
-            </span>
-            <span
-              className="flex-none text-ink-tertiary"
-              style={{
-                fontSize: "var(--text-body-sm)",
-                transform: cuffsOpen ? "rotate(180deg)" : "rotate(0deg)",
-                transition: "transform var(--duration-fast) var(--ease-brand)",
-              }}
-            >
-              <ChevronDownIcon />
-            </span>
-          </button>
-          {cuffsOpen ? (
-            <div className="expand-enter pb-[var(--spacing-xs)]">
-              <ValidatedCuffList />
-            </div>
-          ) : null}
-        </div>
+            {VALIDATED_CUFFS.intro}
+          </p>
+          <div className="flex flex-col gap-[var(--spacing-xxs)]">
+            {VALIDATED_CUFFS.devices.map((d) => (
+              <div key={d.model}>
+                <p style={{ fontSize: "var(--text-body-sm)", fontWeight: 500 }}>
+                  {d.brand} {d.model}
+                </p>
+                <p
+                  className="text-ink-tertiary"
+                  style={{ fontSize: "var(--text-body-sm)" }}
+                >
+                  {d.connectivity}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p
+            className="pt-[var(--spacing-xs)] text-ink-tertiary"
+            style={{ fontSize: "var(--text-label)" }}
+          >
+            {VALIDATED_CUFFS.sourceNote}
+          </p>
+        </Card>
       ) : null}
     </Screen>
   );

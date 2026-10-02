@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { CheckIcon, ClockIcon } from "@/components/ui/icons";
+import { ReviewHoldMarker } from "@/components/ui/ReviewNotices";
 import { APP } from "@/copy/app";
 import { CHAPTER_ART } from "@/assets/photos";
 import type { ProgramChapter } from "@/copy/program-placeholder";
@@ -88,6 +89,12 @@ export function ChapterRow({
               <span aria-hidden>·</span>
               <CheckIcon />
               {c.readLabel}
+            </span>
+          ) : null}
+          {chapter.reviewHolds && chapter.reviewHolds.length > 0 ? (
+            <span className="inline-flex items-center gap-[var(--spacing-3xs)]">
+              <span aria-hidden>·</span>
+              <ReviewHoldMarker holds={chapter.reviewHolds} />
             </span>
           ) : null}
         </div>

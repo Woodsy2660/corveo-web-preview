@@ -1,7 +1,6 @@
 /**
- * Learn catalogue from the Lovable-Andrew handoff. Titles and card copy
- * are as supplied. Article bodies are not in the package — do not invent
- * them. The reader shows emptyReaderMessage.
+ * Learn catalogue. Pulse bodies come from CORV-EDU-002 (clinically accepted,
+ * not gate-passed). In Focus bodies are not supplied — do not invent them.
  */
 
 import {

@@ -46,7 +46,7 @@ export function Signup() {
             {creating ? c.cta : c.signInCta}
           </Button>
           <Button variant="ghost" onClick={() => setMode(creating ? "signin" : "create")}>
-            {creating ? c.signInToggle : c.createToggle}
+            {creating ? c.haveAccount : c.needAccount}
           </Button>
         </div>
       }

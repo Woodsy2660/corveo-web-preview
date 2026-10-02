@@ -48,6 +48,10 @@ export const APP = {
     swipeHint: "Swipe up for the next read",
     pendingBody:
       "The article text is not included in this design preview. This is a layout placeholder, not an approved article.",
+    overline: "The Pulse",
+    next: "Next read",
+    citationNote:
+      "Citation markers are shown as supplied. How they should appear for patients is awaiting a client decision.",
   },
 
   inFocus: {

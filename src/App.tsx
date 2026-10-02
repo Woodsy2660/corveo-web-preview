@@ -64,6 +64,7 @@ export function App() {
         <Route path="/journey/signup" element={<Signup />} />
         <Route path="/journey/consent" element={<Consent />} />
         <Route path="/journey/connect" element={<Connect />} />
+        <Route path="/journey/pulse/:slug" element={<PulseViewer />} />
         <Route path="/journey/health-auth" element={<HealthAuth />} />
         <Route path="/journey/capture" element={<FirstCapture />} />
         <Route path="/journey/result" element={<Result />} />
@@ -78,11 +79,11 @@ export function App() {
           <Route path="/app/program" element={<Program />} />
           <Route path="/app/program/browse" element={<ProgramBrowse />} />
           <Route path="/app/program/:slug" element={<ProgramDetail />} />
-          <Route path="/app/program/:slug/:week" element={<Chapter />} />
           <Route path="/app/education" element={<Education />} />
-          <Route path="/app/education/in-focus/:slug" element={<InFocusArticle />} />
         </Route>
-        {/* Tasks and overlays, not places: these close rather than go back. */}
+        {/* Reads leave the tab bar — it only sits on the three tab homes. */}
+        <Route path="/app/program/:slug/:week" element={<Chapter />} />
+        <Route path="/app/education/in-focus/:slug" element={<InFocusArticle />} />
         <Route path="/app/education/pulse/:slug" element={<PulseViewer />} />
         <Route path="/app/add" element={<ManualEntry />} />
         <Route path="/app/settings" element={<Settings />} />

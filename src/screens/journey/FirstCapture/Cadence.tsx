@@ -10,9 +10,12 @@ import { useUpdateProgress } from "@/lib/api/hooks";
 const ORDER: CadenceChoice[] = ["twice_daily", "daily", "few_weekly"];
 
 /**
- * Journey step 5 — cadence. Reminders (local notifications, wired in the
- * native shell) follow this chosen rhythm only; they are never triggered by
- * a reading's value (SOW A.3.3).
+ * Journey step 5 — cadence.
+ *
+ * Synced from ios/BPReset/Features/Journey/JourneyViews.swift CadenceView.
+ * Uses OptionCard style: title + body in a card, border when selected.
+ * Reminders (local notifications) follow this chosen rhythm only; they are
+ * never triggered by a reading's value (SOW A.3.3).
  */
 export function Cadence() {
   const navigate = useNavigate();
@@ -39,8 +42,8 @@ export function Cadence() {
     >
       <StepDots total={5} current={5} />
       <p
-        className="pb-[var(--spacing-lg)] text-ink-secondary"
-        style={{ fontSize: "var(--text-body-lg)", lineHeight: "var(--leading-body-relaxed)" }}
+        className="pb-[var(--spacing-md)] text-ink-secondary"
+        style={{ fontSize: "var(--text-body-base)", lineHeight: "var(--leading-body)" }}
       >
         {c.intro}
       </p>
@@ -52,6 +55,7 @@ export function Cadence() {
           return (
             <button
               key={key}
+              type="button"
               role="radio"
               aria-checked={selected}
               onClick={() => setCadence(key)}
@@ -60,9 +64,9 @@ export function Cadence() {
               }`}
               style={{ "--stagger-index": i } as React.CSSProperties}
             >
-              {/* Radio dot */}
+              {/* Circular radio button */}
               <span
-                className="mt-[3px] flex size-[20px] flex-none items-center justify-center rounded-round border-2"
+                className="mt-[3px] flex size-[20px] flex-none items-center justify-center rounded-full border-2"
                 style={{
                   borderColor: selected ? "var(--app-heading)" : "var(--app-hairline)",
                   transitionProperty: "border-color",
@@ -70,9 +74,7 @@ export function Cadence() {
                 }}
               >
                 {selected ? (
-                  <span
-                    className="block size-[10px] rounded-round bg-heading"
-                  />
+                  <span className="block size-[10px] rounded-full bg-heading" />
                 ) : null}
               </span>
 
@@ -83,24 +85,18 @@ export function Cadence() {
                 >
                   {opt.title}
                 </span>
-                {/* Body text reveals only on selection — progressive disclosure */}
-                {selected ? (
-                  <p
-                    className="expand-enter pt-[var(--spacing-3xs)] text-ink-secondary"
-                    style={{ fontSize: "var(--text-body-sm)", lineHeight: "var(--leading-body)" }}
-                  >
-                    {opt.body}
-                  </p>
-                ) : null}
+                <p
+                  className="pt-[var(--spacing-3xs)] text-ink-secondary"
+                  style={{ fontSize: "var(--text-body-sm)" }}
+                >
+                  {opt.body}
+                </p>
               </div>
             </button>
           );
         })}
       </div>
 
-      <p className="pt-[var(--spacing-md)] text-ink-tertiary" style={{ fontSize: "var(--text-body-sm)" }}>
-        {c.reminderNote}
-      </p>
     </Screen>
   );
 }

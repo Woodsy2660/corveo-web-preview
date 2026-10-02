@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { Screen } from "@/components/ui/Screen";
 import { Button } from "@/components/ui/Button";
+import { ChapterDraftNotice, TakeawayReviewNote } from "@/components/ui/ReviewNotices";
 import { APP } from "@/copy/app";
 import { SAFETY } from "@/copy/safety";
 import { findEditorial } from "@/lib/education-content";
@@ -142,7 +143,7 @@ export function Chapter() {
 
   if (!program || !chapter || !isAvailable(progress, program, week)) {
     return (
-      <Screen title={c.notFound} withTabBar>
+      <Screen title={c.notFound}>
         <Button onClick={() => navigate("/app/program")}>{c.back}</Button>
       </Screen>
     );
@@ -180,7 +181,6 @@ export function Chapter() {
       overline={`${program.unitLabel} ${chapter.week}`}
       title={chapter.title}
       className="step-enter"
-      withTabBar
       scrollKey={`${program.slug}:${chapter.week}`}
     >
       {chapter.deck ? (
@@ -212,6 +212,11 @@ export function Chapter() {
         </p>
       ) : null}
 
+      <ChapterDraftNotice
+        publishable={chapter.publishable ?? false}
+        holds={chapter.reviewHolds}
+      />
+
       <ArticleBody sections={chapter.sections ?? []} />
 
       {chapter.keyTakeaway ? (
@@ -225,6 +230,9 @@ export function Chapter() {
           >
             {chapter.keyTakeaway}
           </p>
+          <TakeawayReviewNote
+            show={!chapter.publishable && (chapter.reviewHolds?.length ?? 0) > 0}
+          />
         </div>
       ) : null}
 
@@ -280,7 +288,7 @@ export function Chapter() {
       <div
         className="fixed inset-x-0 bottom-0 z-[15] bg-page px-[var(--spacing-md)] pt-[var(--spacing-xs)]"
         style={{
-          paddingBottom: "calc(96px + var(--safe-bottom))",
+          paddingBottom: "calc(var(--spacing-md) + var(--safe-bottom))",
           opacity: fade,
           pointerEvents: fade > 0.2 ? "auto" : "none",
           transition: "opacity var(--duration-slow) var(--ease-brand)",
